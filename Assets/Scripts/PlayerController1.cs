@@ -1,21 +1,29 @@
+using System;
 using System.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.HID;
+using UnityEngine.InputSystem.XR;
 
-public class SavedAction
+
+public class SavedAction1
 {
     public bool attack = false;
     public Vector3 pos = Vector3.zero;
 }
 
-public class PlayerController : MonoBehaviour
+public class PlayerController1 : MonoBehaviour
 {
+/*
+    [SerializeField] private PlayerControls playerControls;
     [SerializeField] private Collider attackCollider;
     [SerializeField] private LayerMask GroundLayers;
 
 
-	private Camera mainCamera;
-	private SavedAction savedAction;
+    private SavedAction savedAction;
+    private CameraRotateController cameraRotateController;
+    private Camera mainCamera;
     private Coroutine moveCoroutine;
     private Coroutine stopTweenCoroutine;
     private float attackTime = 1.22f;
@@ -50,25 +58,57 @@ public class PlayerController : MonoBehaviour
 
     public const float StartStopTime = 0.20f;
 
+    private void Awake()
+    {
+        playerControls = new PlayerControls();
+    }
+
 	private void Update()
 	{
 		SetAnimationSpeed();
 		GroundedCheck();
+
+
+		if (playerControls.Land.Shoot.triggered)
+		{
+			Debug.Log("Shoot: inside update function");
+		}
+		if (stepDestination != null)
+		{
+			//Move();
+		}
+
     }
 
 	private void OnEnable()
-	{
-		mainCamera = Camera.main;
-		characterController = GetComponent<CharacterController>(); if (characterController == null)Debug.LogError("Charactercontroller not found");
-        hasAnimator = TryGetComponent(out animator);
+    {
+        cameraRotateController = GetComponent<CameraRotateController>();
+        cameraRotateController.SetPlayerControls(playerControls);
 
-		Inputs.Instance.Controls.Land.LeftClick.performed += MouseClick;
-		Inputs.Instance.Controls.Land.LeftClick.performed += MouseRightClick;
+        playerControls.Enable();
+        playerControls.Land.LeftClick.performed += MouseClick;
+        playerControls.Land.RightClick.performed += MouseRightClick;
+        
+        //playerControls.Land.Shift.performed += Shift;
+        playerControls.Land.Shift.started += Shift;
+        playerControls.Land.Shift.canceled += Shift;
 
-		Inputs.Instance.Controls.Land.Shift.started += Shift;
-		Inputs.Instance.Controls.Land.Shift.canceled += Shift;
+        mainCamera = Camera.main;
+		characterController = GetComponent<CharacterController>();
+        if (characterController == null)
+        {
+            Debug.LogError("Charactercontroller not found");
+        }
+
+		hasAnimator = TryGetComponent(out animator);
 	}
     
+	private void OnDisable()
+    {
+        playerControls.Disable();
+        //mouseClickAction.Disable();
+    }
+
 	private void OnTriggerEnter(Collider collider)
 	{
 		Enemy enemy = collider.gameObject.GetComponent<Enemy>();
@@ -311,10 +351,13 @@ public class PlayerController : MonoBehaviour
         Gizmos.DrawSphere(startedAttackAgainst, 0.1f);
     }
 
+
+
     private void Shift(InputAction.CallbackContext context)
 	{
         if (context.phase == InputActionPhase.Started)
         {
+            //Debug.Log("Shift ON");
             holdPosition = true;
 			if(moveCoroutine != null)StopCoroutine(moveCoroutine);
 			if(stopTweenCoroutine != null)StopCoroutine(stopTweenCoroutine);
@@ -322,6 +365,7 @@ public class PlayerController : MonoBehaviour
 		}
         else if (context.phase == InputActionPhase.Canceled) 
         {
+            //Debug.Log("Shift OFF");
             holdPosition = false;           
         }
     }
@@ -341,4 +385,11 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
+    private void Move()
+    {
+        if (playerControls.Land.Attack.triggered)
+        {
+            Debug.Log("Shift held, attack");
+        }
+	}*/
 }

@@ -1,0 +1,54 @@
+DEVLOG FOR D2_game"
+Nov 2022
+
+* IDEAS
+- Remake the D2 style game like Grim Dawn and Lost Relics mishmash.
+
+
+21/11	* Starting with simple prototype
+		* Trying to use new imput system from Unity Starter Pack Third person controller
+		* Importing Miximo character and trying to replace the third person character
+22/11	* Kinda Made animation work for the character
+		* Added point click move behaviour for character
+		* Made simple Lerp movement/rotation to points clicked
+		* Shift works as input for stopping movement
+		* Semismooth camera needs more tweeking	
+		* Made A-D rotate camera around player.
+		* Made attack imidiately face direction, maybe add fast tween before?
+		* Fixed some issue with animation playing in place by adding root motion to attack.
+		* Set Attack Timer to slightly less than its animation so it wont loop
+23/11	* Clicking now only works for ground positions, no more tilting character?
+		* Fixed so player turns if attacking during tween
+		* Latest click is saved during attacklock to be executed after.
+		* Made tween for attacking in new direction smooth
+		* Made smooth transition into walk/run state, but its chyunky need rework.
+
+
+		TODO
+		* Make so stored attack isnt executed if enemy dies?
+
+Time X Days total, X left
+
+		TODO
+		* 
+
+		BUGS  
+		* 
+
+		DOES
+		* 
+		
+		MAYBEES
+		*
+
+		CHECKLIST FOR BETTER PLAYER EXPERIENCE
+
+		* BUGS, CRASHES, SLOW PERFORMANCE
+		* MISLEADING MARKETING
+		* NOT ENGAGING WITH COMMUNITY
+		* CONFIGURABLE CONTROLS, 
+		* TEXT TO SMALL, 
+		* CONTRAST, 
+		* MISSING FEATURE
+
+------ ------- ------

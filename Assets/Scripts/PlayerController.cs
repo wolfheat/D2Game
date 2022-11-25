@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
 
 	private Camera mainCamera;
 	private SavedAction savedAction;
+	private SavedAction wayPointToShow;
     private Coroutine moveCoroutine;
     private Coroutine stopTweenCoroutine;
     private float attackTime = 1.22f;
@@ -24,6 +25,7 @@ public class PlayerController : MonoBehaviour
     private const float HoldMouseDuration = 0.2f;
     private const float GroundOffset = 0f;
     private bool attackLock = false;
+    private bool attackDidHit = false;
 
 	// Charactercontroller is used which makes movement with collision, can be used instead of RB
 	private CharacterController characterController;
@@ -46,7 +48,7 @@ public class PlayerController : MonoBehaviour
     private float playerAcceleration = 0.04f;
 
     private bool holdPosition = false;
-    private float motionSpeed = 1f;
+    [SerializeField] private float motionSpeed = 1.3f;
 
 	private bool hasAnimator;
 	private Animator animator;
@@ -72,6 +74,7 @@ public class PlayerController : MonoBehaviour
         hasAnimator = TryGetComponent(out animator);
 
 		Inputs.Instance.Controls.Land.LeftClick.performed += _ => MouseClick();
+		Inputs.Instance.Controls.Land.LeftClick.canceled += _ => ShowWaypointIfAvailable();
 		Inputs.Instance.Controls.Land.RightClick.performed += MouseRightClick;
 
 		Inputs.Instance.Controls.Land.Shift.started += Shift;
@@ -82,6 +85,7 @@ public class PlayerController : MonoBehaviour
 	{
 		Enemy enemy = collider.gameObject.GetComponent<Enemy>();        
         enemy.Hit(25);
+        attackDidHit = true;		
 	}
 
 	private void MouseClick()
@@ -105,7 +109,7 @@ public class PlayerController : MonoBehaviour
                 attackLock = true;
                 animationMoveSpeed = 0;
 
-                ShowWaypoint(lastClickPoint,true);
+                StoreWaypointToShow(lastClickPoint,true);
 				StartCoroutine(FaceAttackDirectionThenAttack());                
 			}
 			else
@@ -115,7 +119,7 @@ public class PlayerController : MonoBehaviour
                 if (moveCoroutine != null) StopCoroutine(moveCoroutine);
                 if (stopTweenCoroutine != null) StopCoroutine(stopTweenCoroutine);
 
-				ShowWaypoint(lastClickPoint);
+				StoreWaypointToShow(lastClickPoint);
 				moveCoroutine = StartCoroutine(PlayerMoveTowards(lastClickPoint));
             }
         }
@@ -127,7 +131,7 @@ public class PlayerController : MonoBehaviour
 		savedAction = new SavedAction();
 		savedAction.attack = holdPosition;
 		savedAction.pos = lastClickPoint;
-		ShowWaypoint(lastClickPoint, holdPosition);
+		StoreWaypointToShow(lastClickPoint, holdPosition);
 	}
 
 	private IEnumerator FaceAttackDirectionThenAttack()
@@ -188,11 +192,16 @@ public class PlayerController : MonoBehaviour
     private IEnumerator DoAttack(float t)
     {
 		animator.SetBool("Attacking", true);
-		yield return new WaitForSeconds(t/2);
-        attackCollider.enabled = true;
-        yield return new WaitForSeconds(0.1f);
+		yield return new WaitForSeconds(t/3);
+        attackDidHit = false;
+		attackCollider.enabled = true;
+		yield return new WaitForSeconds(0.05f);
 		attackCollider.enabled = false;
-		yield return new WaitForSeconds(t/2);
+        
+        if (attackDidHit) soundmaster.PlaySFX(SoundMaster.SFX.SwingSword);
+        else soundmaster.PlaySFX(SoundMaster.SFX.SwingSwordMiss);
+
+		yield return new WaitForSeconds(t*2/3);
 		animator.SetBool("Attacking", false);
         attackLock = false;
 
@@ -292,12 +301,21 @@ public class PlayerController : MonoBehaviour
 
 	}
 
-    private void ShowWaypoint(Vector3 target, bool isAttack=false)
+    private void StoreWaypointToShow(Vector3 target, bool isAttack=false)
     {
-        
-        UIController.ShowWaypoint(target, isAttack);
-
+        wayPointToShow = new SavedAction();
+        wayPointToShow.attack = isAttack;
+        wayPointToShow.pos = target;
 	}
+    private void ShowWaypointIfAvailable()
+    {
+        if(wayPointToShow != null)
+        {
+			UIController.ShowWaypoint(wayPointToShow.pos, wayPointToShow.attack);
+        }
+    }
+
+		
 
     private void OnDrawGizmos()
     {
@@ -341,7 +359,29 @@ public class PlayerController : MonoBehaviour
 		{
 			animator.SetFloat("Speed", animationMoveSpeed);
 			animator.SetFloat("MotionSpeed", motionSpeed);
-		}
+        }
+
+        footStepTimer += Time.deltaTime;
+
+        //CLUMPSY FOOTSTEP SOLUTION - Fix so it handles sounds better for variable speeds
+        if (animationMoveSpeed > 2f)
+        {
+            if (footStepTimer >= AnimationOneStepTime / motionSpeed)
+            {
+                float duration = Time.time - lastTime;
+                lastTime = Time.time;
+                Debug.Log("Start new Step time: " + duration);
+                footStepTimer = 0;
+                soundmaster.PlaySFX(SoundMaster.SFX.Footstep);
+            }
+        }
 	}
 
+	// One step takes 0.48 seconds at playspeed 1f
+	// FootStepTime = 0.48f/motionSpeed;
+	private float footStepTimer = 0;
+    private const float AnimationOneStepTime = 0.48f;
+    private float lastTime = 0;
+    private float thisTime = 0;
+    [SerializeField] private SoundMaster soundmaster;
 }

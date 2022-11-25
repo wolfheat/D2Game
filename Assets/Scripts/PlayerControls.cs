@@ -107,6 +107,15 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MusicToggle"",
+                    ""type"": ""Button"",
+                    ""id"": ""5d0672f0-a3c1-4501-8fd7-5852a6dec282"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -208,6 +217,17 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""action"": ""WayPointType"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3c781dce-9ab8-46bc-9540-4e3f7416aa1d"",
+                    ""path"": ""<Keyboard>/m"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MusicToggle"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -225,6 +245,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_Land_RotateL = m_Land.FindAction("RotateL", throwIfNotFound: true);
         m_Land_RotateR = m_Land.FindAction("RotateR", throwIfNotFound: true);
         m_Land_WayPointType = m_Land.FindAction("WayPointType", throwIfNotFound: true);
+        m_Land_MusicToggle = m_Land.FindAction("MusicToggle", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -293,6 +314,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_Land_RotateL;
     private readonly InputAction m_Land_RotateR;
     private readonly InputAction m_Land_WayPointType;
+    private readonly InputAction m_Land_MusicToggle;
     public struct LandActions
     {
         private @PlayerControls m_Wrapper;
@@ -306,6 +328,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @RotateL => m_Wrapper.m_Land_RotateL;
         public InputAction @RotateR => m_Wrapper.m_Land_RotateR;
         public InputAction @WayPointType => m_Wrapper.m_Land_WayPointType;
+        public InputAction @MusicToggle => m_Wrapper.m_Land_MusicToggle;
         public InputActionMap Get() { return m_Wrapper.m_Land; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -342,6 +365,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @WayPointType.started -= m_Wrapper.m_LandActionsCallbackInterface.OnWayPointType;
                 @WayPointType.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnWayPointType;
                 @WayPointType.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnWayPointType;
+                @MusicToggle.started -= m_Wrapper.m_LandActionsCallbackInterface.OnMusicToggle;
+                @MusicToggle.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnMusicToggle;
+                @MusicToggle.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnMusicToggle;
             }
             m_Wrapper.m_LandActionsCallbackInterface = instance;
             if (instance != null)
@@ -373,6 +399,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @WayPointType.started += instance.OnWayPointType;
                 @WayPointType.performed += instance.OnWayPointType;
                 @WayPointType.canceled += instance.OnWayPointType;
+                @MusicToggle.started += instance.OnMusicToggle;
+                @MusicToggle.performed += instance.OnMusicToggle;
+                @MusicToggle.canceled += instance.OnMusicToggle;
             }
         }
     }
@@ -388,5 +417,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnRotateL(InputAction.CallbackContext context);
         void OnRotateR(InputAction.CallbackContext context);
         void OnWayPointType(InputAction.CallbackContext context);
+        void OnMusicToggle(InputAction.CallbackContext context);
     }
 }

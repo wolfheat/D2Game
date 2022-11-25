@@ -26,8 +26,13 @@ Nov 2022
 		* System for recognizing held mousebutton implemented, works for both walk and attack and triggers ever x's by timer
 		* Added Waypoint marker for valid movement thats placed on click point and animated once. Also System For changing type.
 		* Waypoint now show as red if attack is used/stored and green if movement is used/stored.
+25/11	* Added SoundMaster that handles Main Music and SFX. Added Footsteps.
+		* Different Sound for missing and hitting with attack swing.
+		* Made So waypoint only shows when releasing mouse to prevent spam on holding. Better?
 
 		TODO
+		* Make variants in attack animation
+		* Fix gliding issue with animation while moving
 		* Make so stored attack isnt executed if enemy dies?
 		* Make enemy with animation
 		* Make simple leveldesign

@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: 5a1a1e2e8a7c6644ca11b7614e011fd2
+timeCreated: 1514047960
+licenseType: Store
+ShaderImporter:
+  defaultTextures:
+  - _Ramp: {fileID: 2800000, guid: 0557bb77f778da14fae9acab76281653, type: 3}
+  - _FlareTex: {fileID: 2800000, guid: 1708912af9efbb744b7cca246803580b, type: 3}
+  - _RampMask: {fileID: 2800000, guid: bd6e12b480daf054a8fcb5749534e6c3, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

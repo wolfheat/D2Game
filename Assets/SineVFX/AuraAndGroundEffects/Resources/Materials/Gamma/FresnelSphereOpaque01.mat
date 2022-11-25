@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: FresnelSphereOpaque01
+  m_Shader: {fileID: 4800000, guid: da9f35ab225c3404fad521aff4124ea7, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 0
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _OffsetTex:
+        m_Texture: {fileID: 2800000, guid: 7340c99f6b627e348a293b7c52264e98, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OffsetTexture:
+        m_Texture: {fileID: 2800000, guid: 0cf295bf560387640b4eeeaf1106a5e7, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Ramp:
+        m_Texture: {fileID: 2800000, guid: 0557bb77f778da14fae9acab76281653, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TopTexture0:
+        m_Texture: {fileID: 2800000, guid: 7340c99f6b627e348a293b7c52264e98, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _EdgeLength: 15
+    - _FinalFresnelExp: 4
+    - _FinalPower: 2.5
+    - _OffsetPower: 0.15
+    - _OffsetRemapMaxNew: 1
+    - _OffsetRemapMinNew: 0
+    - _OffsetScrollSpeed: -0.25
+    - _OffsetTiling: 0.75
+    - __dirty: 0
+    m_Colors:
+    - _FinalColor: {r: 1, g: 0.68235296, b: 0.5882353, a: 1}

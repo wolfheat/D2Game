@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: RingSprite01
+  m_Shader: {fileID: 4800000, guid: 90e5a197371e24e4a819bd8d4a55cd4d, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 0
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MaskTex:
+        m_Texture: {fileID: 2800000, guid: 022fb94d40ae61e4fa590fd2a3d27cc7, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Noise01:
+        m_Texture: {fileID: 2800000, guid: 69af364942ff886459b15ac4acf12f00, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Ramp:
+        m_Texture: {fileID: 2800000, guid: be89d56aff73b1c46942c01bc4bf8f25, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RampMask:
+        m_Texture: {fileID: 2800000, guid: bd6e12b480daf054a8fcb5749534e6c3, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _texcoord:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _FinalOpacityPower: 1
+    - _FinalPower: 2
+    - _MaskDistortionPower: 0.15
+    - _MaskMofidyAdd: 1
+    - _Noise01ScrollSpeed: -0.25
+    - _Noise01TilingU: 0.5
+    - _Noise01TilingV: 1
+    - _RampFlip: 0
+    - _RampTilingMultiply: 1
+    - __dirty: 0
+    m_Colors:
+    - _FinalColor: {r: 1, g: 0.7490196, b: 0.64705884, a: 1}
+    - _RampColorTint: {r: 1, g: 0.6183006, b: 0.46323532, a: 1}

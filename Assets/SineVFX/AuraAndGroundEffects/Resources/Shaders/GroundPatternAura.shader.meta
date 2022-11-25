@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: d3a8ab9821e13e04b9cd8756885ee98f
+timeCreated: 1513690769
+licenseType: Store
+ShaderImporter:
+  defaultTextures:
+  - _RadialNoiseDistortion: {fileID: 2800000, guid: 7340c99f6b627e348a293b7c52264e98,
+      type: 3}
+  - _RadialNoise01: {fileID: 2800000, guid: 022104b5ac3b9e4419e61d04b021d330, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

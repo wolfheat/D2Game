@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -12,13 +13,16 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private Collider attackCollider;
     [SerializeField] private LayerMask GroundLayers;
-
+    [SerializeField] private UIController UIController;
 
 	private Camera mainCamera;
 	private SavedAction savedAction;
     private Coroutine moveCoroutine;
     private Coroutine stopTweenCoroutine;
     private float attackTime = 1.22f;
+    private float mouseClickTimer = 0f;
+    private const float HoldMouseDuration = 0.2f;
+    private const float GroundOffset = 0f;
     private bool attackLock = false;
 
 	// Charactercontroller is used which makes movement with collision, can be used instead of RB
@@ -34,26 +38,31 @@ public class PlayerController : MonoBehaviour
     private Vector3 startedAttackAgainst = new Vector3();
     private Vector3 attackForward = new Vector3();
 
-
 	private const float WalkSpeed = 2.0f;
 	private const float SprintSpeed = 5.335f;
-    private float playerTargetSpeed = SprintSpeed;
-    private float playerCurrentSpeed = 0f;
+    private float moveSpeedMax = SprintSpeed;
+    private float MaxSpeedUpTime = 0.4f;
+    private float animationMoveSpeed = 0f;
+    private float playerAcceleration = 0.04f;
+
     private bool holdPosition = false;
-    private bool grounded = true;
-    private const float GroundedRadius = 0.15f;
-    private const float GroundedOffset = 0f;
     private float motionSpeed = 1f;
 
 	private bool hasAnimator;
 	private Animator animator;
 
-    public const float StartStopTime = 0.20f;
+    public const float RotationTime = 0.20f;
 
 	private void Update()
 	{
-		SetAnimationSpeed();
-		GroundedCheck();
+        SetAnimationSpeed();
+
+		mouseClickTimer += Time.deltaTime;
+        if (Inputs.Instance.LClick == 1f && mouseClickTimer > HoldMouseDuration)
+        {
+            // Left button is held
+            MouseClick();
+		}
     }
 
 	private void OnEnable()
@@ -62,8 +71,8 @@ public class PlayerController : MonoBehaviour
 		characterController = GetComponent<CharacterController>(); if (characterController == null)Debug.LogError("Charactercontroller not found");
         hasAnimator = TryGetComponent(out animator);
 
-		Inputs.Instance.Controls.Land.LeftClick.performed += MouseClick;
-		Inputs.Instance.Controls.Land.LeftClick.performed += MouseRightClick;
+		Inputs.Instance.Controls.Land.LeftClick.performed += _ => MouseClick();
+		Inputs.Instance.Controls.Land.RightClick.performed += MouseRightClick;
 
 		Inputs.Instance.Controls.Land.Shift.started += Shift;
 		Inputs.Instance.Controls.Land.Shift.canceled += Shift;
@@ -71,59 +80,60 @@ public class PlayerController : MonoBehaviour
     
 	private void OnTriggerEnter(Collider collider)
 	{
-		Enemy enemy = collider.gameObject.GetComponent<Enemy>();
-        
+		Enemy enemy = collider.gameObject.GetComponent<Enemy>();        
         enemy.Hit(25);
-
 	}
 
-	private void MouseClick(InputAction.CallbackContext context)
+	private void MouseClick()
     {
-        
-
-        Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
+        mouseClickTimer = 0;
+		Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
         RaycastHit hit;
 
 		if (Physics.Raycast(ray.origin, ray.direction, out hit, 1000f, layerMask: GroundLayers) && hit.collider) {
-            lastClickPoint = hit.point + new Vector3(0, GroundedOffset, 0);
-
+            lastClickPoint = hit.point + new Vector3(0, GroundOffset, 0);
             // If a valid point was clicked and we are in attackLock, store it.
             if (attackLock)
             {
-                savedAction = new SavedAction();
-                savedAction.attack = holdPosition;
-                savedAction.pos = lastClickPoint;
+                SaveAction();
                 return;
             }
-
-			if (holdPosition)
+			else if (holdPosition)
 			{
-				if (stopTweenCoroutine != null) StopCoroutine(stopTweenCoroutine);
-                
+                //Start Attack
+				if (stopTweenCoroutine != null) StopCoroutine(stopTweenCoroutine);                
                 attackLock = true;
-                playerCurrentSpeed = 0;
-                StartCoroutine(FaceAttackDirectionThenAttack());
-                
+                animationMoveSpeed = 0;
+
+                ShowWaypoint(lastClickPoint,true);
+				StartCoroutine(FaceAttackDirectionThenAttack());                
 			}
 			else
-            {                    
-				Debug.Log("Move to position " + lastClickPoint);
+            {
+                //Debug.Log("FROM MOUSECLICK");
+                //Start new Move
                 if (moveCoroutine != null) StopCoroutine(moveCoroutine);
                 if (stopTweenCoroutine != null) StopCoroutine(stopTweenCoroutine);
-                moveCoroutine = StartCoroutine(PlayerMoveTowards(lastClickPoint));
 
+				ShowWaypoint(lastClickPoint);
+				moveCoroutine = StartCoroutine(PlayerMoveTowards(lastClickPoint));
             }
         }
-        else
-        {
-		    Debug.Log("Mouse click on no collider");
-        }
+        else Debug.Log("Mouse click on no collider");
     }
 
-    private IEnumerator FaceAttackDirectionThenAttack()
+    private void SaveAction()
+    {		
+		savedAction = new SavedAction();
+		savedAction.attack = holdPosition;
+		savedAction.pos = lastClickPoint;
+		ShowWaypoint(lastClickPoint, holdPosition);
+	}
+
+	private IEnumerator FaceAttackDirectionThenAttack()
     {
 		// Tween Speed value down to zero and send to animation
-		float startSpeed = playerCurrentSpeed;
+		float startSpeed = animationMoveSpeed;
 
 		// Animation Tween points
 		Vector3 startLookDirection = transform.forward;
@@ -134,56 +144,50 @@ public class PlayerController : MonoBehaviour
 		while (timer < PlayerRotateTime)
 		{
 			// Set Rotation
+            timer += Time.deltaTime;
 			currentLookVector = Vector3.Lerp(startLookDirection, endLookDirection, timer / PlayerRotateTime);
 			transform.rotation = Quaternion.LookRotation(currentLookVector, Vector3.up);
-            timer += Time.deltaTime;
 			yield return null;
 		}
 
         //Rotation done now Attack
-
-		//InstantFacePosition(lastClickPoint);
-
 		if (hasAnimator)
 		{
 			startedAttackAgainst = lastClickPoint;
-			StartCoroutine(AttackTimer(attackTime));
+			StartCoroutine(DoAttack(attackTime));
 		}
         yield return null;
 	}
     private IEnumerator StopTween()
     {
 		// Tween Speed value down to zero and send to animation
-		float startSpeed = playerCurrentSpeed;
+		float startSpeed = animationMoveSpeed;
 
         // Animation Tween points
 		Vector3 startLookDirection = transform.forward;
 		Vector3 endLookDirection = (targetDestination - transform.position).normalized;
         Vector3 currentLookVector = startLookDirection;
 
-		while (playerCurrentSpeed > 0f)
+		while (animationMoveSpeed > 0f)
 		{
 			// Set Speed for animation
-			playerCurrentSpeed -= (Time.deltaTime/StartStopTime)*startSpeed;
-			animator.SetFloat("Speed", playerCurrentSpeed);
+			animationMoveSpeed -= (Time.deltaTime/RotationTime)*startSpeed;
+			animator.SetFloat("Speed", animationMoveSpeed);
 
             // Set Rotation
-            currentLookVector = Vector3.Lerp(startLookDirection, endLookDirection, (1-playerCurrentSpeed/startSpeed));
+            currentLookVector = Vector3.Lerp(startLookDirection, endLookDirection, (1-animationMoveSpeed/startSpeed));
 			transform.rotation = Quaternion.LookRotation(currentLookVector, Vector3.up);
 
 			yield return null;
 		}
 
         // After smoot rotation and animation is done break movement and start holdposition
-        // holdPosition = hold;
-		playerCurrentSpeed = 0f;
+		animationMoveSpeed = 0f;
 	}
     
-    private IEnumerator AttackTimer(float t)
+    private IEnumerator DoAttack(float t)
     {
-
 		animator.SetBool("Attacking", true);
-
 		yield return new WaitForSeconds(t/2);
         attackCollider.enabled = true;
         yield return new WaitForSeconds(0.1f);
@@ -206,16 +210,17 @@ public class PlayerController : MonoBehaviour
 				if (stopTweenCoroutine != null) StopCoroutine(stopTweenCoroutine);
 
 				attackLock = true;
-				playerCurrentSpeed = 0;
+				animationMoveSpeed = 0;
 				StartCoroutine(FaceAttackDirectionThenAttack());
 
 			}
 			else
 			{
+				//Debug.Log("FROM STORED");
 				if (moveCoroutine != null) StopCoroutine(moveCoroutine);
 				if (stopTweenCoroutine != null) StopCoroutine(stopTweenCoroutine);
-				moveCoroutine = StartCoroutine(PlayerMoveTowards(lastClickPoint));
-
+                moveCoroutine = StartCoroutine(PlayerMoveTowards(lastClickPoint));
+				
 			}
             savedAction = null;
 		}
@@ -223,79 +228,78 @@ public class PlayerController : MonoBehaviour
 
     private void InstantFacePosition(Vector3 target)
     {
-        Debug.Log("Instantly face position: "+target);
-		targetDestination = target;
+        targetDestination = target;
         transform.rotation = Quaternion.LookRotation(target-transform.position);
 	}
 
     private IEnumerator PlayerMoveTowards(Vector3 target)
     {
-        // Set targetDestination to Final Destination
-        targetDestination = target;
-        startPosition = transform.position;
-        Vector3 playerMoveVector = (targetDestination - transform.position).normalized;
-        float timeElapsed = 0f;
-        float percent;
-        float totalMoveTime = (targetDestination-startPosition).magnitude/playerTargetSpeed;
 
-        Vector3 lastPosition = transform.position;
-        Vector3 nextPosition = lastPosition;
-
-        Vector3 startLookDirection = transform.forward;
-        Vector3 endLookDirection = (target-transform.position).normalized;
-        
+        float timer = 0f;
+        float speedChange = moveSpeedMax-animationMoveSpeed;
+        float totalMoveTime = Vector3.Distance(transform.position, target) / moveSpeedMax;
+		Vector3 startLookDirection = transform.forward;
+		Vector3 endLookDirection = (target - transform.position).normalized;
 		Vector3 currentLookVector = startLookDirection;
-		transform.rotation = Quaternion.LookRotation(currentLookVector, Vector3.up);
-
-        Debug.Log("PPlayer speed at start "+playerCurrentSpeed);
-        float totalSpeedChangeNeeded = playerTargetSpeed - playerCurrentSpeed;
-        // Speed Up tween
-
+		Vector3 playerMoveVector = endLookDirection;
 		while (Vector3.Distance(transform.position, target) > 0.1f && !holdPosition)
         {
-			timeElapsed += Time.deltaTime;
-            //Rotation
-            if (timeElapsed < StartStopTime)
+            timer += Time.deltaTime;
+            // No actual speed tween, but animator gets tween
+            if (timer < MaxSpeedUpTime)
             {
-                // Set Speed for animation
-                playerCurrentSpeed += (Time.deltaTime / StartStopTime) * totalSpeedChangeNeeded;
-                Debug.Log("Player speed at t: "+timeElapsed+": "+playerCurrentSpeed);
-                animator.SetFloat("Speed", playerCurrentSpeed);
-
-                // Set Rotation
-                currentLookVector = Vector3.Lerp(startLookDirection, endLookDirection, timeElapsed / StartStopTime);
-                transform.rotation = Quaternion.LookRotation(currentLookVector, Vector3.up);
+                if (animationMoveSpeed < moveSpeedMax) animationMoveSpeed += playerAcceleration;
+                else
+                {
+                    animationMoveSpeed = moveSpeedMax;
+                }
             }
-            else
+            else if (timer > totalMoveTime-MaxSpeedUpTime)
             {
+                if(animationMoveSpeed > 0f) animationMoveSpeed -= playerAcceleration;
+                if(animationMoveSpeed < 0f) animationMoveSpeed = 0f;
+			}
+            //else animationMoveSpeed = moveSpeedMax;
+            
+			animator.SetFloat("Speed", animationMoveSpeed);
+
+            //Rotation
+			if (timer < RotationTime)
+			{
+				// Set Rotation
+				currentLookVector = Vector3.Lerp(startLookDirection, endLookDirection, timer / RotationTime);
+				transform.rotation = Quaternion.LookRotation(currentLookVector, Vector3.up);
+			}
+			else
+			{
 				transform.rotation = Quaternion.LookRotation(endLookDirection, Vector3.up);
 			}
 
+
             //Movement
-            movement = playerMoveVector * playerCurrentSpeed*Time.deltaTime;
-            lastPosition = nextPosition;
-            nextPosition = transform.position + movement;
-            characterController.Move(movement);
-			yield return null;
+                movement = playerMoveVector * moveSpeedMax * Time.deltaTime;
+                //nextPosition = transform.position + movement;
+                characterController.Move(movement);
+                yield return null;
+
+            //stopTweenCoroutine = StartCoroutine(StopTween());
         }
-		stopTweenCoroutine = StartCoroutine(StopTween());        
+
+        //Ending Animation
+        animationMoveSpeed = 0;
+		animator.SetFloat("Speed", animationMoveSpeed);
+
+
 	}
 
-	private void GroundedCheck()
-	{
-		// set sphere position, with offset
-		Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - GroundedOffset,
-			transform.position.z);
-		grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers,
-			QueryTriggerInteraction.Ignore);
+    private void ShowWaypoint(Vector3 target, bool isAttack=false)
+    {
+        
+        UIController.ShowWaypoint(target, isAttack);
 
-		// update animator if using character
-		if (hasAnimator)
-		{
-			animator.SetBool("Grounded", grounded);
-		}
 	}
-	private void OnDrawGizmos()
+
+    private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
         Gizmos.DrawSphere(targetDestination, 0.1f);
@@ -331,12 +335,11 @@ public class PlayerController : MonoBehaviour
         Debug.Log("Right clicked point");
     }
 
-
     private void SetAnimationSpeed()
     {
 		if (hasAnimator)
 		{
-			animator.SetFloat("Speed", playerCurrentSpeed);
+			animator.SetFloat("Speed", animationMoveSpeed);
 			animator.SetFloat("MotionSpeed", motionSpeed);
 		}
 	}

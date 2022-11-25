@@ -98,6 +98,15 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""WayPointType"",
+                    ""type"": ""Button"",
+                    ""id"": ""8830004a-fa0a-4162-bc72-f100713bc2e0"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -188,6 +197,17 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""action"": ""RotateR"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""33cc247d-72f9-461e-a5e0-ce20277ac2ee"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""WayPointType"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -204,6 +224,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_Land_Shift = m_Land.FindAction("Shift", throwIfNotFound: true);
         m_Land_RotateL = m_Land.FindAction("RotateL", throwIfNotFound: true);
         m_Land_RotateR = m_Land.FindAction("RotateR", throwIfNotFound: true);
+        m_Land_WayPointType = m_Land.FindAction("WayPointType", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -271,6 +292,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_Land_Shift;
     private readonly InputAction m_Land_RotateL;
     private readonly InputAction m_Land_RotateR;
+    private readonly InputAction m_Land_WayPointType;
     public struct LandActions
     {
         private @PlayerControls m_Wrapper;
@@ -283,6 +305,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @Shift => m_Wrapper.m_Land_Shift;
         public InputAction @RotateL => m_Wrapper.m_Land_RotateL;
         public InputAction @RotateR => m_Wrapper.m_Land_RotateR;
+        public InputAction @WayPointType => m_Wrapper.m_Land_WayPointType;
         public InputActionMap Get() { return m_Wrapper.m_Land; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -316,6 +339,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @RotateR.started -= m_Wrapper.m_LandActionsCallbackInterface.OnRotateR;
                 @RotateR.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnRotateR;
                 @RotateR.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnRotateR;
+                @WayPointType.started -= m_Wrapper.m_LandActionsCallbackInterface.OnWayPointType;
+                @WayPointType.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnWayPointType;
+                @WayPointType.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnWayPointType;
             }
             m_Wrapper.m_LandActionsCallbackInterface = instance;
             if (instance != null)
@@ -344,6 +370,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @RotateR.started += instance.OnRotateR;
                 @RotateR.performed += instance.OnRotateR;
                 @RotateR.canceled += instance.OnRotateR;
+                @WayPointType.started += instance.OnWayPointType;
+                @WayPointType.performed += instance.OnWayPointType;
+                @WayPointType.canceled += instance.OnWayPointType;
             }
         }
     }
@@ -358,5 +387,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnShift(InputAction.CallbackContext context);
         void OnRotateL(InputAction.CallbackContext context);
         void OnRotateR(InputAction.CallbackContext context);
+        void OnWayPointType(InputAction.CallbackContext context);
     }
 }

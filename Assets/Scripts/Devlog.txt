@@ -22,10 +22,16 @@ Nov 2022
 		* Latest click is saved during attacklock to be executed after.
 		* Made tween for attacking in new direction smooth
 		* Made smooth transition into walk/run state, but its chyunky need rework.
-
+24/11	* Rewrote PLayerMoveTowards but still needs some fixes. Small steps staggers, sometime pleyer dont reach goal.
+		* System for recognizing held mousebutton implemented, works for both walk and attack and triggers ever x's by timer
+		* Added Waypoint marker for valid movement thats placed on click point and animated once. Also System For changing type.
+		* Waypoint now show as red if attack is used/stored and green if movement is used/stored.
 
 		TODO
 		* Make so stored attack isnt executed if enemy dies?
+		* Make enemy with animation
+		* Make simple leveldesign
+		* Add SoundEffects to attack, footstep, etc
 
 Time X Days total, X left
 

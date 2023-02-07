@@ -29,28 +29,62 @@ Nov 2022
 25/11	* Added SoundMaster that handles Main Music and SFX. Added Footsteps.
 		* Different Sound for missing and hitting with attack swing.
 		* Made So waypoint only shows when releasing mouse to prevent spam on holding. Better?
+30/11	* Finally made player character move correctly with regard to move/attack and rotate. Not really working...
+		* Semi working solution for player to stop moving at walls.
+		* Fixed turning angle never reached. By checking proxarity. Fixed issue with not storing attack.
+1/12	* Made simple enemy waypoint system for attacking when in range and using waypoints for moving.
+2/12	* Made new animator controller script for enemy to handle behaviour. Can use navmech spots for 
+			patrol and engage in chase and bow attack when player gets close.
+5/12	* Made larger testarea with tiles.
+		* Added Spawner of enemies that spawn a new enemy when pressing Space, Enemies get random spawn and waypoint
+6/12	* Made decals and debree spawn randomely on the game area
+7/12	* Made the NavMesh baked/generated at runtime by using NavMeshSurface from custom git download
+9/12	* Made Enemy colliders disable when they die
+19/12	* Rewrote player to have navagent instead of character controller
+20/12	* Added states for player and made it work for basic animations
+		* NEXT - Remake animator for player and code to use states like enemy does
+27/12	* Found out I needed NavMesh-Obstacle component for items to block when using navmech-agent movement
+29/12	* Made attack even if not clicking on walkable spot
+		* Made smooth transition for enemy animator
+		* Clicking under an object makes player never reach target and just keep animating movement. Solved with navmesh obstacle carving
+1/1		* Created 3 step rooms with encounter in middle, fixed doorways between but bad manual positioning of doors.
+2/1		* Player can now gather with G if close enough to node
+		* Gathering is interrupted if new input during gathering
+9/1		* Made animationEvents for player steps and swordAttack.
+		* Made separare footstep calls for audio
+10/1	* Fixed Enemy not switching between states correctly 
+		* Raycast semi-works. Seems not accurate. Enemy lose hold of player when player moves.
+11/1	* Enemy Raycast now works, but cant register player when attackcollider is visable, fix with layers later?
+		* Made Enemy not able to attack through walls.
+		* Made it so arrows now stop att walls and connect to player if player is hit. Might need better precision.
+12/1	* If only one enemy no errors trying to do move to player when dead, but with many enemies that dies similtaniously f1ixed
+		* Made player move to node before mining if to far away, can be interrupted with a stop atm
+20/1	* Rewrote PlayerController making the statemachine/transition between action smoother and easier to add to.
+		* Added powerattack to player when rightclicking
+		* Changed gather sound to appropritate sound
+23/1	* Rewrote player and enemy class by extracting states
+25/1	* Made player turn towards attackpoint at fixed speed before attacking
+		* Fixed enemy chasing layer when close, was seeing the arrows and not player when raytracing. Disabled colliders.
+		* Added random direction for enemy shooting arrow
+
+		* Game can lock up sometimes, why? Prob because of inf loop in player action move/attack
+		* Arrows stop at the player collider, maybe should stick to the actual character instead
+		* When they turn they turn instantly make smooth?
+
+todo	
+		* Make so Enemy stops chase earlier if player is not visable.
+
+		* Make switching weapons for player (W)
+		* Make player Shooting Arrows work, fix arrow and sound
+
+		TODO MAYOR PARTS		
+		* MAKE NODES THAT CAN BE HARVESTED - 
+		* MAKE BOW ANIMATION WORK AND SHOOT ARROWS
 
 		TODO
 		* Make variants in attack animation
 		* Fix gliding issue with animation while moving
-		* Make so stored attack isnt executed if enemy dies?
-		* Make enemy with animation
 		* Make simple leveldesign
-		* Add SoundEffects to attack, footstep, etc
-
-Time X Days total, X left
-
-		TODO
-		* 
-
-		BUGS  
-		* 
-
-		DOES
-		* 
-		
-		MAYBEES
-		*
 
 		CHECKLIST FOR BETTER PLAYER EXPERIENCE
 

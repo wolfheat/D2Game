@@ -1,48 +1,36 @@
-using System;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
-    
-    [SerializeField] private List<GameObject> wayPoints;
-    private GameObject attackWayPoint;
-    private ParticleSystem attackWayPointPS;
-    private GameObject wayPoint;
-    private ParticleSystem wayPointPS;
-    private int activeWayPointID=0;
-    private void OnEnable()
+    [SerializeField] private TextMeshProUGUI infoText;
+    [SerializeField] private TextMeshProUGUI stateText;
+    [SerializeField] private TextMeshProUGUI state2Text;
+    [SerializeField] public Toggle toggle;
+
+    private void Awake()
     {
-        wayPoint = wayPoints[0];
-        wayPointPS = wayPoints[0].GetComponent<ParticleSystem>();
-        attackWayPoint = wayPoints[1];
-        attackWayPointPS = wayPoints[1].GetComponent<ParticleSystem>();
-	}
+        Debug.Log("UIController awake");
+        Debug.Log("Toggle: " + toggle);
+    }
     private void Start()
     {
-		Inputs.Instance.Controls.Land.WayPointType.performed += _ => ChangeWayPoint();
-        
+        Debug.Log("UIController start");
     }
-    private void ChangeWayPoint()
+    public void SetInfoText(string text)
     {
-        Debug.Log("Change TYPE");
-        activeWayPointID++;
-        if(activeWayPointID>=wayPoints.Count) activeWayPointID = 0;
-        wayPoint = wayPoints[activeWayPointID];
-		wayPointPS = wayPoints[activeWayPointID].GetComponent<ParticleSystem>();
-	}
+        infoText.text = text;
+    }
+    
+	public void SetStateText(string text)
+    {
+        stateText.text = text;
+    }
+    
+	public void SetState2Text(string text)
+    {
+        state2Text.text = text;
+    }
 
-	public void ShowWaypoint(Vector3 target, bool isAttack=false)
-    {
-        if (isAttack)
-        {
-            attackWayPoint.transform.position = target;
-            attackWayPointPS.Play();
-        }
-        else
-        {
-            wayPoint.transform.position = target;
-            wayPointPS.Play();
-        }
-	}
 }

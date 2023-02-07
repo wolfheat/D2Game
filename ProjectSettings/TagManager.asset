@@ -16,9 +16,9 @@ TagManager:
   - AttackCollider
   - Enemies
   - Player
-  - 
-  - 
-  - 
+  - Obstacle
+  - Arrows
+  - Resources
   - 
   - 
   - 

@@ -4,6 +4,7 @@ public class SoundMaster : MonoBehaviour
 {
     [SerializeField] private AudioClip[] menu;
     [SerializeField] private AudioClip[] sfx;
+    [SerializeField] private AudioClip[] swordHits;
     [SerializeField] private AudioClip[] grunts;
     [SerializeField] private AudioClip[] music;
     [SerializeField] private AudioClip[] musicIntense;
@@ -19,7 +20,8 @@ public class SoundMaster : MonoBehaviour
     private int currentEncounterMusic = 0;
 
     private float presetVolume = 0.8f;
-    private float presetSFXVolume = 0.4f;
+    private float presetSFXVolume = 0.1f;
+    private float presetSFXStepVolume = 0.5f;
 
     private float totalFadeOutTime = 3.5f;
     private float fadeOutMargin = 0.01f;
@@ -27,9 +29,16 @@ public class SoundMaster : MonoBehaviour
 
     private void Awake()
     {
+        GameObject musicSourceHolder = new GameObject("Music");
+        GameObject sfxSourceHolder = new GameObject("SFX");
+        musicSourceHolder.transform.SetParent(this.transform);
+		//musicSourceHolder.name = "Music";
+        sfxSourceHolder.transform.SetParent(this.transform);
+        //sfxSourceHolder.name = "SFX";
+
         musicSourceIntense = gameObject.AddComponent<AudioSource>();
-        musicSource = gameObject.AddComponent<AudioSource>();
-        sfxSource = gameObject.AddComponent<AudioSource>();
+        musicSource = musicSourceHolder.AddComponent<AudioSource>();
+        sfxSource = sfxSourceHolder.AddComponent<AudioSource>();
     }
     private void Start()
     {
@@ -37,7 +46,7 @@ public class SoundMaster : MonoBehaviour
         musicSourceIntense.volume = 0.5f;
         musicSource.loop = true;
         musicSource.volume = 0.5f;
-        sfxSource.volume = presetSFXVolume;
+        sfxSource.volume = presetSFXStepVolume;
         PlayMusic();
 
         Inputs.Instance.Controls.Land.MusicToggle.performed += _ => MuteToggle();// = _.ReadValue<float>();
@@ -81,6 +90,7 @@ public class SoundMaster : MonoBehaviour
 	public void SetSFXVolume(float vol)
 	{
         sfxSource.volume = vol;
+        sfxSource.volume = presetSFXStepVolume;
 	}
 	private void PlayMusic()
 	{
@@ -101,13 +111,27 @@ public class SoundMaster : MonoBehaviour
         else musicSourceIntense.Stop(); 
 	}
 
-    public enum SFX {Footstep,GetHit,SwingSword,SwingSwordMiss, Grunt,Yeah,PLayerDeath,MenuStep,MenuSelect,MenuError}
-        
+    public enum SFX {Footstep,GetHit,SwingSword,SwingSwordMiss,SwordHit,ShootArrow, Grunt,Yeah,PlayerDeath,MenuStep,MenuSelect,MenuError, Gather }
 
+
+    public void StopStepSFX()
+    {
+		sfxSource.Stop();
+	}
+
+    public void PlayStepSFX()
+    {
+		sfxSource.PlayOneShot(footstep[Random.Range(0, footstep.Length)]);
+	}
+
+    public void StopSFX()
+    {
+        sfxSource.Stop();
+    }
     public void PlaySFX(SFX type, bool playMulti=true)
 	{
 
-        // If not able to play multiple sounds exit if allready playing
+        // If not able to play multiple sounds exit if already playing
         if (!playMulti) if (sfxSource.isPlaying) return;
 
         if (!doPlaySFX) return;
@@ -118,10 +142,19 @@ public class SoundMaster : MonoBehaviour
             case SFX.Footstep: 
                 sfxSource.PlayOneShot(footstep[Random.Range(0,footstep.Length)]);
                 break;
+            case SFX.Gather: 
+                sfxSource.PlayOneShot(sfx[2]);
+                break;
             case SFX.SwingSword: 
                 sfxSource.PlayOneShot(sfx[0]);
                 break;
+            case SFX.SwordHit: 
+                sfxSource.PlayOneShot(swordHits[0]);
+                break;
             case SFX.SwingSwordMiss: 
+                sfxSource.PlayOneShot(sfx[1]);
+                break;
+            case SFX.ShootArrow: 
                 sfxSource.PlayOneShot(sfx[1]);
                 break;
             case SFX.Grunt: 
@@ -130,7 +163,7 @@ public class SoundMaster : MonoBehaviour
             case SFX.Yeah: 
                 sfxSource.PlayOneShot(grunts[3]);
                 break;
-            case SFX.PLayerDeath: 
+            case SFX.PlayerDeath: 
                 sfxSource.PlayOneShot(grunts[4]);
                 break;
 			case SFX.MenuStep:

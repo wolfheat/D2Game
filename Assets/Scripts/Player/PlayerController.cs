@@ -43,7 +43,7 @@ public class PlayerController : MonoBehaviour
 	private const float MinGatherDistance = 1f;
 	private float mouseClickTimer = 0f;
 	private const float HoldMouseDuration = 0.2f;
-	private const float RotationSpeed = 300f;
+	private const float RotationSpeed = 900f;
 	private bool attackLock = false;
 	private bool attackDidHit = false;
 	private bool holdPosition = false;

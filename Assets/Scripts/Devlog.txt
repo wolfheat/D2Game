@@ -66,6 +66,8 @@ Nov 2022
 25/1	* Made player turn towards attackpoint at fixed speed before attacking
 		* Fixed enemy chasing layer when close, was seeing the arrows and not player when raytracing. Disabled colliders.
 		* Added random direction for enemy shooting arrow
+22/3	* Added Zoom in different steps by scroll wheel.
+
 
 		* Game can lock up sometimes, why? Prob because of inf loop in player action move/attack
 		* Arrows stop at the player collider, maybe should stick to the actual character instead

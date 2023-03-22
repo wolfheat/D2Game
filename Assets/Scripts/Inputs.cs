@@ -14,6 +14,8 @@ public class Inputs : MonoBehaviour
 	public float CTRL { get; private set; }
 	public float LClick { get; private set; }	
 	public float Space { get; private set; }
+		
+	public float Zooming { get; private set; }
 
 	private void Awake()
 	{

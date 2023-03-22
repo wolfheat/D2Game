@@ -18,6 +18,11 @@ public class UIController : MonoBehaviour
     {
         Debug.Log("UIController start");
     }
+    public void DebugTest()
+    {
+        Debug.Log("Button Works");
+    }
+    
     public void SetInfoText(string text)
     {
         infoText.text = text;

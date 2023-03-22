@@ -34,32 +34,110 @@ public class LevelCreator : MonoBehaviour
     {
         GroundLayer = LayerMask.NameToLayer("Ground");
         ResourceLayer = LayerMask.NameToLayer("Resources");
-        //CreateLevel();
-        Vector2Int[] doorsAt; 
-        SetPLayerAtStart(new Vector2Int(3,3));
-
-        doorsAt = new Vector2Int[] { new Vector2Int(2, 5)};
-        CreateMiniLevel(new Vector2Int(5,6),Vector2Int.zero,doorsAt);
-
-        doorsAt = new Vector2Int[] { new Vector2Int(4, 0), new Vector2Int(4, 8) };
-        CreateMiniLevel(new Vector2Int(9,9),new Vector2Int(-2,6),doorsAt);
-
-        doorsAt = new Vector2Int[] { new Vector2Int(2, 0)};
-        CreateMiniLevel(new Vector2Int(5,6),new Vector2Int(0,15), doorsAt);
-        
-        
-        CreateResourceAt(new Vector2Int(5,8),0);
-
-
-        Debug.Log("Level created");
-        BakeLevelNavMesh();
-		RequestActivatePlayerNavmesh();
-
 		Inputs.Instance.Controls.Land.X.performed += _ => PrintCurrentTilePosition();
+        
+        //CreateStartLevel();
+
+        CreateGeneratedLevel();
+
+		BakeLevelNavMesh();
+		RequestActivatePlayerNavmesh();
+	}
+
+    private void CreateGeneratedLevel()
+    {
+        //Generate a Bitmap that reprecent the level
+        Vector2Int worldSize = new Vector2Int(100,100);
+        int[,] tileValues = new int[100,100];
+        for (int i = 0; i < worldSize.x; i++)
+        {
+            for (int j = 0; j < worldSize.y; j++)
+            {
+                tileValues[i,j] = 0;
+                if(i > 1 && j > 1 && i < 30 && j < 30) tileValues[i,j] = 1;
+				
+            }
+        }
+
+		tileValues[0, 0] = 1;
+
+		//Fill Level
+		for (int i = 0; i < worldSize.x; i++)
+		{
+			for (int j = 0; j < worldSize.y; j++)
+			{
+				if (tileValues[i, j] == 1)
+				{
+					GenerateFloorTileAt(new Vector2Int(i,j));
+
+
+				}
+			}
+		}
+
+		SetPlayerAtStart(new Vector2Int(3, 3));
+	}
+
+	private void GenerateFloorTileAt(Vector2Int pos)
+	{
+
+		GameObject tile;
+		int specialType = Random.Range(0, 11);
+		if (specialType < 10)
+		{
+			tile = Instantiate(floorTilesPrefab[0], TileHolder.transform);
+			if (specialType < 1)
+			{
+				int debreeType = Random.Range(0, debreePrefabs.Count);
+				//Do debree
+				GameObject debree = Instantiate(debreePrefabs[debreeType], tile.transform);
+				debree.transform.localPosition = Vector3.zero;
+			}
+			else if (specialType < 2)
+			{
+				//DECAL
+				int decalType = Random.Range(0, decalPrefabs.Count);
+				//Do debree
+				GameObject decal = Instantiate(decalPrefabs[decalType], tile.transform);
+				decal.transform.localPosition = Vector3.zero;
+				decal.gameObject.transform.Rotate(0, Random.Range(0, 360), 0);
+			}
+		}
+		else
+		{
+			int specialTile = Random.Range(0, floorTilesPrefab.Count);
+			tile = Instantiate(floorTilesPrefab[specialTile], TileHolder.transform);
+		}
+		tile.transform.localPosition = new Vector3(pos.x * Tilesize, 0, pos.y * Tilesize);
+
+		tile.layer = GroundLayer;
+
 
 	}
 
-    public void PrintCurrentTilePosition()
+	private void CreateStartLevel()
+    {
+		Vector2Int[] doorsAt;
+		SetPlayerAtStart(new Vector2Int(3, 3));
+
+		doorsAt = new Vector2Int[] { new Vector2Int(2, 5) };
+		CreateMiniLevel(new Vector2Int(5, 6), Vector2Int.zero, doorsAt);
+
+		doorsAt = new Vector2Int[] { new Vector2Int(4, 0), new Vector2Int(4, 8) };
+		CreateMiniLevel(new Vector2Int(9, 9), new Vector2Int(-2, 6), doorsAt);
+
+		doorsAt = new Vector2Int[] { new Vector2Int(2, 0) };
+		CreateMiniLevel(new Vector2Int(5, 6), new Vector2Int(0, 15), doorsAt);
+
+
+		CreateResourceAt(new Vector2Int(5, 8), 0);
+
+
+		Debug.Log("Level created");
+
+	}
+
+	public void PrintCurrentTilePosition()
 	{
         if (Inputs.Instance.Shift == 1)
         {
@@ -77,7 +155,7 @@ public class LevelCreator : MonoBehaviour
 		highLightSquare.SetActive(false);
 	}
 
-		private void SetPLayerAtStart(Vector2Int pos)
+	private void SetPlayerAtStart(Vector2Int pos)
     {
         playerController.SetToPosition(new Vector3(pos.x*Tilesize,0,pos.y*Tilesize));
     }
@@ -279,10 +357,4 @@ public class LevelCreator : MonoBehaviour
 			}
         }
     }
-
-    private void Update()
-    {
-        
-    }
-
 }

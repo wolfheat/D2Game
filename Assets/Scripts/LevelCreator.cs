@@ -8,6 +8,31 @@ using Random = UnityEngine.Random;
 
 public enum Direction {left,down,right,up}
 
+
+public static class RandomWalkGenerator
+{
+	public static HashSet<Vector2Int> RandomWalk(Vector2Int start, int walkLength)
+	{
+		HashSet<Vector2Int> result = new HashSet<Vector2Int>();
+		Vector2Int oldStep = start;
+
+		for (int i = 0; i < walkLength; i++)
+		{
+			Vector2Int newStep = oldStep + RandomStep();
+			result.Add(newStep);
+			oldStep = newStep;
+		}
+		return result;
+	}
+
+	private static List<Vector2Int> stepList = new List<Vector2Int>() { Vector2Int.up,Vector2Int.right,Vector2Int.down,Vector2Int.left};
+
+	private static Vector2Int RandomStep()
+	{
+		return stepList[Random.Range(0,stepList.Count)];
+	}
+}
+
 public class LevelCreator : MonoBehaviour
 {
     //[SerializeField] private GameObject playerControllerParent;
@@ -46,36 +71,25 @@ public class LevelCreator : MonoBehaviour
 
     private void CreateGeneratedLevel()
     {
-        //Generate a Bitmap that reprecent the level
-        Vector2Int worldSize = new Vector2Int(100,100);
-        int[,] tileValues = new int[100,100];
-        for (int i = 0; i < worldSize.x; i++)
-        {
-            for (int j = 0; j < worldSize.y; j++)
-            {
-                tileValues[i,j] = 0;
-                if(i > 1 && j > 1 && i < 30 && j < 30) tileValues[i,j] = 1;
-				
-            }
-        }
+        //Generate the level
 
-		tileValues[0, 0] = 1;
+		HashSet<Vector2Int> floorPositions = new HashSet<Vector2Int>();
+		Vector2Int playerStartPosition = new Vector2Int(10, 10);
+		int iterations = 10;
+		int walkLength = 10;
 
-		//Fill Level
-		for (int i = 0; i < worldSize.x; i++)
+		for (int k = 0; k < iterations; k++)
 		{
-			for (int j = 0; j < worldSize.y; j++)
-			{
-				if (tileValues[i, j] == 1)
-				{
-					GenerateFloorTileAt(new Vector2Int(i,j));
-
-
-				}
-			}
+			floorPositions.UnionWith(RandomWalkGenerator.RandomWalk(playerStartPosition,walkLength));
 		}
 
-		SetPlayerAtStart(new Vector2Int(3, 3));
+		foreach (var floor in floorPositions)
+		{
+			GenerateFloorTileAt(floor);
+			//GenerateFloorTileAt(new Vector2Int(floor.x,floor.y));
+		}
+
+		SetPlayerAtStart(playerStartPosition);
 	}
 
 	private void GenerateFloorTileAt(Vector2Int pos)

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
@@ -55,6 +56,8 @@ public class LevelCreator : MonoBehaviour
 	public const float Tilesize = 2f;
     private Vector2Int Levelsize = new Vector2Int(25,15);
 
+	[SerializeField] private RandomWalkGeneratorPresetSO walkGeneratorPreset;
+
 	private void Start()
     {
         GroundLayer = LayerMask.NameToLayer("Ground");
@@ -69,18 +72,19 @@ public class LevelCreator : MonoBehaviour
 		RequestActivatePlayerNavmesh();
 	}
 
-    private void CreateGeneratedLevel()
+    public void CreateGeneratedLevel()
     {
+		//Clear The level
+		ClearLevel();
         //Generate the level
-
 		HashSet<Vector2Int> floorPositions = new HashSet<Vector2Int>();
-		Vector2Int playerStartPosition = new Vector2Int(10, 10);
-		int iterations = 10;
-		int walkLength = 10;
 
-		for (int k = 0; k < iterations; k++)
+		Vector2Int startPos = walkGeneratorPreset.playerStartPosition;
+
+		for (int k = 0; k < walkGeneratorPreset.iterations; k++)
 		{
-			floorPositions.UnionWith(RandomWalkGenerator.RandomWalk(playerStartPosition,walkLength));
+			floorPositions.UnionWith(RandomWalkGenerator.RandomWalk(startPos, walkGeneratorPreset.walkLength));
+			if(walkGeneratorPreset.startRandom) startPos = floorPositions.ElementAt(floorPositions.Count-1);
 		}
 
 		foreach (var floor in floorPositions)
@@ -89,7 +93,19 @@ public class LevelCreator : MonoBehaviour
 			//GenerateFloorTileAt(new Vector2Int(floor.x,floor.y));
 		}
 
-		SetPlayerAtStart(playerStartPosition);
+		SetPlayerAtStart(walkGeneratorPreset.playerStartPosition);
+	}
+
+	public void ClearLevel()
+	{
+		List<GameObject> list = new List<GameObject>();
+		foreach (Transform tile in TileHolder.transform)
+		{
+			list.Add(tile.gameObject);
+		}
+		for (int i = list.Count-1; i >= 0; i--)	
+			DestroyImmediate(list[i]);
+		list.Clear();
 	}
 
 	private void GenerateFloorTileAt(Vector2Int pos)

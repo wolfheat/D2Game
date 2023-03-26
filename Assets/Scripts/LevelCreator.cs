@@ -9,31 +9,6 @@ using Random = UnityEngine.Random;
 
 public enum Direction {left,down,right,up}
 
-
-public static class RandomWalkGenerator
-{
-	public static HashSet<Vector2Int> RandomWalk(Vector2Int start, int walkLength)
-	{
-		HashSet<Vector2Int> result = new HashSet<Vector2Int>();
-		Vector2Int oldStep = start;
-
-		for (int i = 0; i < walkLength; i++)
-		{
-			Vector2Int newStep = oldStep + RandomStep();
-			result.Add(newStep);
-			oldStep = newStep;
-		}
-		return result;
-	}
-
-	private static List<Vector2Int> stepList = new List<Vector2Int>() { Vector2Int.up,Vector2Int.right,Vector2Int.down,Vector2Int.left};
-
-	private static Vector2Int RandomStep()
-	{
-		return stepList[Random.Range(0,stepList.Count)];
-	}
-}
-
 public class LevelCreator : MonoBehaviour
 {
     //[SerializeField] private GameObject playerControllerParent;
@@ -98,14 +73,11 @@ public class LevelCreator : MonoBehaviour
 
 	public void ClearLevel()
 	{
-		List<GameObject> list = new List<GameObject>();
-		foreach (Transform tile in TileHolder.transform)
-		{
-			list.Add(tile.gameObject);
-		}
-		for (int i = list.Count-1; i >= 0; i--)	
-			DestroyImmediate(list[i]);
-		list.Clear();
+		Transform[] children = TileHolder.GetComponentsInChildren<Transform>();
+		for (int i = children.Length-1; i > 0; i--)	
+			DestroyImmediate(children[i].gameObject);
+		Debug.Log("Transforms left in Array: "+children.Length);
+		children = null;
 	}
 
 	private void GenerateFloorTileAt(Vector2Int pos)
@@ -387,4 +359,94 @@ public class LevelCreator : MonoBehaviour
 			}
         }
     }
+
+	public void CreateRoomSeparationDungeon()
+	{
+		Debug.Log("CreateRoomSeparationDungeon RUN");
+		//Clear The level
+		ClearLevel();
+
+		// Generate the level
+		List<Room> rooms = new List<Room>(); 
+
+
+		// Generate X Rooms at Distance X from center at random
+		for (int i = 0; i < 3; i++)
+		{
+			Room newRoom = RoomMaker.GenerateRandomRoom();
+			rooms.Add(newRoom);
+		}
+
+		HashSet<Vector2Int> floorPositions = new HashSet<Vector2Int>();
+
+		foreach (Room room in rooms)
+		{
+			floorPositions.UnionWith(GetRoomBorders(room));
+		}
+
+
+		// Separate Rooms Until they dont overlap
+
+		// Select X largest rooms as main rooms.
+
+		// Find Dalaunay Triangulation lines
+
+		// Make Hallway Lines between Main Rooms
+
+		// Activate secondaryRooms that these hallways intercept
+
+		// Add in a Main Hallway of a certain width around the hallway lines
+
+
+		GenerateAllTilesForThisFloorPosition(floorPositions);
+		SetPlayerAtStart(walkGeneratorPreset.playerStartPosition);
+	}
+
+	private void GenerateAllTilesForThisFloorPosition(HashSet<Vector2Int> floorPositions)
+	{
+		foreach (var floor in floorPositions)
+		{
+			GenerateFloorTileAt(floor);
+		}
+
+	}
+
+	private HashSet<Vector2Int> GetRoomBorders(Room room)
+	{
+		HashSet<Vector2Int> tiles = new HashSet<Vector2Int>();
+		for (int i = 0; i < room.size.x; i++)
+		{
+			for (int j = 0; j < room.size.y; j++)
+			{
+				if(i==0 || j == 0 || i == room.size.x - 1 || j == room.size.y - 1)
+					tiles.Add(new Vector2Int(room.pos.x+i, room.pos.y + j));
+			}
+		}
+		return tiles;
+	}
+}
+
+public static class RoomMaker
+{
+	private static int RoomMinSize = 4;
+	private static int RoomMaxSize = 10;
+	private static int RoomMaxDev = 3;
+
+	public static Room GenerateRandomRoom()
+	{
+		return new Room(
+			new Vector2Int(Random.Range(RoomMinSize,RoomMaxSize), Random.Range(RoomMinSize, RoomMaxSize)), 
+			new Vector2Int(Random.Range(-RoomMaxDev, RoomMaxDev), Random.Range(-RoomMaxDev, RoomMaxDev)));
+	}
+}
+public class Room
+{
+	public Vector2Int size;
+	public Vector2Int pos;
+
+	public Room(Vector2Int s, Vector2Int p)
+	{
+		size = s;
+		pos = p;
+	}
 }

@@ -69,6 +69,7 @@ Nov 2022
 22/3	* Added Zoom in different steps by scroll wheel.
 24/3	* Made new levelgenerator using HashSet.
 		* Updated Random Generation
+25/3	* Added New Generation Algorithm, Separating rooms
 
 		* Game can lock up sometimes, why? Prob because of inf loop in player action move/attack
 		* Arrows stop at the player collider, maybe should stick to the actual character instead

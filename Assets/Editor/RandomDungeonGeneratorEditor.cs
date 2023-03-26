@@ -37,6 +37,10 @@ public class RandomDungeonGeneratorEditor : Editor
             //SceneView.lastActiveSceneView.LookAt(new Vector3(0,0,0));
 
 		}
+        if(GUILayout.Button("Create Dungeon With RoomSeparation"))
+        {
+            generator.CreateRoomSeparationDungeon();
+		}
     }
 
 }

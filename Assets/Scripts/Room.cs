@@ -18,7 +18,7 @@ public class Room
 
 	internal Vector2Int GetCenter()
 	{
-		Vector2 center = new Vector2(pos.x + size.x / 2, pos.y + size.y / 2);
+		Vector2 center = new Vector2(pos.x + (size.x / 2), pos.y + (size.y / 2));
 		return Vector2Int.RoundToInt(center);
 	}
 

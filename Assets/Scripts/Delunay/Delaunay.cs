@@ -11,6 +11,7 @@ namespace DelaunayVoronoi
         private double MaxX { get; set; }
         private double MaxY { get; set; }
         private IEnumerable<Triangle> border;
+        private HashSet<Point> startPoints;
 
         public IEnumerable<Point> GeneratePoints(int amount, double maxX, double maxY)
         {
@@ -52,10 +53,11 @@ namespace DelaunayVoronoi
                 if(p.y<MinY) MinY = p.y;
                 if(p.y>MaxY) MaxY = p.y;
             }
-            MinX -= 10;
-            MinY -= 10;
-            MaxX += 10;
-            MaxY += 10;
+            int margin = 10;
+            MinX -= margin;
+            MinY -= margin;
+            MaxX += margin;
+            MaxY += margin;
 
 			var point0 = new Point(MinX, MinY);
 			var point1 = new Point(MinX, MaxY);
@@ -64,11 +66,13 @@ namespace DelaunayVoronoi
 			var tri1 = new Triangle(point0, point1, point2);
 			var tri2 = new Triangle(point0, point2, point3);
 			border = new List<Triangle>() { tri1, tri2 };
-
+			startPoints = new HashSet<Point>() { point0, point1, point2, point3 };
 
 			IEnumerable<Point> pointEnumerable = points.Select(p => new Point(p.x, p.y)).ToList();
             return BowyerWatson(pointEnumerable);
         }
+
+
         public IEnumerable<Triangle> BowyerWatson(IEnumerable<Point> points)
         {
             //var supraTriangle = GenerateSupraTriangle();
@@ -95,7 +99,10 @@ namespace DelaunayVoronoi
                 }
             }
 
-            //triangulation.RemoveWhere(o => o.Vertices.Any(v => supraTriangle.Vertices.Contains(v)));
+            List < Triangle > startTriangles = new List<Triangle>();
+			startTriangles = triangulation.Where(triangle => triangle.Vertices.Any(point => startPoints.Contains(point))).ToList();            
+			triangulation.ExceptWith(startTriangles);
+
             return triangulation;
         }
 

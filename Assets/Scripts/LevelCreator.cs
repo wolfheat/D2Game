@@ -414,7 +414,7 @@ public class LevelCreator : MonoBehaviour
 		// Select X largest rooms as main rooms.		
 		List<Room> mainRooms = rooms.OrderByDescending(r => r.size.magnitude).Take(8).ToList();
 		List<Vector2Int> roomCenters = new List<Vector2Int>();
-		foreach (Room room in mainRooms)
+		foreach (Room room in rooms)
 		{
 			roomCenters.Add(room.GetCenter());
 		}
@@ -475,10 +475,10 @@ public class LevelCreator : MonoBehaviour
 			{
 				for (int i = 0; i < 3; i++)
 				{
-					Vector3 startPoint = new Vector3((float)triangle.Vertices[i].X, 1, (float)triangle.Vertices[i].Y);
-					Vector3 endPoint = new Vector3((float)triangle.Vertices[(i+1)%3].X, 1, (float)triangle.Vertices[(i + 1) % 3].Y);
+					Vector3 startPoint = new Vector3((float)triangle.Vertices[i].X, 0.2f, (float)triangle.Vertices[i].Y);
+					Vector3 endPoint = new Vector3((float)triangle.Vertices[(i+1)%3].X, 0.2f, (float)triangle.Vertices[(i + 1) % 3].Y);
 					//Debug.Log("Drawing line "+startPoint+" to "+endPoint);
-					Gizmos.DrawLine(startPoint, endPoint);
+					Gizmos.DrawLine(startPoint*2, endPoint*2);
 				}
 			}
 		}

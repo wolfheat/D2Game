@@ -70,6 +70,8 @@ Nov 2022
 24/3	* Made new levelgenerator using HashSet.
 		* Updated Random Generation
 25/3	* Added New Generation Algorithm, Separating rooms
+26/3	* Adding Delunay computation
+
 
 		* Game can lock up sometimes, why? Prob because of inf loop in player action move/attack
 		* Arrows stop at the player collider, maybe should stick to the actual character instead

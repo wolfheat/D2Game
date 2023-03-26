@@ -5,7 +5,8 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
-
+using DelaunayVoronoi;
+using System.Net;
 
 public enum Direction {left,down,right,up}
 
@@ -25,13 +26,25 @@ public class LevelCreator : MonoBehaviour
     [SerializeField] private GameObject highLightSquare;
     [SerializeField] private NavMeshSurface TileHolder;
 
-    private List<Mesh> surfacMeshes = new List<Mesh>();
+	[Space(10, order = 0)]
+	[Header ("Separation Dungeon Creator")]
+	[SerializeField] private int SeparationRoomsAmt = 5;
+	[SerializeField] private int SeparateTries = 10;
+
+	[Space(10, order = 0)]
+	[Header ("Random Walk Dungeon Creator")]
+	[SerializeField] private RandomWalkGeneratorPresetSO walkGeneratorPreset;
+
+	IEnumerable<Triangle> delaunay;
+
+
+	private List<Mesh> surfacMeshes = new List<Mesh>();
     int GroundLayer;
     int ResourceLayer;
 	public const float Tilesize = 2f;
     private Vector2Int Levelsize = new Vector2Int(25,15);
 
-	[SerializeField] private RandomWalkGeneratorPresetSO walkGeneratorPreset;
+
 
 	private void Start()
     {
@@ -76,8 +89,6 @@ public class LevelCreator : MonoBehaviour
 		Transform[] children = TileHolder.GetComponentsInChildren<Transform>();
 		for (int i = children.Length-1; i > 0; i--)	
 			DestroyImmediate(children[i].gameObject);
-		Debug.Log("Transforms left in Array: "+children.Length);
-		children = null;
 	}
 
 	private void GenerateFloorTileAt(Vector2Int pos)
@@ -360,6 +371,120 @@ public class LevelCreator : MonoBehaviour
         }
     }
 
+
+	public void CreateRoomDispersionDungeon()
+	{
+
+		// Generate New Room Move until not overlapping
+
+		Debug.Log("CreateRoomDispersionDungeon RUN");
+		//Clear The level
+		ClearLevel();
+
+		// Generate the level
+		List<Room> rooms = new List<Room>();
+
+
+		int totalMovementsNeeded = 0;
+		int maxIterations = 100;
+		int iteration;
+		// Generate X Rooms at Distance X from center at random
+		for (int i = 0; i < SeparationRoomsAmt; i++)
+		{
+			iteration = 0;
+			Room newRoom = RoomMaker.GenerateRandomRoom();
+			while (RoomMaker.OverlapAny(newRoom, rooms) && iteration<maxIterations)
+			{
+				newRoom.Move();
+				iteration++;
+				totalMovementsNeeded++;
+			}
+			if (iteration == maxIterations)
+			{
+				Debug.LogWarning("Move new room iteration reached MAX, stopped moving overlapping room. Room at: "+newRoom.tempPos);
+
+			}
+			//Lock Room and Add to Rooms
+			rooms.Add(newRoom);
+		}
+		Debug.Log("Creation of Dispersion Dungeon needed "+totalMovementsNeeded+" movements to complete.");
+
+		HashSet<Vector2Int> floorPositions = new HashSet<Vector2Int>();
+
+		// Select X largest rooms as main rooms.		
+		List<Room> mainRooms = rooms.OrderByDescending(r => r.size.magnitude).Take(8).ToList();
+		List<Vector2Int> roomCenters = new List<Vector2Int>();
+		foreach (Room room in mainRooms)
+		{
+			roomCenters.Add(room.GetCenter());
+		}
+
+
+		string roomSizeString = "";
+
+		for (int i = 0; i < mainRooms.Count; i++)
+		{
+			roomSizeString += mainRooms[i].size.magnitude+" , ";
+		}
+		Debug.Log("Room Sizes: "+ roomSizeString);
+
+
+		// Find Dalaunay Triangulation lines
+
+		DelaunayTriangulator delaunayTriangulator = new DelaunayTriangulator();
+		
+		delaunay = delaunayTriangulator.BowyerWatson(roomCenters);
+
+		Debug.Log("Delaunay Triangles Created");
+		Debug.Log("Delaunay Triangles 1: "+delaunay.First());
+
+
+
+		// Make Hallway Lines between Main Rooms
+
+		// Activate secondaryRooms that these hallways intercept
+
+		// Add in a Main Hallway of a certain width around the hallway lines
+
+
+
+
+
+		// Generate Map to show it
+		foreach (Room room in rooms)
+		{
+			floorPositions.UnionWith(GetAllRoomTiles(room));
+			//floorPositions.UnionWith(GetRoomBorders(room));
+		}
+
+		GenerateAllTilesForThisFloorPosition(floorPositions);
+		SetPlayerAtStart(walkGeneratorPreset.playerStartPosition);
+	}
+
+	private void OnDrawGizmos()
+	{
+		
+		Gizmos.color = Color.green;
+		Gizmos.DrawLine(Vector3.up, Vector3.right);
+
+		if (delaunay != null)
+		{
+			Gizmos.color = Color.red;
+
+			foreach (Triangle triangle in delaunay)
+			{
+				for (int i = 0; i < 3; i++)
+				{
+					Vector3 startPoint = new Vector3((float)triangle.Vertices[i].X, 1, (float)triangle.Vertices[i].Y);
+					Vector3 endPoint = new Vector3((float)triangle.Vertices[(i+1)%3].X, 1, (float)triangle.Vertices[(i + 1) % 3].Y);
+					//Debug.Log("Drawing line "+startPoint+" to "+endPoint);
+					Gizmos.DrawLine(startPoint, endPoint);
+				}
+			}
+		}
+		UnityEditor.EditorApplication.QueuePlayerLoopUpdate();
+	}
+
 	public void CreateRoomSeparationDungeon()
 	{
 		Debug.Log("CreateRoomSeparationDungeon RUN");
@@ -371,27 +496,18 @@ public class LevelCreator : MonoBehaviour
 
 
 		// Generate X Rooms at Distance X from center at random
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < SeparationRoomsAmt; i++)
 		{
 			Room newRoom = RoomMaker.GenerateRandomRoom();
 			rooms.Add(newRoom);
 		}
 
 		// Separate Rooms Until they dont overlap
-
-		RoomMaker.SetClosestRooms(rooms);
-		RoomMaker.MoveOverlap(rooms);
-
-
-
-
-
-
-
-
-
-
-
+		for (int i = 0; i < SeparateTries; i++)
+		{
+			RoomMaker.SetClosestRooms(rooms);
+			RoomMaker.MoveOverlap(rooms);
+		}
 
 
 
@@ -402,8 +518,6 @@ public class LevelCreator : MonoBehaviour
 		{
 			floorPositions.UnionWith(GetRoomBorders(room));
 		}
-
-
 
 		// Select X largest rooms as main rooms.
 
@@ -442,88 +556,16 @@ public class LevelCreator : MonoBehaviour
 		}
 		return tiles;
 	}
-}
-
-public static class RoomMaker
-{
-	private static int RoomMinSize = 4;
-	private static int RoomMaxSize = 10;
-	private static int RoomMaxDev = 3;
-	private static int MoveStrength = 2;
-
-	public static Room GenerateRandomRoom()
+	private HashSet<Vector2Int> GetAllRoomTiles(Room room)
 	{
-		return new Room(
-			new Vector2Int(Random.Range(RoomMinSize,RoomMaxSize), Random.Range(RoomMinSize, RoomMaxSize)), 
-			new Vector2Int(Random.Range(-RoomMaxDev, RoomMaxDev), Random.Range(-RoomMaxDev, RoomMaxDev)));
-	}
-
-	internal static bool Overlap(Room r1, Room r2)
-	{
-		bool overlapX = r1.pos.x <= r2.pos.x+r2.size.x && r1.pos.x+r1.size.x >= r2.pos.x;
-		bool overlapY = r1.pos.y <= r2.pos.y+r2.size.y && r1.pos.y+r1.size.y >= r2.pos.y;
-		return overlapX && overlapY;		
-	}
-	
-	internal static void MoveOverlap(List<Room> rooms)
-	{
-		foreach (var room in rooms)
+		HashSet<Vector2Int> tiles = new HashSet<Vector2Int>();
+		for (int i = 0; i < room.size.x; i++)
 		{
-			bool overlap = false;
-			foreach (var roomToCheck in room.closest)
-			{
-				if (Overlap(room, roomToCheck))
-				{
-					overlap = true;
-					break;
-				}
+			for (int j = 0; j < room.size.y; j++)
+			{			
+				tiles.Add(new Vector2Int(room.pos.x+i, room.pos.y + j));
 			}
-			MoveAwayFromClosest(room);
 		}
-	}
-
-	private static void MoveAwayFromClosest(Room room)
-	{
-		Vector2 moveDirection = Vector2.zero;
-		foreach (Room otherRoom in room.closest)
-		{
-			Debug.Log("Room Difference: "+ (room.pos - otherRoom.pos)+" Room1: "+room.pos+" Room2: "+otherRoom.pos);
-			moveDirection += (room.pos - otherRoom.pos);
-		}
-		moveDirection = moveDirection.normalized;
-		Vector2Int moveVector = Vector2Int.RoundToInt(moveDirection * MoveStrength);
-		Debug.Log("MoveVector "+moveVector + "because "+moveDirection);
-		Debug.Log("Moving Room from "+room.pos+" to "+(room.pos + moveVector));
-		room.pos += moveVector;
-	}
-
-	internal static void SetClosestRooms(List<Room> rooms)
-	{
-		foreach (var room in rooms)
-		{
-			List<Room> closestRooms = new List<Room>();
-			foreach (var checkedRoom in rooms)
-			{
-				if (room == checkedRoom) continue;
-				closestRooms.Add(checkedRoom);
-				closestRooms.Sort((r1, r2) => Vector2Int.Distance(room.pos, r1.pos).CompareTo(Vector2Int.Distance(room.pos, r2.pos)));
-			}
-			room.closest = closestRooms;
-		}	
-
-	}
-}
-public class Room
-{
-	public Vector2Int size;
-	public Vector2Int pos;
-	public List<Vector2Int> corners;
-	public List<Room> closest;
-
-	public Room(Vector2Int s, Vector2Int p)
-	{
-		size = s;
-		pos = p;
-		corners = new List<Vector2Int>() { p,p+s-Vector2Int.one,new Vector2Int(p.x+s.x-1,p.y), new Vector2Int(p.x, p.y + s.y-1)};
+		return tiles;
 	}
 }

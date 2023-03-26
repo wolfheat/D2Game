@@ -41,6 +41,10 @@ public class RandomDungeonGeneratorEditor : Editor
         {
             generator.CreateRoomSeparationDungeon();
 		}
+        if(GUILayout.Button("Create Dungeon With RoomDispersion"))
+        {
+            generator.CreateRoomDispersionDungeon();
+		}
     }
 
 }

@@ -1,7 +1,26 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace DelaunayVoronoi
 {
+    public class PathPoint : Point
+    {
+        public List<PathPoint> pathPoints = new List<PathPoint>();
+
+        public PathPoint(Point p) : base(p.X, p.Y)
+        {
+        }
+        public PathPoint(double x, double y) : base(x, y)
+        {
+        }
+
+        internal float ManhattanDistance(PathPoint neighbor)
+        {
+            return Mathf.Abs((float)X-(float)neighbor.X)+Mathf.Abs((float)Y-(float)neighbor.Y);
+        }
+    }
+
     public class Point
     {
         /// <summary>

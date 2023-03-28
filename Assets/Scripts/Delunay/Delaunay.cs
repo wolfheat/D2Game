@@ -72,6 +72,54 @@ namespace DelaunayVoronoi
             return BowyerWatson(pointEnumerable);
         }
 
+        public static IEnumerable<PathPoint> FindMinimumPath(IEnumerable<Triangle> triangles)
+        {
+            
+            List<PathPoint> points = ConvertToPathPoints(triangles);
+
+            string print = "Points: ";
+
+            foreach (var point in points)
+            {
+                print += "(";
+                foreach (var neighbor in point.pathPoints)
+                {
+                    float distance = point.ManhattanDistance(neighbor);
+                    print += distance + ", ";
+
+                }
+                print += ")";
+            }
+
+            Debug.Log(print);
+
+            return points;
+		}
+        
+        public static List<PathPoint> ConvertToPathPoints(IEnumerable<Triangle> triangles)
+        {
+            
+            List<PathPoint> points = new List<PathPoint>();
+
+            foreach (var tri in triangles)
+            {
+                List<PathPoint> pathPoints = new List<PathPoint>();
+				for (int i = 0; i < 3; i++)
+                {
+                    PathPoint pathPoint = new PathPoint(tri.Vertices[i]); 
+                    pathPoints.Add(pathPoint);
+
+                    if(!points.Contains(pathPoint)) points.Add(pathPoint);
+				}
+                for (int i = 0; i < 3; i++)
+                {
+                    pathPoints[i].pathPoints.Add(pathPoints[(i+1)%3]);
+                    pathPoints[i].pathPoints.Add(pathPoints[(i+4)%3]);
+                }
+            }
+            return points;
+		}
+
 
         public IEnumerable<Triangle> BowyerWatson(IEnumerable<Point> points)
         {

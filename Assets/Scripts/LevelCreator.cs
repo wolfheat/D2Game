@@ -450,7 +450,7 @@ public class LevelCreator : MonoBehaviour
 		Debug.Log("Delaunay Triangles Created");
 		Debug.Log("Delaunay Triangles Amount: "+delaunay.Count());
 
-
+		DelaunayTriangulator.FindMinimumPath(delaunay);
 
 		// Make Hallway Lines between Main Rooms
 

@@ -72,6 +72,8 @@ Nov 2022
 25/3	* Added New Generation Algorithm, Separating rooms
 26/3	* Adding Delunay computation
 		* Removed StartTriangles in Delunay
+27/3	* Separated main and rest triangles for main room and possible addon rooms for corridors later
+
 
 		* TODO: Implement Minimum Spanning Tree
 

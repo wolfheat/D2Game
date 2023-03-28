@@ -91,6 +91,14 @@ public class LevelCreator : MonoBehaviour
 			DestroyImmediate(children[i].gameObject);
 	}
 
+	private void GenerateLavaFloorTileAt(Vector2Int pos)
+	{
+		GameObject tile;
+		tile = Instantiate(floorTilesPrefab[7], TileHolder.transform);
+		tile.transform.localPosition = new Vector3(pos.x * Tilesize, 0, pos.y * Tilesize);
+		tile.layer = GroundLayer;
+	}
+
 	private void GenerateFloorTileAt(Vector2Int pos)
 	{
 
@@ -118,7 +126,7 @@ public class LevelCreator : MonoBehaviour
 		}
 		else
 		{
-			int specialTile = Random.Range(0, floorTilesPrefab.Count);
+			int specialTile = Random.Range(0, 7);
 			tile = Instantiate(floorTilesPrefab[specialTile], TileHolder.transform);
 		}
 		tile.transform.localPosition = new Vector3(pos.x * Tilesize, 0, pos.y * Tilesize);
@@ -413,8 +421,12 @@ public class LevelCreator : MonoBehaviour
 
 		// Select X largest rooms as main rooms.		
 		List<Room> mainRooms = rooms.OrderByDescending(r => r.size.magnitude).Take(8).ToList();
+		List<Room> restRooms = rooms.OrderBy(r => r.size.magnitude).Take(rooms.Count-8).ToList();
+		
+		
 		List<Vector2Int> roomCenters = new List<Vector2Int>();
-		foreach (Room room in rooms)
+
+		foreach (Room room in mainRooms)
 		{
 			roomCenters.Add(room.GetCenter());
 		}
@@ -436,7 +448,7 @@ public class LevelCreator : MonoBehaviour
 		delaunay = delaunayTriangulator.BowyerWatson(roomCenters);
 
 		Debug.Log("Delaunay Triangles Created");
-		Debug.Log("Delaunay Triangles 1: "+delaunay.First());
+		Debug.Log("Delaunay Triangles Amount: "+delaunay.Count());
 
 
 
@@ -451,13 +463,12 @@ public class LevelCreator : MonoBehaviour
 
 
 		// Generate Map to show it
-		foreach (Room room in rooms)
-		{
-			floorPositions.UnionWith(GetAllRoomTiles(room));
-			//floorPositions.UnionWith(GetRoomBorders(room));
-		}
-
+		foreach (Room room in mainRooms){floorPositions.UnionWith(GetAllRoomTiles(room));}
 		GenerateAllTilesForThisFloorPosition(floorPositions);
+		floorPositions.Clear();
+		foreach (Room room in restRooms){floorPositions.UnionWith(GetAllRoomTiles(room));}
+		GenerateAllTilesForThisFloorPosition(floorPositions,true);
+
 		SetPlayerAtStart(walkGeneratorPreset.playerStartPosition);
 	}
 
@@ -478,7 +489,7 @@ public class LevelCreator : MonoBehaviour
 					Vector3 startPoint = new Vector3((float)triangle.Vertices[i].X, 0.2f, (float)triangle.Vertices[i].Y);
 					Vector3 endPoint = new Vector3((float)triangle.Vertices[(i+1)%3].X, 0.2f, (float)triangle.Vertices[(i + 1) % 3].Y);
 					//Debug.Log("Drawing line "+startPoint+" to "+endPoint);
-					Gizmos.DrawLine(startPoint*2, endPoint*2);
+					Gizmos.DrawLine(startPoint*2, endPoint*2);		
 				}
 			}
 		}
@@ -534,11 +545,12 @@ public class LevelCreator : MonoBehaviour
 		SetPlayerAtStart(walkGeneratorPreset.playerStartPosition);
 	}
 
-	private void GenerateAllTilesForThisFloorPosition(HashSet<Vector2Int> floorPositions)
+	private void GenerateAllTilesForThisFloorPosition(HashSet<Vector2Int> floorPositions,bool IsLava = false)
 	{
 		foreach (var floor in floorPositions)
 		{
-			GenerateFloorTileAt(floor);
+			if (IsLava) GenerateLavaFloorTileAt(floor);
+			else GenerateFloorTileAt(floor);
 		}
 
 	}

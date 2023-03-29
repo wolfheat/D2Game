@@ -98,10 +98,11 @@ namespace DelaunayVoronoi
         
         public static List<PathPoint> ConvertToPathPoints(IEnumerable<Triangle> triangles)
         {
-            
+			/*
             List<PathPoint> points = new List<PathPoint>();
+			HashSet<Point> uniquePoints = new HashSet<Point>();
 
-            foreach (var tri in triangles)
+			foreach (var tri in triangles)
             {
                 List<PathPoint> pathPoints = new List<PathPoint>();
 				for (int i = 0; i < 3; i++)
@@ -118,6 +119,52 @@ namespace DelaunayVoronoi
                 }
             }
             return points;
+            */
+			List<PathPoint> pathPoints = new List<PathPoint>();
+			HashSet<Point> uniquePoints = new HashSet<Point>();
+
+			foreach (Triangle triangle in triangles)
+			{
+				PathPoint[] points = new PathPoint[3];
+
+				for (int i = 0; i < 3; i++)
+				{
+					Point vertex = triangle.Vertices[i];
+					PathPoint point;
+                    if(vertex == null) Debug.Log("Vertex is NUll");
+
+					if (uniquePoints.Contains(vertex))
+					{
+						Debug.Log($"vertex: {vertex}, pathPoints: {string.Join(", ", pathPoints)}");
+						point = pathPoints.Find(p => p.Equals(vertex));
+						Debug.Log($"point: {point}");
+
+						Debug.Log("Point: "+i+" This vertex already exists: "+point);
+					}
+					else
+					{
+						point = new PathPoint(vertex);
+						uniquePoints.Add(vertex);
+						pathPoints.Add(point);
+                        Debug.Log("vertex("+i+"):"+vertex);
+					}
+					points[i] = point;
+				}
+				for (int i = 0; i < 3; i++)
+				{
+					PathPoint point1 = points[i];
+					PathPoint point2 = points[(i + 1) % 3];
+
+                    Debug.Log("point1: "+point1+ " point2: "+point2);
+					if (!point1.pathPoints.Contains(point2))
+					{
+						point1.pathPoints.Add(point2);
+						point2.pathPoints.Add(point1);
+					}
+				}
+			}
+
+			return pathPoints;
 		}
 
 

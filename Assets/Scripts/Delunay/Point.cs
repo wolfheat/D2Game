@@ -19,7 +19,23 @@ namespace DelaunayVoronoi
         {
             return Mathf.Abs((float)X-(float)neighbor.X)+Mathf.Abs((float)Y-(float)neighbor.Y);
         }
-    }
+		public override bool Equals(object obj)
+		{
+			if (obj == null || GetType() != obj.GetType())
+			{
+				return false;
+			}
+			PathPoint other = (PathPoint)obj;
+			return X == other.X && Y == other.Y;
+		}
+		public override int GetHashCode()
+		{
+			int hash = 17;
+			hash = hash * 31 + X.GetHashCode();
+			hash = hash * 31 + Y.GetHashCode();
+			return hash;
+		}
+	}
 
     public class Point
     {
@@ -47,7 +63,8 @@ namespace DelaunayVoronoi
         public override string ToString()
         {
             // Simple way of seeing what's going on in the debugger when investigating weirdness
-            return $"{nameof(Point)} {_instanceId} {X:0.##}@{Y:0.##}";
+            //return $"{nameof(Point)} {_instanceId} {X:0.##}@{Y:0.##}";
+            return "("+X+","+Y+")";
         }
     }
 }

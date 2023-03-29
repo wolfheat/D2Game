@@ -8,6 +8,8 @@ namespace DelaunayVoronoi
     public class PathPoint
     {
         public List<PathPoint> unvisitedNeighbors = new List<PathPoint>();
+        public PathPoint closest = null;
+        public float closestDistance;
         public List<PathPoint> connectedNeighbors = new List<PathPoint>();
         public Vector2Int pos { get; set; }
 
@@ -18,25 +20,41 @@ namespace DelaunayVoronoi
 
         internal float ManhattanDistance(PathPoint neighbor)
         {
-            Debug.Log("Trying to Find Manhattan for "+neighbor+" and "+this);
+            if(neighbor==null) Debug.Log("Trying to Find Manhattan for null neighbor");
             return Vector2.Distance(pos,neighbor.pos);
         }        
 
+        public bool IsVisited()
+        {
+            return (connectedNeighbors.Count>0);
+        }
+        
+        public bool HasUnvisitedNeighbors()
+        {
+            return (unvisitedNeighbors.Count>0);
+        }
+        
         public bool IsEqual(PathPoint other)
         {
             return pos.Equals(other.pos);
         }
 
+            /*
         internal PathPoint ClosestUnvisitedNeigbor()
         {
-            if (unvisitedNeighbors.Count == 0) { Debug.Log("unvisitedNeighbors.Count == 0"); return null; }
+            Debug.Log("Unvisited neighbors: " + HasUnvisitedNeighbors());
+
+
+
+
+			if (!HasUnvisitedNeighbors()) { Debug.Log("No Available unvisited neighbors"); return null; }
             PathPoint closest = null;
             float minDistance = 1000f;
             foreach (var neighbor in unvisitedNeighbors)
             {
 				//Debug.Log("PosC neigbor:"+neighbor);
 
-				if (neighbor.connectedNeighbors.Count==0 && ManhattanDistance(neighbor) < minDistance)
+				if (!neighbor.IsVisited() && ManhattanDistance(neighbor) < minDistance)
                 {
                     //Debug.Log("PosA");
                     closest = neighbor;
@@ -45,36 +63,73 @@ namespace DelaunayVoronoi
             }
             return closest;
         }
+            */
 
         internal static PathPoint FindPointWithClosestNeighbor(List<PathPoint> connectedPoints)
         {
             PathPoint closest = null;
-            PathPoint closestNeighbor;
+            //PathPoint closestNeighbor;
 			float minDistance = 1000f;
 
-            for (int i = 0; i < connectedPoints.Count; i++)
+			Debug.Log("Finding Point With Closest Neighbor START: ");
+
+            foreach(PathPoint point in connectedPoints)
             {
-                PathPoint pathPoint = connectedPoints[i];
-                closestNeighbor = pathPoint.ClosestUnvisitedNeigbor();
-                float distance = pathPoint.ManhattanDistance(closestNeighbor);
-                if (distance < minDistance)
+                if(point.closest != null && point.closestDistance<minDistance) closest = point;
+            }
+            return closest;
+
+
+				/*
+				for (int i = 0; i < connectedPoints.Count; i++)
+				{
+					PathPoint pathPoint = connectedPoints[i];
+					Debug.Log("Testing New PathPoint: " + i + "/" + connectedPoints.Count);
+
+					closestNeighbor = pathPoint.ClosestUnvisitedNeigbor();
+					if (closestNeighbor == null) { Debug.Log("Closest neighbor: NONE Stored:"+closest); continue; }
+					else Debug.Log("Closest Neighbor: " + closestNeighbor + "Stored:" + closest);
+					float distance = pathPoint.ManhattanDistance(closestNeighbor);
+					if (distance < minDistance)
+					{
+						Debug.Log("Point found in Connected Points, with closest legit neighbor at distance: "+distance);
+						closest = pathPoint;
+						minDistance = distance;
+					}
+				}
+				Debug.Log("Finding Point With Closest Neighbor COMPLETE: "+closest);
+				return closest;
+				*/
+			}
+
+        public void SetClosest()
+        {
+            PathPoint closeNeighbor = null;
+            float distance = 1000f;
+            foreach (var unvisited in unvisitedNeighbors)
+            {
+                float newDistance = ManhattanDistance(unvisited);
+				if (newDistance < distance && !unvisited.IsVisited())
                 {
-				    Debug.Log("Point found in Connected Points, with closest legit neighbor at distance: "+distance);
-                    closest = pathPoint;
-                    minDistance = distance;
+                    closeNeighbor = unvisited;
+                    distance = newDistance;
                 }
             }
-			Debug.Log("PosB END: "+closest);
-            return closest;
-		}
+            if (closeNeighbor != null)
+            {
+                closest = closeNeighbor;
+                closestDistance = distance;
+            }
+        }
 
         internal void ConnectNeighbors(PathPoint other)
         {
-            Debug.Log("Connecting this: "+this+" to other: "+other);
+            Debug.Log("Connecting point: ("+this.pos+") to other: ("+other.pos+")");
 			connectedNeighbors.Add(other);
 			unvisitedNeighbors.Remove(other);
 			other.connectedNeighbors.Add(this);
 			other.unvisitedNeighbors.Remove(this);
+            if (other.unvisitedNeighbors.Contains(this)) Debug.LogWarning("Other was not able to remove this PathPoint");
         }
     }
 

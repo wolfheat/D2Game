@@ -78,29 +78,61 @@ namespace DelaunayVoronoi
             
             List<PathPoint> points = ConvertToPathPoints(triangles);
 
+            Debug.Log("---------------------------------------------------");
+			foreach (PathPoint p in points)
+			{
+				Debug.Log("StartPoints " + p.pos);
+			}
 
-            List<PathPoint> unConnectedPoints = new List<PathPoint>(points);
+
+
+			List<PathPoint> unConnectedPoints = new List<PathPoint>(points);
             List<PathPoint> connectedPoints = new List<PathPoint>();
             
             PathPoint point = unConnectedPoints.First();
+            point.SetClosest();
 			connectedPoints.Add(point);
             unConnectedPoints.Remove(point);
-            int countTimer = 0;
+			Debug.Log("Remove Point:" + point.pos);
+			int countTimer = 0;
 
 			while (unConnectedPoints.Count > 0 && countTimer < 50)
-            {
-                Debug.Log("unConnectedPoints.Count: "+ unConnectedPoints.Count+" point:"+point);
+            {               
                 countTimer++;
+				
                 //
 
-                PathPoint closest = point.ClosestUnvisitedNeigbor();
+				PathPoint closest = point.closest;
                 if(closest==null) Debug.Log("points closest neighbor is null");
                 point.ConnectNeighbors(closest);
+                if (!unConnectedPoints.Contains(closest))
+                {
+                    Debug.Log("UnConnected does not contain closest: "+closest.pos);
+                    foreach (PathPoint p in unConnectedPoints)
+                    {
+                        Debug.Log("But contains "+p.pos);
+                    }
 
-                unConnectedPoints.Remove(closest);
+                }
+                Debug.Log("Remove from unConnected WAS:"+unConnectedPoints.Count+" Closest is: "+closest);
+			    unConnectedPoints.Remove(closest);
+				Debug.Log("Remove Point:" + closest.pos);
+
+				Debug.Log("Removed from unConnected NOW:"+unConnectedPoints.Count);
                 connectedPoints.Add(closest);
 
-                if(unConnectedPoints.Count>0) point = PathPoint.FindPointWithClosestNeighbor(connectedPoints);
+				for (int i = 0; i < connectedPoints.Count; i++)
+				{
+					connectedPoints[i].SetClosest();
+				}
+
+                Debug.Log("Unconnected Points count: "+unConnectedPoints.Count);
+                if (unConnectedPoints.Count > 0)
+                {
+                    Debug.Log("Unconnected Points still available: "+unConnectedPoints.Count);
+                    point = PathPoint.FindPointWithClosestNeighbor(connectedPoints);
+                    Debug.Log("Finding Pont: "+point);
+                }
 			}
             if (countTimer == 50) Debug.LogError("Stuck in While loop, exiting.");
             return points;

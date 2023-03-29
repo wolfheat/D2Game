@@ -504,7 +504,7 @@ public class LevelCreator : MonoBehaviour
 				foreach (var connectedNeighbor in pathPoint.connectedNeighbors)
 				{
 					Vector3 startPoint = new Vector3(pathPoint.pos.x, 0.2f, pathPoint.pos.y);
-					PathPoint closestNeighbor = pathPoint.ClosestUnvisitedNeigbor();
+					//PathPoint closestNeighbor = pathPoint.closest;
 					Vector3 endPoint = new Vector3(connectedNeighbor.pos.x, 0.2f, connectedNeighbor.pos.y);
 					//Debug.Log("Drawing line "+startPoint+" to "+endPoint);
 					Gizmos.DrawLine(startPoint*2, endPoint*2);		

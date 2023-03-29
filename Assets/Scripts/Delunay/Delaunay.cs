@@ -86,24 +86,23 @@ namespace DelaunayVoronoi
 			connectedPoints.Add(point);
             unConnectedPoints.Remove(point);
             int countTimer = 0;
-			while (unConnectedPoints.Count > 0 && countTimer < 10)
+
+			while (unConnectedPoints.Count > 0 && countTimer < 50)
             {
-                Debug.Log("unConnectedPoints.Count: "+ unConnectedPoints.Count);
+                Debug.Log("unConnectedPoints.Count: "+ unConnectedPoints.Count+" point:"+point);
                 countTimer++;
                 //
 
                 PathPoint closest = point.ClosestUnvisitedNeigbor();
+                if(closest==null) Debug.Log("points closest neighbor is null");
+                point.ConnectNeighbors(closest);
 
-                point.connectedNeighbors.Add(closest);
-                point.unvisitedNeighbors.Remove(closest);
-                closest.connectedNeighbors.Add(point);
-                closest.unvisitedNeighbors.Remove(point);
                 unConnectedPoints.Remove(closest);
                 connectedPoints.Add(closest);
 
                 if(unConnectedPoints.Count>0) point = PathPoint.FindPointWithClosestNeighbor(connectedPoints);
 			}
-            if (countTimer == 10) Debug.LogError("Stuck in While loop, exiting.");
+            if (countTimer == 50) Debug.LogError("Stuck in While loop, exiting.");
             return points;
 		}
         

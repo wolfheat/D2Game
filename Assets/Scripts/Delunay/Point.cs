@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 
 namespace DelaunayVoronoi
@@ -17,6 +18,7 @@ namespace DelaunayVoronoi
 
         internal float ManhattanDistance(PathPoint neighbor)
         {
+            Debug.Log("Trying to Find Manhattan for "+neighbor+" and "+this);
             return Vector2.Distance(pos,neighbor.pos);
         }        
 
@@ -27,14 +29,16 @@ namespace DelaunayVoronoi
 
         internal PathPoint ClosestUnvisitedNeigbor()
         {
-            if(unvisitedNeighbors.Count==0) return null;
-
-            PathPoint closest = unvisitedNeighbors[0];
-            float minDistance = ManhattanDistance(closest);
+            if (unvisitedNeighbors.Count == 0) { Debug.Log("unvisitedNeighbors.Count == 0"); return null; }
+            PathPoint closest = null;
+            float minDistance = 1000f;
             foreach (var neighbor in unvisitedNeighbors)
             {
-                if(ManhattanDistance(neighbor) < minDistance)
+				//Debug.Log("PosC neigbor:"+neighbor);
+
+				if (neighbor.connectedNeighbors.Count==0 && ManhattanDistance(neighbor) < minDistance)
                 {
+                    //Debug.Log("PosA");
                     closest = neighbor;
                     minDistance = ManhattanDistance(neighbor);
 				}
@@ -42,32 +46,35 @@ namespace DelaunayVoronoi
             return closest;
         }
 
-        internal static PathPoint FindPointWithClosestNeighbor(List<PathPoint> unConnectedPoints)
+        internal static PathPoint FindPointWithClosestNeighbor(List<PathPoint> connectedPoints)
         {
-            if(unConnectedPoints.Count == 1) return unConnectedPoints[0];
+            PathPoint closest = null;
+            PathPoint closestNeighbor;
+			float minDistance = 1000f;
 
-			PathPoint closest = unConnectedPoints[0];
-            PathPoint closestNeighbor = closest.ClosestUnvisitedNeigbor();
-			float minDistance = closest.ManhattanDistance(closestNeighbor);
-
-            for (int i = 1; i < unConnectedPoints.Count; i++)
+            for (int i = 0; i < connectedPoints.Count; i++)
             {
-                PathPoint pathPoint = unConnectedPoints[i];
+                PathPoint pathPoint = connectedPoints[i];
                 closestNeighbor = pathPoint.ClosestUnvisitedNeigbor();
                 float distance = pathPoint.ManhattanDistance(closestNeighbor);
                 if (distance < minDistance)
                 {
+				    Debug.Log("Point found in Connected Points, with closest legit neighbor at distance: "+distance);
                     closest = pathPoint;
                     minDistance = distance;
                 }
             }
+			Debug.Log("PosB END: "+closest);
             return closest;
 		}
 
         internal void ConnectNeighbors(PathPoint other)
         {
-           connectedNeighbors.Add(other);
-           other.connectedNeighbors.Add(this);
+            Debug.Log("Connecting this: "+this+" to other: "+other);
+			connectedNeighbors.Add(other);
+			unvisitedNeighbors.Remove(other);
+			other.connectedNeighbors.Add(this);
+			other.unvisitedNeighbors.Remove(this);
         }
     }
 

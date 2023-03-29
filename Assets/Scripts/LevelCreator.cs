@@ -36,6 +36,7 @@ public class LevelCreator : MonoBehaviour
 	[SerializeField] private RandomWalkGeneratorPresetSO walkGeneratorPreset;
 
 	IEnumerable<Triangle> delaunay;
+	List<PathPoint> delaunayPathPoints;
 
 
 	private List<Mesh> surfacMeshes = new List<Mesh>();
@@ -450,7 +451,7 @@ public class LevelCreator : MonoBehaviour
 		Debug.Log("Delaunay Triangles Created");
 		Debug.Log("Delaunay Triangles Amount: "+delaunay.Count());
 
-		DelaunayTriangulator.FindMinimumPath(delaunay);
+		delaunayPathPoints = DelaunayTriangulator.FindMinimumPath(delaunay);
 
 		// Make Hallway Lines between Main Rooms
 
@@ -477,7 +478,7 @@ public class LevelCreator : MonoBehaviour
 		
 		Gizmos.color = Color.green;
 		Gizmos.DrawLine(Vector3.up, Vector3.right);
-
+		/*
 		if (delaunay != null)
 		{
 			Gizmos.color = Color.red;
@@ -488,6 +489,23 @@ public class LevelCreator : MonoBehaviour
 				{
 					Vector3 startPoint = new Vector3((float)triangle.Vertices[i].X, 0.2f, (float)triangle.Vertices[i].Y);
 					Vector3 endPoint = new Vector3((float)triangle.Vertices[(i+1)%3].X, 0.2f, (float)triangle.Vertices[(i + 1) % 3].Y);
+					//Debug.Log("Drawing line "+startPoint+" to "+endPoint);
+					Gizmos.DrawLine(startPoint*2, endPoint*2);		
+				}
+			}
+		}*/
+
+		if (delaunayPathPoints != null)
+		{
+			Gizmos.color = Color.green;
+
+			foreach (PathPoint pathPoint in delaunayPathPoints)
+			{
+				for (int i = 0; i < 3; i++)
+				{
+					Vector3 startPoint = new Vector3(pathPoint.pos.x, 0.2f, pathPoint.pos.y);
+					PathPoint closestNeighbor = pathPoint.ClosestNeigbor();
+					Vector3 endPoint = new Vector3(closestNeighbor.pos.x, 0.2f, closestNeighbor.pos.y);
 					//Debug.Log("Drawing line "+startPoint+" to "+endPoint);
 					Gizmos.DrawLine(startPoint*2, endPoint*2);		
 				}

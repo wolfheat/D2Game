@@ -72,101 +72,75 @@ namespace DelaunayVoronoi
             return BowyerWatson(pointEnumerable);
         }
 
-        public static IEnumerable<PathPoint> FindMinimumPath(IEnumerable<Triangle> triangles)
+        public static List<PathPoint> FindMinimumPath(IEnumerable<Triangle> triangles)
         {
             
             List<PathPoint> points = ConvertToPathPoints(triangles);
 
-            string print = "Points: ";
 
-            foreach (var point in points)
-            {
-                print += "(";
-                foreach (var neighbor in point.pathPoints)
-                {
-                    float distance = point.ManhattanDistance(neighbor);
-                    print += distance + ", ";
-
-                }
-                print += ")";
-            }
-
-            Debug.Log(print);
 
             return points;
 		}
         
         public static List<PathPoint> ConvertToPathPoints(IEnumerable<Triangle> triangles)
         {
-			/*
-            List<PathPoint> points = new List<PathPoint>();
-			HashSet<Point> uniquePoints = new HashSet<Point>();
-
-			foreach (var tri in triangles)
+            List<VectorTriangle> vectorTriangles = new List<VectorTriangle>();
+            foreach (var triangle in triangles)
             {
-                List<PathPoint> pathPoints = new List<PathPoint>();
-				for (int i = 0; i < 3; i++)
-                {
-                    PathPoint pathPoint = new PathPoint(tri.Vertices[i]); 
-                    pathPoints.Add(pathPoint);
-
-                    if(!points.Contains(pathPoint)) points.Add(pathPoint);
-				}
-                for (int i = 0; i < 3; i++)
-                {
-                    pathPoints[i].pathPoints.Add(pathPoints[(i+1)%3]);
-                    pathPoints[i].pathPoints.Add(pathPoints[(i+4)%3]);
-                }
+                VectorTriangle vectorTriangle = new VectorTriangle(triangle.ReturnAsVector2Int());
+                vectorTriangles.Add(vectorTriangle);
             }
-            return points;
-            */
-			List<PathPoint> pathPoints = new List<PathPoint>();
-			HashSet<Point> uniquePoints = new HashSet<Point>();
 
-			foreach (Triangle triangle in triangles)
+			List<PathPoint> pathPoints = new List<PathPoint>();
+
+			foreach (VectorTriangle triangle in vectorTriangles)
 			{
 				PathPoint[] points = new PathPoint[3];
 
 				for (int i = 0; i < 3; i++)
 				{
-					Point vertex = triangle.Vertices[i];
-					PathPoint point;
-                    if(vertex == null) Debug.Log("Vertex is NUll");
-
-					if (uniquePoints.Contains(vertex))
-					{
-						Debug.Log($"vertex: {vertex}, pathPoints: {string.Join(", ", pathPoints)}");
-						point = pathPoints.Find(p => p.Equals(vertex));
-						Debug.Log($"point: {point}");
-
-						Debug.Log("Point: "+i+" This vertex already exists: "+point);
-					}
-					else
-					{
-						point = new PathPoint(vertex);
-						uniquePoints.Add(vertex);
-						pathPoints.Add(point);
-                        Debug.Log("vertex("+i+"):"+vertex);
-					}
-					points[i] = point;
+					Vector2Int vertex = triangle.Vertices[i];
+					points[i] = new PathPoint(vertex);
 				}
 				for (int i = 0; i < 3; i++)
 				{
-					PathPoint point1 = points[i];
-					PathPoint point2 = points[(i + 1) % 3];
-
-                    Debug.Log("point1: "+point1+ " point2: "+point2);
-					if (!point1.pathPoints.Contains(point2))
-					{
-						point1.pathPoints.Add(point2);
-						point2.pathPoints.Add(point1);
-					}
+                    points[i].neighbors.Add(points[(i + 1) % 3]);
+                    points[i].neighbors.Add(points[(i + 2) % 3]);
 				}
+                pathPoints = AddOrCombineRange(pathPoints, points);
 			}
-
 			return pathPoints;
 		}
 
+        private static List<PathPoint> AddOrCombineRange(List<PathPoint> storedPoints, PathPoint[] newPoints)
+        {
+            foreach (var newPoint in newPoints)
+            {
+                bool exists = false;
+                foreach(var storedPoint in storedPoints)
+                {
+                	if (storedPoint.IsEqual(newPoint))
+                    {
+					    Debug.Log("Equal");
+                        foreach (var newNeighbor in newPoint.neighbors)
+                        {
+                            bool neighborexist = false;
+                            foreach (var storedNeighbor in storedPoint.neighbors)
+                            {
+                                if (storedNeighbor.IsEqual(newNeighbor))
+                                {
+                                    neighborexist = true;
+                                }
+                            }
+                            if(!neighborexist) storedPoint.neighbors.Add(newNeighbor);
+                        }
+                        exists = true;
+                    }
+                }
+                if(!exists) storedPoints.Add(newPoint);
+            }
+            return storedPoints;
+        }
 
         public IEnumerable<Triangle> BowyerWatson(IEnumerable<Point> points)
         {

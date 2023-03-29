@@ -4,38 +4,42 @@ using UnityEngine;
 
 namespace DelaunayVoronoi
 {
-    public class PathPoint : Point
+    public class PathPoint
     {
-        public List<PathPoint> pathPoints = new List<PathPoint>();
+        public List<PathPoint> neighbors = new List<PathPoint>();
+        public Vector2Int pos { get; set; }
 
-        public PathPoint(Point p) : base(p.X, p.Y)
+        public PathPoint(Vector2Int p)
         {
-        }
-        public PathPoint(double x, double y) : base(x, y)
-        {
+            pos = p;    
         }
 
         internal float ManhattanDistance(PathPoint neighbor)
         {
-            return Mathf.Abs((float)X-(float)neighbor.X)+Mathf.Abs((float)Y-(float)neighbor.Y);
+            return Vector2.Distance(pos,neighbor.pos);
+        }        
+
+        public bool IsEqual(PathPoint other)
+        {
+            Debug.Log("Check if equal: "+pos.Equals(other.pos));
+            return pos.Equals(other.pos);
         }
-		public override bool Equals(object obj)
-		{
-			if (obj == null || GetType() != obj.GetType())
-			{
-				return false;
-			}
-			PathPoint other = (PathPoint)obj;
-			return X == other.X && Y == other.Y;
-		}
-		public override int GetHashCode()
-		{
-			int hash = 17;
-			hash = hash * 31 + X.GetHashCode();
-			hash = hash * 31 + Y.GetHashCode();
-			return hash;
-		}
-	}
+
+        internal PathPoint ClosestNeigbor()
+        {
+            PathPoint closest = neighbors[0];
+            float minDistance = ManhattanDistance(closest);
+            foreach (var neighbor in neighbors)
+            {
+                if(ManhattanDistance(neighbor) < minDistance)
+                {
+                    closest = neighbor;
+                    minDistance = ManhattanDistance(neighbor);
+				}
+            }
+            return closest;
+        }
+    }
 
     public class Point
     {

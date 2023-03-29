@@ -1,12 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
+using UnityEngine;
 
 namespace DelaunayVoronoi
 {
+    public class VectorTriangle
+    {
+        public Vector2Int[] Vertices;
+        public VectorTriangle[] Neighbors;
+
+        public VectorTriangle(Vector2Int[] vertices)
+        {
+            Vertices = vertices;
+        }
+    }
     public class Triangle
     {
         public Point[] Vertices { get; } = new Point[3];
+        public Vector2Int[] ReturnAsVector2Int()
+        {
+            Vector2Int[] result = new Vector2Int[3];
+            for (int i = 0; i < Vertices.Length; i++)
+            {
+                Point vertex = Vertices[i];
+                result[i] = new Vector2Int(Mathf.RoundToInt((float)vertex.X), Mathf.RoundToInt((float)vertex.Y));
+            }
+            return result;
+        }
+
         public Point Circumcenter { get; private set; }
         public double RadiusSquared;
 

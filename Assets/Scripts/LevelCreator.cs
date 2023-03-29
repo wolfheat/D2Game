@@ -501,14 +501,15 @@ public class LevelCreator : MonoBehaviour
 
 			foreach (PathPoint pathPoint in delaunayPathPoints)
 			{
-				for (int i = 0; i < 3; i++)
+				foreach (var connectedNeighbor in pathPoint.connectedNeighbors)
 				{
 					Vector3 startPoint = new Vector3(pathPoint.pos.x, 0.2f, pathPoint.pos.y);
-					PathPoint closestNeighbor = pathPoint.ClosestNeigbor();
-					Vector3 endPoint = new Vector3(closestNeighbor.pos.x, 0.2f, closestNeighbor.pos.y);
+					PathPoint closestNeighbor = pathPoint.ClosestUnvisitedNeigbor();
+					Vector3 endPoint = new Vector3(connectedNeighbor.pos.x, 0.2f, connectedNeighbor.pos.y);
 					//Debug.Log("Drawing line "+startPoint+" to "+endPoint);
 					Gizmos.DrawLine(startPoint*2, endPoint*2);		
 				}
+
 			}
 		}
 		UnityEditor.EditorApplication.QueuePlayerLoopUpdate();

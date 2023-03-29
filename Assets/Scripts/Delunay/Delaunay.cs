@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Random = System.Random;
 
 namespace DelaunayVoronoi
@@ -78,7 +79,31 @@ namespace DelaunayVoronoi
             List<PathPoint> points = ConvertToPathPoints(triangles);
 
 
+            List<PathPoint> unConnectedPoints = new List<PathPoint>(points);
+            List<PathPoint> connectedPoints = new List<PathPoint>();
+            
+            PathPoint point = unConnectedPoints.First();
+			connectedPoints.Add(point);
+            unConnectedPoints.Remove(point);
+            int countTimer = 0;
+			while (unConnectedPoints.Count > 0 && countTimer < 10)
+            {
+                Debug.Log("unConnectedPoints.Count: "+ unConnectedPoints.Count);
+                countTimer++;
+                //
 
+                PathPoint closest = point.ClosestUnvisitedNeigbor();
+
+                point.connectedNeighbors.Add(closest);
+                point.unvisitedNeighbors.Remove(closest);
+                closest.connectedNeighbors.Add(point);
+                closest.unvisitedNeighbors.Remove(point);
+                unConnectedPoints.Remove(closest);
+                connectedPoints.Add(closest);
+
+                if(unConnectedPoints.Count>0) point = PathPoint.FindPointWithClosestNeighbor(connectedPoints);
+			}
+            if (countTimer == 10) Debug.LogError("Stuck in While loop, exiting.");
             return points;
 		}
         
@@ -104,8 +129,8 @@ namespace DelaunayVoronoi
 				}
 				for (int i = 0; i < 3; i++)
 				{
-                    points[i].neighbors.Add(points[(i + 1) % 3]);
-                    points[i].neighbors.Add(points[(i + 2) % 3]);
+                    points[i].unvisitedNeighbors.Add(points[(i + 1) % 3]);
+                    points[i].unvisitedNeighbors.Add(points[(i + 2) % 3]);
 				}
                 pathPoints = AddOrCombineRange(pathPoints, points);
 			}
@@ -121,18 +146,17 @@ namespace DelaunayVoronoi
                 {
                 	if (storedPoint.IsEqual(newPoint))
                     {
-					    Debug.Log("Equal");
-                        foreach (var newNeighbor in newPoint.neighbors)
+                        foreach (var newNeighbor in newPoint.unvisitedNeighbors)
                         {
                             bool neighborexist = false;
-                            foreach (var storedNeighbor in storedPoint.neighbors)
+                            foreach (var storedNeighbor in storedPoint.unvisitedNeighbors)
                             {
                                 if (storedNeighbor.IsEqual(newNeighbor))
                                 {
                                     neighborexist = true;
                                 }
                             }
-                            if(!neighborexist) storedPoint.neighbors.Add(newNeighbor);
+                            if(!neighborexist) storedPoint.unvisitedNeighbors.Add(newNeighbor);
                         }
                         exists = true;
                     }

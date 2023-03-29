@@ -6,7 +6,8 @@ namespace DelaunayVoronoi
 {
     public class PathPoint
     {
-        public List<PathPoint> neighbors = new List<PathPoint>();
+        public List<PathPoint> unvisitedNeighbors = new List<PathPoint>();
+        public List<PathPoint> connectedNeighbors = new List<PathPoint>();
         public Vector2Int pos { get; set; }
 
         public PathPoint(Vector2Int p)
@@ -21,15 +22,16 @@ namespace DelaunayVoronoi
 
         public bool IsEqual(PathPoint other)
         {
-            Debug.Log("Check if equal: "+pos.Equals(other.pos));
             return pos.Equals(other.pos);
         }
 
-        internal PathPoint ClosestNeigbor()
+        internal PathPoint ClosestUnvisitedNeigbor()
         {
-            PathPoint closest = neighbors[0];
+            if(unvisitedNeighbors.Count==0) return null;
+
+            PathPoint closest = unvisitedNeighbors[0];
             float minDistance = ManhattanDistance(closest);
-            foreach (var neighbor in neighbors)
+            foreach (var neighbor in unvisitedNeighbors)
             {
                 if(ManhattanDistance(neighbor) < minDistance)
                 {
@@ -38,6 +40,34 @@ namespace DelaunayVoronoi
 				}
             }
             return closest;
+        }
+
+        internal static PathPoint FindPointWithClosestNeighbor(List<PathPoint> unConnectedPoints)
+        {
+            if(unConnectedPoints.Count == 1) return unConnectedPoints[0];
+
+			PathPoint closest = unConnectedPoints[0];
+            PathPoint closestNeighbor = closest.ClosestUnvisitedNeigbor();
+			float minDistance = closest.ManhattanDistance(closestNeighbor);
+
+            for (int i = 1; i < unConnectedPoints.Count; i++)
+            {
+                PathPoint pathPoint = unConnectedPoints[i];
+                closestNeighbor = pathPoint.ClosestUnvisitedNeigbor();
+                float distance = pathPoint.ManhattanDistance(closestNeighbor);
+                if (distance < minDistance)
+                {
+                    closest = pathPoint;
+                    minDistance = distance;
+                }
+            }
+            return closest;
+		}
+
+        internal void ConnectNeighbors(PathPoint other)
+        {
+           connectedNeighbors.Add(other);
+           other.connectedNeighbors.Add(this);
         }
     }
 

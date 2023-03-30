@@ -90,6 +90,14 @@ namespace DelaunayVoronoi
             List<PathPoint> connectedPoints = new List<PathPoint>();
             
             PathPoint point = unConnectedPoints.First();
+            // Check if any is connected to this point
+            foreach (var u in unConnectedPoints)
+            {
+                if(u.unvisitedNeighbors.Contains(point)) Debug.Log("Connected to point " + u.pos);
+            }
+
+
+
             point.SetClosest();
 			connectedPoints.Add(point);
             unConnectedPoints.Remove(point);
@@ -103,41 +111,59 @@ namespace DelaunayVoronoi
                 //
 
 				PathPoint closest = point.closest;
-                if(closest==null) Debug.Log("points closest neighbor is null");
+                if(closest==null) Debug.Log("Connect "+point.pos+" to "+closest.pos);
                 point.ConnectNeighbors(closest);
+                Debug.Log("Connected Point "+point.pos+" with "+closest.pos+" amount of connected neighbors are now("+point.connectedNeighbors.Count+","+closest.connectedNeighbors.Count+")");
+                
                 if (!unConnectedPoints.Contains(closest))
                 {
-                    Debug.Log("UnConnected does not contain closest: "+closest.pos);
-                    foreach (PathPoint p in unConnectedPoints)
-                    {
-                        Debug.Log("But contains "+p.pos);
-                    }
-
+                    Debug.LogWarning("UnConnected does not contain closest: "+closest.pos);
                 }
-                Debug.Log("Remove from unConnected WAS:"+unConnectedPoints.Count+" Closest is: "+closest);
-			    unConnectedPoints.Remove(closest);
-				Debug.Log("Remove Point:" + closest.pos);
 
-				Debug.Log("Removed from unConnected NOW:"+unConnectedPoints.Count);
+                int unconnectedcounter = unConnectedPoints.Count;
+                //Debug.Log("Remove from UnConnected WAS:"+unConnectedPoints.Count+" Closest is: "+closest);
+			    unConnectedPoints.Remove(closest);
+				Debug.Log("Remove Point:" + closest.pos+" from Unconnected to Connected");
+                if(unConnectedPoints.Count == unconnectedcounter) Debug.LogWarning("Could NOT remove from Unconnected: "+unConnectedPoints.Count);
+
                 connectedPoints.Add(closest);
+                PrintLists(connectedPoints,unConnectedPoints);
 
 				for (int i = 0; i < connectedPoints.Count; i++)
 				{
 					connectedPoints[i].SetClosest();
-				}
+                }
+                Debug.Log("Calculating new Closest neighbors");
 
-                Debug.Log("Unconnected Points count: "+unConnectedPoints.Count);
-                if (unConnectedPoints.Count > 0)
+				if (unConnectedPoints.Count > 0)
                 {
-                    Debug.Log("Unconnected Points still available: "+unConnectedPoints.Count);
                     point = PathPoint.FindPointWithClosestNeighbor(connectedPoints);
-                    Debug.Log("Finding Pont: "+point);
+                    if(point != null) Debug.Log("Finding One Connected Point: "+point.pos);
+                    if(point == null) Debug.Log("Finding One Connected Point: NULL");
                 }
 			}
             if (countTimer == 50) Debug.LogError("Stuck in While loop, exiting.");
             return points;
 		}
         
+        private static void PrintLists(List<PathPoint> connectedPoints, List<PathPoint> unConnectedPoints)
+        {
+			string listString = "Unconnected: ";
+			foreach (PathPoint p in unConnectedPoints)
+			{
+				listString += p.pos;
+			}
+			listString += " Connected: ";
+			foreach (PathPoint p in connectedPoints)
+			{
+                listString += p.pos + "-";
+                foreach (PathPoint connected in p.connectedNeighbors)
+                    listString += connected.pos;
+                listString += " || ";
+			}
+			Debug.Log(listString);
+		}
+
         public static List<PathPoint> ConvertToPathPoints(IEnumerable<Triangle> triangles)
         {
             List<VectorTriangle> vectorTriangles = new List<VectorTriangle>();

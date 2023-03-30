@@ -26,6 +26,7 @@ namespace DelaunayVoronoi
 
         public bool IsVisited()
         {
+            Debug.Log("Checking VISITED "+pos+" "+ (connectedNeighbors.Count > 0));
             return (connectedNeighbors.Count>0);
         }
         
@@ -70,8 +71,6 @@ namespace DelaunayVoronoi
             PathPoint closest = null;
             //PathPoint closestNeighbor;
 			float minDistance = 1000f;
-
-			Debug.Log("Finding Point With Closest Neighbor START: ");
 
             foreach(PathPoint point in connectedPoints)
             {
@@ -131,7 +130,31 @@ namespace DelaunayVoronoi
 			other.unvisitedNeighbors.Remove(this);
             if (other.unvisitedNeighbors.Contains(this)) Debug.LogWarning("Other was not able to remove this PathPoint");
         }
-    }
+
+        // --- CUSTOM METHODS ---
+		public bool Equals(PathPoint other)
+		{
+			if (other == null) return false;
+			return pos.x == other.pos.x && pos.y == other.pos.y; // Define equality criteria based on Id and Name
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj == null) return false;
+			if (!(obj is PathPoint other)) return false;
+			return Equals(other);
+		}
+
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				int hash = 17;
+				hash = hash * 23 + pos.GetHashCode();
+				return hash;
+			}
+		}
+	}
 
     public class Point
     {

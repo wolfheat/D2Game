@@ -174,6 +174,7 @@ namespace DelaunayVoronoi
             }
 
 			List<PathPoint> pathPoints = new List<PathPoint>();
+			Dictionary<Vector2Int,PathPoint> dictionary = new Dictionary<Vector2Int, PathPoint>();
 
 			foreach (VectorTriangle triangle in vectorTriangles)
 			{
@@ -182,16 +183,27 @@ namespace DelaunayVoronoi
 				for (int i = 0; i < 3; i++)
 				{
 					Vector2Int vertex = triangle.Vertices[i];
-					points[i] = new PathPoint(vertex);
+                    if(dictionary.ContainsKey(vertex))
+					    points[i] = dictionary[vertex];
+                    else
+                    {
+                        PathPoint newPathPoint = new PathPoint(vertex);
+                        points[i] = newPathPoint;
+                        dictionary.Add(vertex, newPathPoint);
+                    }
 				}
 				for (int i = 0; i < 3; i++)
 				{
                     points[i].unvisitedNeighbors.Add(points[(i + 1) % 3]);
                     points[i].unvisitedNeighbors.Add(points[(i + 2) % 3]);
 				}
-                pathPoints = AddOrCombineRange(pathPoints, points);
+                //pathPoints = AddOrCombineRange(pathPoints, points);
 			}
-			return pathPoints;
+
+            return dictionary.Values.ToList();
+
+
+			//return pathPoints;
 		}
 
         private static List<PathPoint> AddOrCombineRange(List<PathPoint> storedPoints, PathPoint[] newPoints)

@@ -103,22 +103,32 @@ namespace DelaunayVoronoi
 
         public void SetClosest()
         {
+            Debug.Log("--------------------------");
+            Debug.Log("Setting Closest for Point: "+pos);
             PathPoint closeNeighbor = null;
             float distance = 1000f;
+            Debug.Log("Closest Point: NONE (start)");
             foreach (var unvisited in unvisitedNeighbors)
             {
                 float newDistance = ManhattanDistance(unvisited);
 				if (newDistance < distance && !unvisited.IsVisited())
                 {
+                    Debug.Log("Found a Closest Point: "+unvisited.pos);
                     closeNeighbor = unvisited;
                     distance = newDistance;
                 }
             }
             if (closeNeighbor != null)
             {
+                Debug.Log("Found the Closest Point: "+closeNeighbor.pos+" at distance "+distance);
                 closest = closeNeighbor;
                 closestDistance = distance;
             }
+            else
+            {
+                Debug.Log("Found the Closest Point: NONE FOUND");
+            }
+            Debug.Log("--------------------------");
         }
 
         internal void ConnectNeighbors(PathPoint other)
@@ -128,7 +138,7 @@ namespace DelaunayVoronoi
 			unvisitedNeighbors.Remove(other);
 			other.connectedNeighbors.Add(this);
 			other.unvisitedNeighbors.Remove(this);
-            if (other.unvisitedNeighbors.Contains(this)) Debug.LogWarning("Other was not able to remove this PathPoint");
+            if (other.unvisitedNeighbors.Contains(this)) Debug.LogWarning("Other "+ other.pos+" could not remove this PathPoint at "+pos);
         }
 
         // --- CUSTOM METHODS ---

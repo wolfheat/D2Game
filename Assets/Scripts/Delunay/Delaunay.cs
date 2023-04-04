@@ -40,21 +40,21 @@ namespace DelaunayVoronoi
             return points;
         }
 
-        public IEnumerable<Triangle> BowyerWatson(List<Vector2Int> points)
+        public IEnumerable<Triangle> BowyerWatson(List<Vector2> points)
         {
             var MinX = points[0].x;
             var MinY = points[0].y;
             MaxX = points[0].x;
             MaxY = points[0].y;
 
-            foreach (Vector2Int p in points)
+            foreach (Vector2 p in points)
             {
                 if(p.x<MinX) MinX = p.x;
                 if(p.x>MaxX) MaxX = p.x;
                 if(p.y<MinY) MinY = p.y;
                 if(p.y>MaxY) MaxY = p.y;
             }
-            int margin = 10;
+            int margin = 100;
             MinX -= margin;
             MinY -= margin;
             MaxX += margin;
@@ -300,6 +300,109 @@ namespace DelaunayVoronoi
         {
             var badTriangles = triangles.Where(o => o.IsPointInsideCircumcircle(point));
             return new HashSet<Triangle>(badTriangles);
+        }
+
+		internal static Dictionary<Point, List<Point>> FindMinimumPathVersion2(IEnumerable<Triangle> triangles)
+		{
+            // Have triangles
+            // Make Dictionary with a list
+
+            Dictionary<Point, List<Point>> pointDictionary = new Dictionary<Point, List<Point>>(new PointEqualityComparer());
+            Dictionary<Point, List<Point>> connectedDictionary = new Dictionary<Point, List<Point>>(new PointEqualityComparer());
+
+            foreach (var triangle in triangles)
+            {
+                for (int i = 0; i < triangle.Vertices.Length; i++)
+                {
+                    Point key = triangle.Vertices[i];
+
+					if (!pointDictionary.ContainsKey(key)) pointDictionary.Add(key, new List<Point>());
+					if(!((List<Point>)pointDictionary[key]).Contains(triangle.Vertices[(i + 1) % 3], new PointEqualityComparer())) pointDictionary[key].Add(triangle.Vertices[(i+1)%3]);
+					if(!((List<Point>)pointDictionary[key]).Contains(triangle.Vertices[(i + 2) % 3], new PointEqualityComparer())) pointDictionary[key].Add(triangle.Vertices[(i+2)%3]);                    
+                }
+            }
+
+			PrintDictionary(pointDictionary);
+
+
+			// Get random Point And Add it as connected
+			Point start = pointDictionary.FirstOrDefault().Key;
+            connectedDictionary.Add(start, new List<Point>());
+
+            Debug.Log("STARTING COMMECTION FROM "+start);
+
+            //pointDictionary.Remove(start);
+
+            /*
+            // Remove start Position for all connected Points
+            foreach (var connection in pointDictionary[start])
+            {
+                pointDictionary[connection].Remove(start);
+            }
+            // Remove Start Position from Dictionary
+            pointDictionary.Remove(start);
+            */
+
+            int emergencyCounter = 0;
+
+			while (connectedDictionary.Count < pointDictionary.Count && emergencyCounter < 100)
+            {
+
+
+                Point closestChecked = null;
+                Point closestNeighbor = null;
+                float distance = 10000f;
+
+                // Find Closest Points
+                foreach (Point connectedPoint in connectedDictionary.Keys)
+                {
+                    foreach (var neighbor in pointDictionary[connectedPoint])
+                    {
+                        if (connectedDictionary.ContainsKey(neighbor)) continue;
+
+                        float newDistance = connectedPoint.ManHattanDistance(neighbor);
+                        if(newDistance < distance)
+                        {
+                            closestNeighbor = neighbor;
+                            closestChecked = connectedPoint;
+                            distance = newDistance;
+                        }
+                    }
+
+                }
+                if (closestNeighbor == null) Debug.LogWarning("No Closest Neighbor found");
+                else
+                {
+                    connectedDictionary[closestChecked].Add(closestNeighbor);
+                    connectedDictionary.Add(closestNeighbor, new List<Point>());
+                    connectedDictionary[closestNeighbor].Add(closestChecked);
+                }
+
+                emergencyCounter++;
+                if (emergencyCounter == 100) Debug.LogError("Emergency Counter 100");
+            }
+
+            Debug.Log("Dictionary Created, size: "+connectedDictionary.Count);
+            PrintDictionary(connectedDictionary);
+
+            return connectedDictionary;
+
+
+		}
+
+        private static void PrintDictionary(Dictionary<Point, List<Point>> pointDictionary)
+        {
+            Debug.Log("PRINT DICTIONARY");
+            foreach (var point in pointDictionary)
+            {
+                string printText = "";
+                for (int i = 0; i < point.Value.Count; i++)
+                {
+                    printText += point.Value[i];
+                }
+                Debug.Log("Point "+point.Key+" = "+printText);
+            }
+            Debug.Log("PRINT DICTIONARY - DONE");
         }
     }
 }

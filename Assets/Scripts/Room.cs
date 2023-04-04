@@ -21,6 +21,12 @@ public class Room
 		Vector2 center = new Vector2(pos.x + (size.x / 2), pos.y + (size.y / 2));
 		return Vector2Int.RoundToInt(center);
 	}
+	
+	internal Vector2 GetFloatCenter()
+	{
+		Vector2 center = new Vector2(pos.x + (size.x / 2), pos.y + (size.y / 2));
+		return center;
+	}
 
 	internal void Move()
 	{

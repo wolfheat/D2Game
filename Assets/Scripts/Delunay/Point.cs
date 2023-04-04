@@ -195,5 +195,23 @@ namespace DelaunayVoronoi
             //return $"{nameof(Point)} {_instanceId} {X:0.##}@{Y:0.##}";
             return "("+X+","+Y+")";
         }
+
+        internal float ManHattanDistance(Point neighbor)
+        {
+            return Mathf.RoundToInt((float)Math.Abs(X-neighbor.X) + (float)Math.Abs(Y-neighbor.Y));
+        }
     }
+
+	public class PointEqualityComparer : IEqualityComparer<Point>
+	{
+		public bool Equals(Point x, Point y)
+		{
+			return x.X == y.X && x.Y == y.Y;
+		}
+
+		public int GetHashCode(Point obj)
+		{
+			return obj.X.GetHashCode() ^ obj.Y.GetHashCode();
+		}
+	}
 }

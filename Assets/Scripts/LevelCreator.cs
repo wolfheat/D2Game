@@ -37,6 +37,7 @@ public class LevelCreator : MonoBehaviour
 
 	IEnumerable<Triangle> delaunay;
 	List<PathPoint> delaunayPathPoints;
+	Dictionary<Point,List<Point>> delaunayDictionary;
 
 
 	private List<Mesh> surfacMeshes = new List<Mesh>();
@@ -425,33 +426,41 @@ public class LevelCreator : MonoBehaviour
 		List<Room> restRooms = rooms.OrderBy(r => r.size.magnitude).Take(rooms.Count-8).ToList();
 		
 		
+		List<Vector2> roomFloatCenters = new List<Vector2>();
 		List<Vector2Int> roomCenters = new List<Vector2Int>();
 
 		foreach (Room room in mainRooms)
 		{
+			roomFloatCenters.Add(room.GetFloatCenter());
 			roomCenters.Add(room.GetCenter());
 		}
 
 
 		string roomSizeString = "";
+		string roomCenterString = "";
 
 		for (int i = 0; i < mainRooms.Count; i++)
 		{
 			roomSizeString += mainRooms[i].size.magnitude+" , ";
+			roomCenterString += roomCenters[i];
 		}
 		Debug.Log("Room Sizes: "+ roomSizeString);
+		Debug.Log("At Center: "+ roomCenterString);
 
 
 		// Find Dalaunay Triangulation lines
 
 		DelaunayTriangulator delaunayTriangulator = new DelaunayTriangulator();
 		
-		delaunay = delaunayTriangulator.BowyerWatson(roomCenters);
+		delaunay = delaunayTriangulator.BowyerWatson(roomFloatCenters);
 
 		Debug.Log("Delaunay Triangles Created");
 		Debug.Log("Delaunay Triangles Amount: "+delaunay.Count());
 
-		delaunayPathPoints = DelaunayTriangulator.FindMinimumPath(delaunay);
+		//delaunayPathPoints = DelaunayTriangulator.FindMinimumPath(delaunay);
+		delaunayDictionary = DelaunayTriangulator.FindMinimumPathVersion2(delaunay);
+
+		Debug.Log("Dictionary Size: "+delaunayDictionary.Count);
 
 		// Make Hallway Lines between Main Rooms
 
@@ -495,6 +504,23 @@ public class LevelCreator : MonoBehaviour
 			}
 		}*/
 
+		if (delaunayDictionary != null)
+		{
+			Gizmos.color = Color.green;
+
+			foreach (Point point in delaunayDictionary.Keys)
+			{
+				foreach (var point2 in delaunayDictionary[point])
+				{
+					Vector3 startPoint = new Vector3((float)point.X, 0.2f, (float)point.Y);
+					//PathPoint closestNeighbor = pathPoint.closest;
+					Vector3 endPoint = new Vector3((float)point2.X, 0.2f, (float)point2.Y);
+					//Debug.Log("Drawing line "+startPoint+" to "+endPoint);
+					Gizmos.DrawLine(startPoint*2, endPoint*2);		
+				}
+
+			}
+		}
 		if (delaunayPathPoints != null)
 		{
 			Gizmos.color = Color.green;

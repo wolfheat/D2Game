@@ -38,6 +38,7 @@ public class LevelCreator : MonoBehaviour
 	IEnumerable<Triangle> delaunay;
 	List<PathPoint> delaunayPathPoints;
 	Dictionary<Point,List<Point>> delaunayDictionary;
+	Dictionary<Point,List<Point>> delaunayPathwayDictionary;
 
 
 	private List<Mesh> surfacMeshes = new List<Mesh>();
@@ -459,8 +460,10 @@ public class LevelCreator : MonoBehaviour
 
 		//delaunayPathPoints = DelaunayTriangulator.FindMinimumPath(delaunay);
 		delaunayDictionary = DelaunayTriangulator.FindMinimumPathVersion2(delaunay);
+		delaunayPathwayDictionary = DelaunayTriangulator.DelunayDictionaryToPathWays(delaunayDictionary);
 
 		Debug.Log("Dictionary Size: "+delaunayDictionary.Count);
+		Debug.Log("Dictionary Pathway Size: "+delaunayPathwayDictionary.Count);
 
 		// Make Hallway Lines between Main Rooms
 
@@ -504,6 +507,26 @@ public class LevelCreator : MonoBehaviour
 			}
 		}*/
 
+		if (delaunayPathwayDictionary != null)
+		{
+			int lines = 0;
+			Gizmos.color = Color.red;
+
+			foreach (Point point in delaunayPathwayDictionary.Keys)
+			{
+				foreach (var point2 in delaunayPathwayDictionary[point])
+				{
+					Vector3 startPoint = new Vector3((float)point.X, 0.2f, (float)point.Y);
+					//PathPoint closestNeighbor = pathPoint.closest;
+					Vector3 endPoint = new Vector3((float)point2.X, 0.2f, (float)point2.Y);
+					//Debug.Log("Drawing line "+startPoint+" to "+endPoint);
+					Gizmos.DrawLine(startPoint*2, endPoint*2);
+					lines++;
+				}
+
+			}
+		}
+		
 		if (delaunayDictionary != null)
 		{
 			Gizmos.color = Color.green;
@@ -521,6 +544,7 @@ public class LevelCreator : MonoBehaviour
 
 			}
 		}
+
 		if (delaunayPathPoints != null)
 		{
 			Gizmos.color = Color.green;

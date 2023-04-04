@@ -404,5 +404,39 @@ namespace DelaunayVoronoi
             }
             Debug.Log("PRINT DICTIONARY - DONE");
         }
+
+        internal static Dictionary<Point, List<Point>> DelunayDictionaryToPathWays(Dictionary<Point, List<Point>> delaunayDictionary)
+        {
+			// Have A Dictionary
+			Dictionary<Point, List<Point>> wayDictionary = new Dictionary<Point, List<Point>>();
+
+            foreach (var point in delaunayDictionary.Keys)
+            {
+                    foreach(var target in delaunayDictionary[point])
+                    {
+                        // Create new Point inbetween
+                        Point newMiddlePoint = point.GetCorner(target);
+
+                        if (!wayDictionary.ContainsKey(point))
+                        {
+                            wayDictionary.Add(point, new List<Point>());
+                        }
+
+                        wayDictionary[point].Add(newMiddlePoint);
+
+                        if (!wayDictionary.ContainsKey(target))
+                        {
+                            wayDictionary.Add(target, new List<Point>());
+                        }
+
+                        wayDictionary[target].Add(newMiddlePoint);
+
+                        delaunayDictionary[target].Remove(point);
+                    }
+                
+            }
+            return wayDictionary;
+
+		}
     }
 }

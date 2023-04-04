@@ -200,6 +200,20 @@ namespace DelaunayVoronoi
         {
             return Mathf.RoundToInt((float)Math.Abs(X-neighbor.X) + (float)Math.Abs(Y-neighbor.Y));
         }
+
+        internal Point GetCorner(Point target)
+        {
+            bool bottomRight = UnityEngine.Random.Range(0,2)==1?true:false;
+
+            double Xpos = bottomRight?target.X:this.X;
+            double Ypos = bottomRight?this.Y: target.Y;
+            Point newPoint = new Point(Xpos, Ypos);
+
+			//Debug.Log("Getting Corner between "+this+" and "+target+" its "+newPoint);
+
+			return newPoint;
+
+        }
     }
 
 	public class PointEqualityComparer : IEqualityComparer<Point>

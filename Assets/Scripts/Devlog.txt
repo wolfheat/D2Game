@@ -73,7 +73,12 @@ Nov 2022
 26/3	* Adding Delunay computation
 		* Removed StartTriangles in Delunay
 27/3	* Separated main and rest triangles for main room and possible addon rooms for corridors later
+4/4		* Delunay Working, also Made simple Pathway generation between rooms that forms straight lines
 
+		// TODO
+		// PathWays working but are just angled straight lines between rooms
+		// Better to use A* alg to find shortest path with weights
+		// Preplaces Unused Rooms should be lower cost to move through
 
 		* TODO: Implement Minimum Spanning Tree
 

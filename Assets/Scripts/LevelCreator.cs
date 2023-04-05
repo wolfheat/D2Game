@@ -40,12 +40,16 @@ public class LevelCreator : MonoBehaviour
 	Dictionary<Point,List<Point>> delaunayDictionary;
 	Dictionary<Point,List<Point>> delaunayPathwayDictionary;
 
+	[Space(10, order = 0)]
+	[Header("Dispersion Dungeon Creator")]
+	[SerializeField] private int DispersionRoomsAmt = 8;
+	[SerializeField, Range(1f,5f)] private float HallwayRoomsRatio = 2.5f;
 
 	private List<Mesh> surfacMeshes = new List<Mesh>();
     int GroundLayer;
     int ResourceLayer;
 	public const float Tilesize = 2f;
-    private Vector2Int Levelsize = new Vector2Int(25,15);
+	private Vector2Int Levelsize = new Vector2Int(25,15);
 
 
 
@@ -94,10 +98,10 @@ public class LevelCreator : MonoBehaviour
 			DestroyImmediate(children[i].gameObject);
 	}
 
-	private void GenerateLavaFloorTileAt(Vector2Int pos)
+	private void GenerateForcedFloorTileAt(Vector2Int pos,int index)
 	{
 		GameObject tile;
-		tile = Instantiate(floorTilesPrefab[7], TileHolder.transform);
+		tile = Instantiate(floorTilesPrefab[index], TileHolder.transform);
 		tile.transform.localPosition = new Vector3(pos.x * Tilesize, 0, pos.y * Tilesize);
 		tile.layer = GroundLayer;
 	}
@@ -393,53 +397,23 @@ public class LevelCreator : MonoBehaviour
 		ClearLevel();
 
 		// Generate the level
-		List<Room> rooms = new List<Room>();
-
-
-		int totalMovementsNeeded = 0;
-		int maxIterations = 100;
-		int iteration;
-		// Generate X Rooms at Distance X from center at random
-		for (int i = 0; i < SeparationRoomsAmt; i++)
-		{
-			iteration = 0;
-			Room newRoom = RoomMaker.GenerateRandomRoom();
-			while (RoomMaker.OverlapAny(newRoom, rooms) && iteration<maxIterations)
-			{
-				newRoom.Move();
-				iteration++;
-				totalMovementsNeeded++;
-			}
-			if (iteration == maxIterations)
-			{
-				Debug.LogWarning("Move new room iteration reached MAX, stopped moving overlapping room. Room at: "+newRoom.tempPos);
-
-			}
-			//Lock Room and Add to Rooms
-			rooms.Add(newRoom);
-		}
-		Debug.Log("Creation of Dispersion Dungeon needed "+totalMovementsNeeded+" movements to complete.");
+		List<Room> rooms = RoomMaker.GenerateRandomDungeon(DispersionRoomsAmt, HallwayRoomsRatio);
 
 		HashSet<Vector2Int> floorPositions = new HashSet<Vector2Int>();
 
 		// Select X largest rooms as main rooms.		
-		List<Room> mainRooms = rooms.OrderByDescending(r => r.size.magnitude).Take(8).ToList();
-		List<Room> restRooms = rooms.OrderBy(r => r.size.magnitude).Take(rooms.Count-8).ToList();
-		
-		
-		List<Vector2> roomFloatCenters = new List<Vector2>();
-		List<Vector2Int> roomCenters = new List<Vector2Int>();
-
-		foreach (Room room in mainRooms)
-		{
-			roomFloatCenters.Add(room.GetFloatCenter());
-			roomCenters.Add(room.GetCenter());
-		}
+		List<Room> mainRooms = rooms.OrderByDescending(r => r.size.magnitude).Take(DispersionRoomsAmt).ToList();
+		List<Room> restRooms = rooms.OrderBy(r => r.size.magnitude).Take(rooms.Count- DispersionRoomsAmt).ToList();
+		List<Room> selectedRestRooms = new List<Room>();
 
 
+		List<Vector2> roomCentersAsFloats = RoomMaker.GetCentersAsFloats(mainRooms);
+		List<Vector2Int> roomCenters = RoomMaker.GetCentersAsInts(mainRooms);
+
+		/* PRINT ROOM CENTERS
 		string roomSizeString = "";
 		string roomCenterString = "";
-
+		 
 		for (int i = 0; i < mainRooms.Count; i++)
 		{
 			roomSizeString += mainRooms[i].size.magnitude+" , ";
@@ -447,23 +421,30 @@ public class LevelCreator : MonoBehaviour
 		}
 		Debug.Log("Room Sizes: "+ roomSizeString);
 		Debug.Log("At Center: "+ roomCenterString);
+		*/
 
 
 		// Find Dalaunay Triangulation lines
-
-		DelaunayTriangulator delaunayTriangulator = new DelaunayTriangulator();
-		
-		delaunay = delaunayTriangulator.BowyerWatson(roomFloatCenters);
-
-		Debug.Log("Delaunay Triangles Created");
-		Debug.Log("Delaunay Triangles Amount: "+delaunay.Count());
-
-		//delaunayPathPoints = DelaunayTriangulator.FindMinimumPath(delaunay);
+		DelaunayTriangulator delaunayTriangulator = new DelaunayTriangulator();		
+		delaunay = delaunayTriangulator.BowyerWatson(roomCentersAsFloats);
 		delaunayDictionary = DelaunayTriangulator.FindMinimumPathVersion2(delaunay);
 		delaunayPathwayDictionary = DelaunayTriangulator.DelunayDictionaryToPathWays(delaunayDictionary);
 
-		Debug.Log("Dictionary Size: "+delaunayDictionary.Count);
-		Debug.Log("Dictionary Pathway Size: "+delaunayPathwayDictionary.Count);
+
+		selectedRestRooms = RoomMaker.SelectRooms(restRooms, delaunayPathwayDictionary);
+
+
+		restRooms.RemoveAll(r => selectedRestRooms.Contains(r));
+		Debug.Log("SelectedRooms: "+selectedRestRooms.Count);
+		Debug.Log("RestRooms: "+restRooms.Count);
+
+		// TODO
+		// PathWays working but are just angled straight lines between rooms
+		// Better to use A* alg to find shortest path with weights
+		// Preplaces Unused Rooms should be lower cost to move through
+
+		//Debug.Log("Dictionary Size: "+delaunayDictionary.Count);
+		//Debug.Log("Dictionary Pathway Size: "+delaunayPathwayDictionary.Count);
 
 		// Make Hallway Lines between Main Rooms
 
@@ -472,15 +453,15 @@ public class LevelCreator : MonoBehaviour
 		// Add in a Main Hallway of a certain width around the hallway lines
 
 
-
-
-
 		// Generate Map to show it
 		foreach (Room room in mainRooms){floorPositions.UnionWith(GetAllRoomTiles(room));}
 		GenerateAllTilesForThisFloorPosition(floorPositions);
 		floorPositions.Clear();
 		foreach (Room room in restRooms){floorPositions.UnionWith(GetAllRoomTiles(room));}
-		GenerateAllTilesForThisFloorPosition(floorPositions,true);
+		GenerateAllTilesForThisFloorPosition(floorPositions,7);
+		floorPositions.Clear();
+		foreach (Room room in selectedRestRooms){floorPositions.UnionWith(GetAllRoomTiles(room));}
+		GenerateAllTilesForThisFloorPosition(floorPositions,8);
 
 		SetPlayerAtStart(walkGeneratorPreset.playerStartPosition);
 	}
@@ -614,12 +595,12 @@ public class LevelCreator : MonoBehaviour
 		SetPlayerAtStart(walkGeneratorPreset.playerStartPosition);
 	}
 
-	private void GenerateAllTilesForThisFloorPosition(HashSet<Vector2Int> floorPositions,bool IsLava = false)
+	private void GenerateAllTilesForThisFloorPosition(HashSet<Vector2Int> floorPositions,int ForceType = 0)
 	{
 		foreach (var floor in floorPositions)
 		{
-			if (IsLava) GenerateLavaFloorTileAt(floor);
-			else GenerateFloorTileAt(floor);
+			if (ForceType == 0) GenerateFloorTileAt(floor);
+			else GenerateForcedFloorTileAt(floor, ForceType);
 		}
 
 	}

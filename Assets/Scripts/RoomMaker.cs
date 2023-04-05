@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using DelaunayVoronoi;
+using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -81,5 +83,89 @@ public static class RoomMaker
 			if(Overlap(room,roomToCheck))return true;			
 		}
 		return false;
+	}
+
+	internal static List<Room> GenerateRandomDungeon(int amt, float hallwayRoomsRatio)
+	{
+		List<Room> rooms = new List<Room>();
+		int totalMovementsNeeded = 0;
+		int maxIterations = 100;
+		int iteration;
+
+		int totalRooms = Mathf.RoundToInt(amt * hallwayRoomsRatio);
+
+		// Generate X Rooms at Distance X from center at random
+		for (int i = 0; i < totalRooms; i++)
+		{
+			iteration = 0;
+			Room newRoom = RoomMaker.GenerateRandomRoom();
+			while (RoomMaker.OverlapAny(newRoom, rooms) && iteration < maxIterations)
+			{
+				newRoom.Move();
+				iteration++;
+				totalMovementsNeeded++;
+			}
+			if (iteration == maxIterations)
+			{
+				Debug.LogWarning("Move new room iteration reached MAX, stopped moving overlapping room. Room at: " + newRoom.tempPos);
+
+			}
+			//Lock Room and Add to Rooms
+			rooms.Add(newRoom);
+		}
+		Debug.Log("Creation of Dispersion Dungeon needed " + totalMovementsNeeded + " movements to complete.");
+
+		return rooms;
+	}
+
+	internal static List<Vector2> GetCentersAsFloats(List<Room> mainRooms)
+	{
+		List<Vector2> centers = new List<Vector2>();
+
+		foreach (Room room in mainRooms)
+		{
+			centers.Add(room.GetFloatCenter());
+		}
+		return centers;
+
+	}
+	internal static List<Vector2Int> GetCentersAsInts(List<Room> mainRooms)
+	{
+		List<Vector2Int> centers = new List<Vector2Int>();
+
+		foreach (Room room in mainRooms)
+		{
+			centers.Add(room.GetCenter());
+		}
+		return centers;
+
+	}
+
+	internal static List<Room> SelectRooms(List<Room> restRooms, Dictionary<Point, List<Point>> delaunayPathwayDictionary)
+	{
+		List<Room> selectedRooms = new List<Room>();
+		int countTrue = 0;
+		int count = 0;
+
+		foreach (var point in delaunayPathwayDictionary.Keys)
+		{
+			foreach (var destination in delaunayPathwayDictionary[point])
+			{
+				foreach(Room room in restRooms)
+				{
+					if (selectedRooms.Contains(room)) continue;
+
+					if (room.CheckOverlap(point, destination))
+					{
+						selectedRooms.Add(room);
+						countTrue++;
+					}
+					else count++;
+
+				}
+			}
+		}
+		Debug.Log("Count of Overlaps: "+countTrue+" Not Overlap:"+count);
+		return selectedRooms;
 	}
 }

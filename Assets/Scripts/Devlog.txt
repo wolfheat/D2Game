@@ -74,6 +74,8 @@ Nov 2022
 		* Removed StartTriangles in Delunay
 27/3	* Separated main and rest triangles for main room and possible addon rooms for corridors later
 4/4		* Delunay Working, also Made simple Pathway generation between rooms that forms straight lines
+5/4		* Tried new method for selecting secondary rooms. Creating Gameobjects and running IntersectLine by Rays.
+
 
 		// TODO
 		// PathWays working but are just angled straight lines between rooms

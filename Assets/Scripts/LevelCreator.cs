@@ -431,7 +431,11 @@ public class LevelCreator : MonoBehaviour
 		delaunayPathwayDictionary = DelaunayTriangulator.DelunayDictionaryToPathWays(delaunayDictionary);
 
 
-		selectedRestRooms = RoomMaker.SelectRooms(restRooms, delaunayPathwayDictionary);
+		List<RoomGameObject> restRoomsWithColliders = MakeColliders(restRooms);
+
+		selectedRestRooms = RoomGameObject.SelectRooms(restRoomsWithColliders, delaunayPathwayDictionary);
+
+		//selectedRestRooms = RoomMaker.SelectRooms(restRooms, delaunayPathwayDictionary);
 
 
 		restRooms.RemoveAll(r => selectedRestRooms.Contains(r));
@@ -464,6 +468,25 @@ public class LevelCreator : MonoBehaviour
 		GenerateAllTilesForThisFloorPosition(floorPositions,8);
 
 		SetPlayerAtStart(walkGeneratorPreset.playerStartPosition);
+	}
+
+	private List<RoomGameObject> MakeColliders(List<Room> restRooms)
+	{
+		List<RoomGameObject> roomObjects = new List<RoomGameObject>();
+		foreach (Room room in restRooms)
+		{
+			Vector2 size = room.size;
+			Vector2 center = room.pos + size / 2f;
+			GameObject roomObject = new GameObject("Room Collider");
+			BoxCollider2D collider = roomObject.AddComponent<BoxCollider2D>();
+			collider.size = size;
+			collider.offset = center;
+			RoomGameObject roomGameObject = roomObject.AddComponent<RoomGameObject>();
+			roomGameObject.originalRoom = room;
+			roomGameObject.col = collider;
+			roomObjects.Add(roomGameObject);
+		}
+		return roomObjects;
 	}
 
 	private void OnDrawGizmos()

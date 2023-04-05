@@ -140,7 +140,7 @@ public static class RoomMaker
 		return centers;
 
 	}
-
+	/*
 	internal static List<Room> SelectRooms(List<Room> restRooms, Dictionary<Point, List<Point>> delaunayPathwayDictionary)
 	{
 		List<Room> selectedRooms = new List<Room>();
@@ -167,5 +167,5 @@ public static class RoomMaker
 		}
 		Debug.Log("Count of Overlaps: "+countTrue+" Not Overlap:"+count);
 		return selectedRooms;
-	}
+	}*/
 }

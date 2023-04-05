@@ -214,6 +214,11 @@ namespace DelaunayVoronoi
 			return newPoint;
 
         }
+
+        internal Vector2 ToVector2()
+        {
+            return new Vector2((float)X,(float)Y);
+        }
     }
 
 	public class PointEqualityComparer : IEqualityComparer<Point>

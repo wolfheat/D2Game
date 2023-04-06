@@ -48,6 +48,8 @@ public class LevelCreator : MonoBehaviour
 	[SerializeField, Range(1f,5f)] private float HallwayRoomsRatio = 2.5f;
 	[SerializeField] private bool ShowLines = false;
 
+	List<Vector2Int> doorOpenings = new List<Vector2Int>();
+
 	private List<Mesh> surfacMeshes = new List<Mesh>();
     int GroundLayer;
     int ResourceLayer;
@@ -460,7 +462,7 @@ public class LevelCreator : MonoBehaviour
 
 		roomType = new int[200, 200];
 
-		FillInRooms(mainRooms,1);
+		FillInRooms(mainRooms,100);
 		FillInRooms(selectedRestRooms,2);
 		FillInCorridor(delaunayPathwayDictionary,3);
 
@@ -513,31 +515,42 @@ public class LevelCreator : MonoBehaviour
 			for (int j = 0; j < roomType.GetLength(1); j++)
 			{
 				if (roomType[i, j] == 0) continue;
+				
 				//Create Tile
-
 				GameObject tile;
-				if (roomType[i, j] == 1) tile = GenerateFloorTileAt(new Vector2Int(i-100, j-100));
+				if (roomType[i, j] >= 100) tile = GenerateFloorTileAt(new Vector2Int(i-100, j-100));
 				else tile = GenerateForcedFloorTileAt(new Vector2Int(i - 100, j - 100), (roomType[i, j]+6));
 
+				//Create Wall
 				GenerateWallIfNeeded(i,j,tile);
-
-
 			}
 		}
 	}
 
-	private void GenerateWallIfNeeded(int i, int j, GameObject tile,bool surroundAll = true)
+	private void GenerateWallIfNeeded(int i, int j, GameObject tile,bool surroundAll = false)
 	{
+		if (IsDoorOpening(new Vector2Int(i-100,j-100))) return;
+
 		int currentType = roomType[i, j];
 
-		if ((surroundAll && roomType[i,j+1]==0) || (!surroundAll && roomType[i,j+1] != currentType)) CreateWallAt(Direction.up,tile,0);
+		if ((surroundAll && roomType[i, j + 1] == 0) || (!surroundAll && roomType[i, j + 1] != currentType)) CreateWallAt(Direction.up,tile,0);
 		if ((surroundAll && roomType[i + 1, j] == 0) || (!surroundAll && roomType[i + 1, j] != currentType)) CreateWallAt(Direction.right,tile,0);
 		if ((surroundAll && roomType[i, j - 1] == 0) || (!surroundAll && roomType[i, j - 1] != currentType)) CreateWallAt(Direction.down,tile,0);
 		if ((surroundAll && roomType[i - 1, j] == 0) || (!surroundAll && roomType[i - 1, j] != currentType)) CreateWallAt(Direction.left,tile,0);
 	}
 
+	private bool IsDoorOpening(Vector2Int vector2Int)
+	{
+		if(doorOpenings.Contains(vector2Int))return true;
+		return false;
+	}
+
 	private void FillInCorridor(Dictionary<Point, List<Point>> delaunayPathwayDictionary, int v,int sideSteps=1)
 	{
+		
+		doorOpenings = new List<Vector2Int>();
+
+
 		foreach (var path in delaunayPathwayDictionary)
 		{
 			foreach (var startPoint in delaunayPathwayDictionary.Keys)
@@ -563,7 +576,7 @@ public class LevelCreator : MonoBehaviour
 									// Make sure the position is within the bounds of the array
 									if (x >= 0 && x < roomType.GetLength(0) && y >= 0 && y < roomType.GetLength(1))
 									{
-										if (roomType[x,y] == 0)
+											if (roomType[x,y] == 0)
 										{
 											// Check if the position is within sideSteps distance
 											Vector2Int neighborID = new Vector2Int(x, y);
@@ -573,25 +586,36 @@ public class LevelCreator : MonoBehaviour
 								}
 							}
 						}
+						int lastType = roomType[100 + currentID.x, 100 + currentID.y];
 						currentID += step;
+						int thisType = roomType[100 + currentID.x, 100 + currentID.y];
+
+						if (((thisType >= 100 && thisType <= 199)|| (lastType >= 100 && lastType <= 199)) && lastType != 0 && thisType != lastType)
+						{
+							doorOpenings.Add(currentID);
+							doorOpenings.Add(currentID-step);
+						}
 					}
 
 				}
 			}
 		}
+		Debug.Log("Door openings: "+doorOpenings.Count);
 	}
 
 	private void FillInRooms(List<Room> mainRooms, int type)
 	{
+		int addedRoomId = 0;
 		foreach (Room room in mainRooms)
 		{
 			for (int i = 0; i < room.size.x; i++)
 			{
 				for (int j = 0; j < room.size.y; j++)
 				{
-					roomType[100+room.pos.x+i, 100 + room.pos.y+j] = type;
+					roomType[100+room.pos.x+i, 100 + room.pos.y+j] = type+addedRoomId;
 				}
 			}
+			if(type == 100) addedRoomId += 1;
 		}
 	}
 

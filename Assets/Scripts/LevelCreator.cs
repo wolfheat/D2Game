@@ -7,6 +7,7 @@ using UnityEngine.AI;
 using Random = UnityEngine.Random;
 using DelaunayVoronoi;
 using System.Net;
+using UnityEngine.InputSystem;
 
 public enum Direction {left,down,right,up}
 
@@ -51,7 +52,8 @@ public class LevelCreator : MonoBehaviour
 	public const float Tilesize = 2f;
 	private Vector2Int Levelsize = new Vector2Int(25,15);
 
-
+	int[,] roomType = new int[200, 200];
+	Vector2Int roomTypeOffset = new Vector2Int(100, 100);
 
 	private void Start()
     {
@@ -94,8 +96,9 @@ public class LevelCreator : MonoBehaviour
 	public void ClearLevel()
 	{
 		Transform[] children = TileHolder.GetComponentsInChildren<Transform>();
+		Debug.Log("CLEARING LEVEL, CHILDREN BEFORE: "+children.Length);
 		for (int i = children.Length-1; i > 0; i--)	
-			DestroyImmediate(children[i].gameObject);
+			DestroyImmediate(children[i].gameObject);		
 	}
 
 	private void GenerateForcedFloorTileAt(Vector2Int pos,int index)
@@ -431,16 +434,27 @@ public class LevelCreator : MonoBehaviour
 		delaunayPathwayDictionary = DelaunayTriangulator.DelunayDictionaryToPathWays(delaunayDictionary);
 
 
+
+		/*
 		List<RoomGameObject> restRoomsWithColliders = MakeColliders(restRooms);
-
 		selectedRestRooms = RoomGameObject.SelectRooms(restRoomsWithColliders, delaunayPathwayDictionary);
+		*/
 
-		//selectedRestRooms = RoomMaker.SelectRooms(restRooms, delaunayPathwayDictionary);
-
+		selectedRestRooms = RoomMaker.SelectRooms(restRooms, delaunayPathwayDictionary);
 
 		restRooms.RemoveAll(r => selectedRestRooms.Contains(r));
 		Debug.Log("SelectedRooms: "+selectedRestRooms.Count);
 		Debug.Log("RestRooms: "+restRooms.Count);
+
+		roomType = new int[200, 200];
+
+		FillInRooms(mainRooms,1);
+		FillInRooms(selectedRestRooms,2);
+		FillInCorridor(delaunayPathwayDictionary,3);
+
+		GenerateAllTilesFromRoomTypeArray();
+
+
 
 		// TODO
 		// PathWays working but are just angled straight lines between rooms
@@ -458,6 +472,7 @@ public class LevelCreator : MonoBehaviour
 
 
 		// Generate Map to show it
+		/*
 		foreach (Room room in mainRooms){floorPositions.UnionWith(GetAllRoomTiles(room));}
 		GenerateAllTilesForThisFloorPosition(floorPositions);
 		floorPositions.Clear();
@@ -466,8 +481,65 @@ public class LevelCreator : MonoBehaviour
 		floorPositions.Clear();
 		foreach (Room room in selectedRestRooms){floorPositions.UnionWith(GetAllRoomTiles(room));}
 		GenerateAllTilesForThisFloorPosition(floorPositions,8);
-
+		*/
 		SetPlayerAtStart(walkGeneratorPreset.playerStartPosition);
+	}
+
+	private void GenerateAllTilesFromRoomTypeArray()
+	{
+		// Array to Use roomType
+		for (int i = 0; i < roomType.GetLength(0); i++)
+		{
+			for (int j = 0; j < roomType.GetLength(1); j++)
+			{
+				if (roomType[i, j] == 0) continue;
+				//Create Tile
+				if (roomType[i, j] == 1) GenerateFloorTileAt(new Vector2Int(i-100, j-100));
+				else GenerateForcedFloorTileAt(new Vector2Int(i - 100, j - 100), (roomType[i, j]+6));
+			}
+		}
+	}
+
+	private void FillInCorridor(Dictionary<Point, List<Point>> delaunayPathwayDictionary, int v)
+	{
+		foreach (var path in delaunayPathwayDictionary)
+		{
+			foreach (var startPoint in delaunayPathwayDictionary.Keys)
+			{
+				foreach (var endPoint in delaunayPathwayDictionary[startPoint])
+				{
+					Vector2Int startID = Vector2Int.RoundToInt(startPoint.ToVector2());
+					Vector2Int endID   = Vector2Int.RoundToInt(endPoint.ToVector2());
+					int steps = Math.Abs(startID.x - endID.x) + Math.Abs(startID.y - endID.y);
+					Vector2Int step = Vector2Int.RoundToInt(((Vector2)endID - (Vector2)startID).normalized);
+					Vector2Int currentID = startID;
+
+					for (int i = 0; i <= steps; i++)
+					{
+						if (roomType[100 + currentID.x, 100 + currentID.y] == 0)
+						{
+							roomType[100 + currentID.x, 100 + currentID.y] = 3;
+						}
+						currentID += step;
+					}
+
+				}
+			}
+		}
+	}
+
+	private void FillInRooms(List<Room> mainRooms, int type)
+	{
+		foreach (Room room in mainRooms)
+		{
+			for (int i = 0; i < room.size.x; i++)
+			{
+				for (int j = 0; j < room.size.y; j++)
+				{
+					roomType[100+room.pos.x+i, 100 + room.pos.y+j] = type;
+				}
+			}
+		}
 	}
 
 	private List<RoomGameObject> MakeColliders(List<Room> restRooms)

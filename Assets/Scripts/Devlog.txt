@@ -75,6 +75,8 @@ Nov 2022
 27/3	* Separated main and rest triangles for main room and possible addon rooms for corridors later
 4/4		* Delunay Working, also Made simple Pathway generation between rooms that forms straight lines
 5/4		* Tried new method for selecting secondary rooms. Creating Gameobjects and running IntersectLine by Rays.
+6/4		* Selecting secondary rooms by simple position code now.
+		* Added array for all level and checking which tiles that should be additional corridors and adding them.
 
 
 		// TODO

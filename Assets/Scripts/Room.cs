@@ -37,58 +37,32 @@ public class Room
 {
 	public Vector2Int size;
 	public Vector2Int pos;
-	private Point[] corners;
+	public Point[] corners;
 	public Vector2 tempPos;
 	public List<Room> closest = new List<Room>();
 	public List<Room> overlapping = new List<Room>();
 
-	/*
-	internal bool CheckOverlap(Point point, Point destination)
+	
+	internal bool CheckOverlap(Point p1, Point p2)
 	{
-		bool result = false;
+		Point lowLeft = p1;
+		Point upRight = p2;
 
-		Debug.Log("Checking edges");
-		// Check if the line overlaps with any of the edges of the room
-		for (int i = 0; i < 4; i++)
+		// make sure P1 is bottom left corner
+		if(p1.X > p2.X || p1.Y > p2.Y)
 		{
-			Debug.Log("Checking edge " + (i + 1));
-			Point p1 = corners[i];
-			Point p2 = corners[(i + 1) % 4];
-
-			Debug.Log("Room corner 1: " + p1);
-			Debug.Log("Room corner 2: " + p2);
-			Debug.Log("Line startpoint: " + point);
-			Debug.Log("Line endpoint: " + destination);
-
-			// Compute the intersection of the line and the edge
-			Vector2 intersection;
-			bool intersects = LineSegment2D.Intersect(
-				new Vector2((float)p1.X, (float)p1.Y),
-				new Vector2((float)p2.X, (float)p2.Y),
-				new Vector2((float)point.X, (float)point.Y),
-				new Vector2((float)destination.X, (float)destination.Y),
-				out intersection
-			);
-
-			if (intersects)
-			{
-				Debug.Log("Intersection point: " + intersection);
-
-				// Check if the intersection point lies within the line segment
-				float epsilon = 0.001f; // tolerance for floating point comparisons
-				if ((intersection.x + epsilon >= Mathf.Min((float)point.X, (float)destination.X)) &&
-					(intersection.x - epsilon <= Mathf.Max((float)point.X, (float)destination.X)) &&
-					(intersection.y + epsilon >= Mathf.Min((float)point.Y, (float)destination.Y)) &&
-					(intersection.y - epsilon <= Mathf.Max((float)point.Y, (float)destination.Y)))
-				{
-					result = true;
-					break; // intersection found, no need to check other edges
-				}
-			}
+			lowLeft = p2;
+			upRight = p1;
 		}
 
-		return result;
-	}*/
+		if ( (lowLeft.X < corners[0].X && upRight.X > corners[0].X) || (lowLeft.X < corners[2].X && lowLeft.X > corners[0].X))
+			if(lowLeft.Y > corners[0].Y && lowLeft.Y < corners[2].Y) return true;
+
+		if ( (lowLeft.Y < corners[0].Y && upRight.Y > corners[0].Y) || (lowLeft.Y < corners[2].Y && lowLeft.Y > corners[0].Y))
+			if(lowLeft.X > corners[0].X && lowLeft.X < corners[2].X) return true;
+
+		return false;
+	}
 
 	internal bool OLDCheckOverlap(Point point, Point destination)
 	{

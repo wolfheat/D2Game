@@ -77,6 +77,7 @@ Nov 2022
 5/4		* Tried new method for selecting secondary rooms. Creating Gameobjects and running IntersectLine by Rays.
 6/4		* Selecting secondary rooms by simple position code now.
 		* Added array for all level and checking which tiles that should be additional corridors and adding them.
+		* Simple addition of walls, need to fix walls between andjecent rooms of same type and doorways
 
 
 		// TODO

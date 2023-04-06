@@ -322,7 +322,7 @@ namespace DelaunayVoronoi
                 }
             }
 
-			PrintDictionary(pointDictionary);
+			//PrintDictionary(pointDictionary);
 
 
 			// Get random Point And Add it as connected
@@ -383,7 +383,7 @@ namespace DelaunayVoronoi
             }
 
             Debug.Log("Dictionary Created, size: "+connectedDictionary.Count);
-            PrintDictionary(connectedDictionary);
+            //PrintDictionary(connectedDictionary);
 
             return connectedDictionary;
 

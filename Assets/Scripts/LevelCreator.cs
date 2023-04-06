@@ -8,6 +8,7 @@ using Random = UnityEngine.Random;
 using DelaunayVoronoi;
 using System.Net;
 using UnityEngine.InputSystem;
+using UnityEditor;
 
 public enum Direction {left,down,right,up}
 
@@ -101,15 +102,16 @@ public class LevelCreator : MonoBehaviour
 			DestroyImmediate(children[i].gameObject);		
 	}
 
-	private void GenerateForcedFloorTileAt(Vector2Int pos,int index)
+	private GameObject GenerateForcedFloorTileAt(Vector2Int pos,int index)
 	{
 		GameObject tile;
 		tile = Instantiate(floorTilesPrefab[index], TileHolder.transform);
 		tile.transform.localPosition = new Vector3(pos.x * Tilesize, 0, pos.y * Tilesize);
 		tile.layer = GroundLayer;
+		return tile;
 	}
 
-	private void GenerateFloorTileAt(Vector2Int pos)
+	private GameObject GenerateFloorTileAt(Vector2Int pos)
 	{
 
 		GameObject tile;
@@ -143,7 +145,7 @@ public class LevelCreator : MonoBehaviour
 
 		tile.layer = GroundLayer;
 
-
+		return tile;
 	}
 
 	private void CreateStartLevel()
@@ -392,7 +394,7 @@ public class LevelCreator : MonoBehaviour
 
 	public void CreateRoomDispersionDungeon()
 	{
-
+		double time = EditorApplication.timeSinceStartup;
 		// Generate New Room Move until not overlapping
 
 		Debug.Log("CreateRoomDispersionDungeon RUN");
@@ -405,8 +407,15 @@ public class LevelCreator : MonoBehaviour
 		HashSet<Vector2Int> floorPositions = new HashSet<Vector2Int>();
 
 		// Select X largest rooms as main rooms.		
-		List<Room> mainRooms = rooms.OrderByDescending(r => r.size.magnitude).Take(DispersionRoomsAmt).ToList();
-		List<Room> restRooms = rooms.OrderBy(r => r.size.magnitude).Take(rooms.Count- DispersionRoomsAmt).ToList();
+
+		rooms = rooms.OrderByDescending(r => r.size.magnitude).ToList();
+
+		Debug.Log("ROOMS "+rooms.Count);
+		List<Room> mainRooms = rooms.Take(DispersionRoomsAmt).ToList();
+		Debug.Log("MAIN ROOMS "+mainRooms.Count+" rooms: "+rooms.Count);
+		List<Room> restRooms = rooms.GetRange(DispersionRoomsAmt,rooms.Count-DispersionRoomsAmt).ToList();
+		//List<Room> restRooms = rooms.OrderBy(r => r.size.magnitude).Take(rooms.Count- DispersionRoomsAmt).ToList();
+		Debug.Log("REST ROOMS "+restRooms.Count + " rooms: " + rooms.Count);
 		List<Room> selectedRestRooms = new List<Room>();
 
 
@@ -483,6 +492,9 @@ public class LevelCreator : MonoBehaviour
 		GenerateAllTilesForThisFloorPosition(floorPositions,8);
 		*/
 		SetPlayerAtStart(walkGeneratorPreset.playerStartPosition);
+
+		double timeTaken = EditorApplication.timeSinceStartup - time;
+		Debug.Log("Time taken: "+timeTaken);
 	}
 
 	private void GenerateAllTilesFromRoomTypeArray()
@@ -494,13 +506,27 @@ public class LevelCreator : MonoBehaviour
 			{
 				if (roomType[i, j] == 0) continue;
 				//Create Tile
-				if (roomType[i, j] == 1) GenerateFloorTileAt(new Vector2Int(i-100, j-100));
-				else GenerateForcedFloorTileAt(new Vector2Int(i - 100, j - 100), (roomType[i, j]+6));
+
+				GameObject tile;
+				if (roomType[i, j] == 1) tile = GenerateFloorTileAt(new Vector2Int(i-100, j-100));
+				else tile = GenerateForcedFloorTileAt(new Vector2Int(i - 100, j - 100), (roomType[i, j]+6));
+
+				GenerateWallIfNeeded(i,j,tile);
+
 			}
 		}
 	}
 
-	private void FillInCorridor(Dictionary<Point, List<Point>> delaunayPathwayDictionary, int v)
+	private void GenerateWallIfNeeded(int i, int j, GameObject tile)
+	{
+		int currentType = roomType[i, j];
+		if (roomType[i,j+1] != currentType) CreateWallAt(Direction.up,tile,0);
+		if (roomType[i+1,j] != currentType) CreateWallAt(Direction.right,tile,0);
+		if (roomType[i,j-1] != currentType) CreateWallAt(Direction.down,tile,0);
+		if (roomType[i-1,j] != currentType) CreateWallAt(Direction.left,tile,0);
+	}
+
+	private void FillInCorridor(Dictionary<Point, List<Point>> delaunayPathwayDictionary, int v,int sideSteps=1)
 	{
 		foreach (var path in delaunayPathwayDictionary)
 		{
@@ -510,15 +536,32 @@ public class LevelCreator : MonoBehaviour
 				{
 					Vector2Int startID = Vector2Int.RoundToInt(startPoint.ToVector2());
 					Vector2Int endID   = Vector2Int.RoundToInt(endPoint.ToVector2());
-					int steps = Math.Abs(startID.x - endID.x) + Math.Abs(startID.y - endID.y);
+					int steps = Math.Abs(startID.x - endID.x) + Math.Abs(startID.y - endID.y);					
 					Vector2Int step = Vector2Int.RoundToInt(((Vector2)endID - (Vector2)startID).normalized);
 					Vector2Int currentID = startID;
 
 					for (int i = 0; i <= steps; i++)
 					{
-						if (roomType[100 + currentID.x, 100 + currentID.y] == 0)
+						if (roomType[100 + currentID.x, 100 + currentID.y] == 0 || roomType[100 + currentID.x, 100 + currentID.y] == 3)
 						{
 							roomType[100 + currentID.x, 100 + currentID.y] = 3;
+							// Check neighboring positions within sideSteps distance and set them to 3
+							for (int x = 100 + currentID.x - sideSteps; x <= 100 + currentID.x + sideSteps; x++)
+							{
+								for (int y = 100 + currentID.y - sideSteps; y <= 100 + currentID.y + sideSteps; y++)
+								{
+									// Make sure the position is within the bounds of the array
+									if (x >= 0 && x < roomType.GetLength(0) && y >= 0 && y < roomType.GetLength(1))
+									{
+										if (roomType[x,y] == 0)
+										{
+											// Check if the position is within sideSteps distance
+											Vector2Int neighborID = new Vector2Int(x, y);
+											roomType[x,y] = 3;
+										}
+									}
+								}
+							}
 						}
 						currentID += step;
 					}

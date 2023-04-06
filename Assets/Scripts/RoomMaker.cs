@@ -89,7 +89,7 @@ public static class RoomMaker
 	{
 		List<Room> rooms = new List<Room>();
 		int totalMovementsNeeded = 0;
-		int maxIterations = 100;
+		int maxIterations = 300;
 		int iteration;
 
 		int totalRooms = Mathf.RoundToInt(amt * hallwayRoomsRatio);
@@ -157,7 +157,7 @@ public static class RoomMaker
 
 					if (room.CheckOverlap(point, destination))
 					{
-						Debug.Log("Line "+point+","+destination+" overlaps room " + room.corners[0] + "," + room.corners[2]);
+						//Debug.Log("Line "+point+","+destination+" overlaps room " + room.corners[0] + "," + room.corners[2]);
 						selectedRooms.Add(room);
 						countTrue++;
 					}
@@ -166,7 +166,7 @@ public static class RoomMaker
 				}
 			}
 		}
-		Debug.Log("Count of Overlaps: "+countTrue+" Not Overlap:"+count);
+		//Debug.Log("Count of Overlaps: "+countTrue+" Not Overlap:"+count);
 		return selectedRooms;
 	}
 }

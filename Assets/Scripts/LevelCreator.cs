@@ -46,6 +46,7 @@ public class LevelCreator : MonoBehaviour
 	[Header("Dispersion Dungeon Creator")]
 	[SerializeField] private int DispersionRoomsAmt = 8;
 	[SerializeField, Range(1f,5f)] private float HallwayRoomsRatio = 2.5f;
+	[SerializeField] private bool ShowLines = false;
 
 	private List<Mesh> surfacMeshes = new List<Mesh>();
     int GroundLayer;
@@ -61,10 +62,12 @@ public class LevelCreator : MonoBehaviour
         GroundLayer = LayerMask.NameToLayer("Ground");
         ResourceLayer = LayerMask.NameToLayer("Resources");
 		Inputs.Instance.Controls.Land.X.performed += _ => PrintCurrentTilePosition();
-        
-        //CreateStartLevel();
 
-        CreateGeneratedLevel();
+		//CreateStartLevel();
+
+		//CreateGeneratedLevel();
+
+		CreateRoomDispersionDungeon();
 
 		BakeLevelNavMesh();
 		RequestActivatePlayerNavmesh();
@@ -491,7 +494,12 @@ public class LevelCreator : MonoBehaviour
 		foreach (Room room in selectedRestRooms){floorPositions.UnionWith(GetAllRoomTiles(room));}
 		GenerateAllTilesForThisFloorPosition(floorPositions,8);
 		*/
-		SetPlayerAtStart(walkGeneratorPreset.playerStartPosition);
+
+		// Find random Room Center TODO: make sure it is a leaf room
+		int index = Random.Range(0, roomCenters.Count);
+		Vector2Int randomRoomCenter = roomCenters[index];
+
+		SetPlayerAtStart(randomRoomCenter);
 
 		double timeTaken = EditorApplication.timeSinceStartup - time;
 		Debug.Log("Time taken: "+timeTaken);
@@ -513,17 +521,19 @@ public class LevelCreator : MonoBehaviour
 
 				GenerateWallIfNeeded(i,j,tile);
 
+
 			}
 		}
 	}
 
-	private void GenerateWallIfNeeded(int i, int j, GameObject tile)
+	private void GenerateWallIfNeeded(int i, int j, GameObject tile,bool surroundAll = true)
 	{
 		int currentType = roomType[i, j];
-		if (roomType[i,j+1] != currentType) CreateWallAt(Direction.up,tile,0);
-		if (roomType[i+1,j] != currentType) CreateWallAt(Direction.right,tile,0);
-		if (roomType[i,j-1] != currentType) CreateWallAt(Direction.down,tile,0);
-		if (roomType[i-1,j] != currentType) CreateWallAt(Direction.left,tile,0);
+
+		if ((surroundAll && roomType[i,j+1]==0) || (!surroundAll && roomType[i,j+1] != currentType)) CreateWallAt(Direction.up,tile,0);
+		if ((surroundAll && roomType[i + 1, j] == 0) || (!surroundAll && roomType[i + 1, j] != currentType)) CreateWallAt(Direction.right,tile,0);
+		if ((surroundAll && roomType[i, j - 1] == 0) || (!surroundAll && roomType[i, j - 1] != currentType)) CreateWallAt(Direction.down,tile,0);
+		if ((surroundAll && roomType[i - 1, j] == 0) || (!surroundAll && roomType[i - 1, j] != currentType)) CreateWallAt(Direction.left,tile,0);
 	}
 
 	private void FillInCorridor(Dictionary<Point, List<Point>> delaunayPathwayDictionary, int v,int sideSteps=1)
@@ -606,7 +616,7 @@ public class LevelCreator : MonoBehaviour
 
 	private void OnDrawGizmos()
 	{
-		
+		if(!ShowLines) return;
 		Gizmos.color = Color.green;
 		Gizmos.DrawLine(Vector3.up, Vector3.right);
 		/*

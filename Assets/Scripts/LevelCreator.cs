@@ -48,7 +48,7 @@ public class LevelCreator : MonoBehaviour
 	[SerializeField, Range(1f,5f)] private float HallwayRoomsRatio = 2.5f;
 	[SerializeField] private bool ShowLines = false;
 
-	List<Vector2Int> doorOpenings = new List<Vector2Int>();
+	List<DoorInfo> doorOpenings = new List<DoorInfo>();
 
 	private List<Mesh> surfacMeshes = new List<Mesh>();
     int GroundLayer;
@@ -521,34 +521,41 @@ public class LevelCreator : MonoBehaviour
 				if (roomType[i, j] >= 100) tile = GenerateFloorTileAt(new Vector2Int(i-100, j-100));
 				else tile = GenerateForcedFloorTileAt(new Vector2Int(i - 100, j - 100), (roomType[i, j]+6));
 
+				
 				//Create Wall
 				GenerateWallIfNeeded(i,j,tile);
 			}
 		}
 	}
 
-	private void GenerateWallIfNeeded(int i, int j, GameObject tile,bool surroundAll = false)
+	private void GenerateWallIfNeeded(int i, int j, GameObject tile)
 	{
-		if (IsDoorOpening(new Vector2Int(i-100,j-100))) return;
+		// Check for Door
+		DoorInfo door = IsDoorOpening(new Vector2Int(i - 100, j - 100));
+
 
 		int currentType = roomType[i, j];
 
-		if ((surroundAll && roomType[i, j + 1] == 0) || (!surroundAll && roomType[i, j + 1] != currentType)) CreateWallAt(Direction.up,tile,0);
-		if ((surroundAll && roomType[i + 1, j] == 0) || (!surroundAll && roomType[i + 1, j] != currentType)) CreateWallAt(Direction.right,tile,0);
-		if ((surroundAll && roomType[i, j - 1] == 0) || (!surroundAll && roomType[i, j - 1] != currentType)) CreateWallAt(Direction.down,tile,0);
-		if ((surroundAll && roomType[i - 1, j] == 0) || (!surroundAll && roomType[i - 1, j] != currentType)) CreateWallAt(Direction.left,tile,0);
+		if (roomType[i, j + 1] != currentType && (door == null || door.dir != Direction.up)) CreateWallAt(Direction.up, tile, 0);
+		if (roomType[i + 1, j] != currentType && (door == null || door.dir != Direction.right)) CreateWallAt(Direction.right, tile, 0);
+		if (roomType[i, j - 1] != currentType && (door == null || door.dir != Direction.down)) CreateWallAt(Direction.down, tile, 0);
+		if (roomType[i - 1, j] != currentType && (door == null || door.dir != Direction.left)) CreateWallAt(Direction.left, tile, 0);
 	}
 
-	private bool IsDoorOpening(Vector2Int vector2Int)
+	private DoorInfo IsDoorOpening(Vector2Int p)
 	{
-		if(doorOpenings.Contains(vector2Int))return true;
-		return false;
+		foreach (DoorInfo doorOpening in doorOpenings)
+		{
+			if (doorOpening.pos == p) return doorOpening;
+		}
+
+		return null;
 	}
 
 	private void FillInCorridor(Dictionary<Point, List<Point>> delaunayPathwayDictionary, int v,int sideSteps=1)
 	{
 		
-		doorOpenings = new List<Vector2Int>();
+		doorOpenings = new List<DoorInfo>();
 
 
 		foreach (var path in delaunayPathwayDictionary)
@@ -563,7 +570,7 @@ public class LevelCreator : MonoBehaviour
 					Vector2Int step = Vector2Int.RoundToInt(((Vector2)endID - (Vector2)startID).normalized);
 					Vector2Int currentID = startID;
 
-					for (int i = 0; i <= steps; i++)
+					for (int i = 0; i < steps; i++)
 					{
 						if (roomType[100 + currentID.x, 100 + currentID.y] == 0 || roomType[100 + currentID.x, 100 + currentID.y] == 3)
 						{
@@ -587,13 +594,15 @@ public class LevelCreator : MonoBehaviour
 							}
 						}
 						int lastType = roomType[100 + currentID.x, 100 + currentID.y];
+						Vector2Int lastID = currentID;
 						currentID += step;
 						int thisType = roomType[100 + currentID.x, 100 + currentID.y];
 
-						if (((thisType >= 100 && thisType <= 199)|| (lastType >= 100 && lastType <= 199)) && lastType != 0 && thisType != lastType)
+						//if (((thisType >= 100 && thisType <= 199)|| (lastType >= 100 && lastType <= 199)) && lastType != 0 && thisType != lastType)
+						if (lastType != 0 && thisType != lastType)
 						{
-							doorOpenings.Add(currentID);
-							doorOpenings.Add(currentID-step);
+							doorOpenings.Add(new DoorInfo(currentID, -step));
+							doorOpenings.Add(new DoorInfo(lastID, step)); 
 						}
 					}
 
@@ -801,5 +810,25 @@ public class LevelCreator : MonoBehaviour
 			}
 		}
 		return tiles;
+	}
+}
+
+class DoorInfo
+{
+	public Vector2Int pos;
+	public Direction dir;
+
+	public DoorInfo(Vector2Int p, Vector2Int d)
+	{
+		dir = VectorToDir(d);
+		pos = p;
+	}
+
+	private Direction VectorToDir(Vector2Int d)
+	{
+		if (d.y > 0) return Direction.up;
+		if (d.x > 0) return Direction.right;
+		if (d.y < 0) return Direction.down;
+		else return Direction.left;
 	}
 }

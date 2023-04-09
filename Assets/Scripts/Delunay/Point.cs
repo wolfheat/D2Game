@@ -219,6 +219,10 @@ namespace DelaunayVoronoi
         {
             return new Vector2((float)X,(float)Y);
         }
+        internal Vector2Int ToVector2Int()
+        {
+            return new Vector2Int(Mathf.RoundToInt((float)X), Mathf.RoundToInt((float)Y));
+        }
     }
 
 	public class PointEqualityComparer : IEqualityComparer<Point>

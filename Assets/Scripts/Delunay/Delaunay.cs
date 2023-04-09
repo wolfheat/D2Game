@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using Random = System.Random;
 
 namespace DelaunayVoronoi
@@ -40,6 +38,11 @@ namespace DelaunayVoronoi
             return points;
         }
 
+        public static IEnumerable<Triangle> GenerateBowyerWatsonFromList(List<Vector2> points)
+        {
+            DelaunayTriangulator triangulator = new DelaunayTriangulator();
+            return triangulator.BowyerWatson(points);
+        }
         public IEnumerable<Triangle> BowyerWatson(List<Vector2> points)
         {
             var MinX = points[0].x;
@@ -71,168 +74,6 @@ namespace DelaunayVoronoi
 
 			IEnumerable<Point> pointEnumerable = points.Select(p => new Point(p.x, p.y)).ToList();
             return BowyerWatson(pointEnumerable);
-        }
-
-        public static List<PathPoint> FindMinimumPath(IEnumerable<Triangle> triangles)
-        {
-            
-            List<PathPoint> points = ConvertToPathPoints(triangles);
-
-            Debug.Log("---------------------------------------------------");
-			foreach (PathPoint p in points)
-			{
-				Debug.Log("StartPoints " + p.pos);
-			}
-
-
-
-			List<PathPoint> unConnectedPoints = new List<PathPoint>(points);
-            List<PathPoint> connectedPoints = new List<PathPoint>();
-            
-            PathPoint point = unConnectedPoints.First();
-            // Check if any is connected to this point
-            foreach (var u in unConnectedPoints)
-            {
-                if(u.unvisitedNeighbors.Contains(point)) Debug.Log("Connected to point " + u.pos);
-            }
-
-
-
-            point.SetClosest();
-			connectedPoints.Add(point);
-            unConnectedPoints.Remove(point);
-			Debug.Log("Remove Point:" + point.pos);
-			int countTimer = 0;
-
-			while (unConnectedPoints.Count > 0 && countTimer < 50)
-            {               
-                countTimer++;
-				
-                //
-
-				PathPoint closest = point.closest;
-                if(closest==null) Debug.Log("Connect "+point.pos+" to "+closest.pos);
-                point.ConnectNeighbors(closest);
-                Debug.Log("Connected Point "+point.pos+" with "+closest.pos+" amount of connected neighbors are now("+point.connectedNeighbors.Count+","+closest.connectedNeighbors.Count+")");
-                
-                if (!unConnectedPoints.Contains(closest))
-                {
-                    Debug.LogWarning("UnConnected does not contain closest: "+closest.pos);
-                }
-
-                int unconnectedcounter = unConnectedPoints.Count;
-                //Debug.Log("Remove from UnConnected WAS:"+unConnectedPoints.Count+" Closest is: "+closest);
-			    unConnectedPoints.Remove(closest);
-				Debug.Log("Remove Point:" + closest.pos+" from Unconnected to Connected");
-                if(unConnectedPoints.Count == unconnectedcounter) Debug.LogWarning("Could NOT remove from Unconnected: "+unConnectedPoints.Count);
-
-                connectedPoints.Add(closest);
-                PrintLists(connectedPoints,unConnectedPoints);
-
-				for (int i = 0; i < connectedPoints.Count; i++)
-				{
-					connectedPoints[i].SetClosest();
-                }
-                Debug.Log("Calculating new Closest neighbors");
-
-				if (unConnectedPoints.Count > 0)
-                {
-                    point = PathPoint.FindPointWithClosestNeighbor(connectedPoints);
-                    if(point != null) Debug.Log("Finding One Connected Point: "+point.pos);
-                    if(point == null) Debug.Log("Finding One Connected Point: NULL");
-                }
-			}
-            if (countTimer == 50) Debug.LogError("Stuck in While loop, exiting.");
-            return points;
-		}
-        
-        private static void PrintLists(List<PathPoint> connectedPoints, List<PathPoint> unConnectedPoints)
-        {
-			string listString = "Unconnected: ";
-			foreach (PathPoint p in unConnectedPoints)
-			{
-				listString += p.pos;
-			}
-			listString += " Connected: ";
-			foreach (PathPoint p in connectedPoints)
-			{
-                listString += p.pos + "-";
-                foreach (PathPoint connected in p.connectedNeighbors)
-                    listString += connected.pos;
-                listString += " || ";
-			}
-			Debug.Log(listString);
-		}
-
-        public static List<PathPoint> ConvertToPathPoints(IEnumerable<Triangle> triangles)
-        {
-            List<VectorTriangle> vectorTriangles = new List<VectorTriangle>();
-            foreach (var triangle in triangles)
-            {
-                VectorTriangle vectorTriangle = new VectorTriangle(triangle.ReturnAsVector2Int());
-                vectorTriangles.Add(vectorTriangle);
-            }
-
-			List<PathPoint> pathPoints = new List<PathPoint>();
-			Dictionary<Vector2Int,PathPoint> dictionary = new Dictionary<Vector2Int, PathPoint>();
-
-			foreach (VectorTriangle triangle in vectorTriangles)
-			{
-				PathPoint[] points = new PathPoint[3];
-
-				for (int i = 0; i < 3; i++)
-				{
-					Vector2Int vertex = triangle.Vertices[i];
-                    if(dictionary.ContainsKey(vertex))
-					    points[i] = dictionary[vertex];
-                    else
-                    {
-                        PathPoint newPathPoint = new PathPoint(vertex);
-                        points[i] = newPathPoint;
-                        dictionary.Add(vertex, newPathPoint);
-                    }
-				}
-				for (int i = 0; i < 3; i++)
-				{
-                    points[i].unvisitedNeighbors.Add(points[(i + 1) % 3]);
-                    points[i].unvisitedNeighbors.Add(points[(i + 2) % 3]);
-				}
-                //pathPoints = AddOrCombineRange(pathPoints, points);
-			}
-
-            return dictionary.Values.ToList();
-
-
-			//return pathPoints;
-		}
-
-        private static List<PathPoint> AddOrCombineRange(List<PathPoint> storedPoints, PathPoint[] newPoints)
-        {
-            foreach (var newPoint in newPoints)
-            {
-                bool exists = false;
-                foreach(var storedPoint in storedPoints)
-                {
-                	if (storedPoint.IsEqual(newPoint))
-                    {
-                        foreach (var newNeighbor in newPoint.unvisitedNeighbors)
-                        {
-                            bool neighborexist = false;
-                            foreach (var storedNeighbor in storedPoint.unvisitedNeighbors)
-                            {
-                                if (storedNeighbor.IsEqual(newNeighbor))
-                                {
-                                    neighborexist = true;
-                                }
-                            }
-                            if(!neighborexist) storedPoint.unvisitedNeighbors.Add(newNeighbor);
-                        }
-                        exists = true;
-                    }
-                }
-                if(!exists) storedPoints.Add(newPoint);
-            }
-            return storedPoints;
         }
 
         public IEnumerable<Triangle> BowyerWatson(IEnumerable<Point> points)
@@ -282,27 +123,13 @@ namespace DelaunayVoronoi
             return boundaryEdges.ToList();
         }
 
-        private Triangle GenerateSupraTriangle()
-        {
-            //   1  -> maxX
-            //  / \
-            // 2---3
-            // |
-            // v maxY
-            var margin = 500;
-            var point1 = new Point(0.5 * MaxX, -2 * MaxX - margin);
-            var point2 = new Point(-2 * MaxY - margin, 2 * MaxY + margin);
-            var point3 = new Point(2 * MaxX + MaxY + margin, 2 * MaxY + margin);
-            return new Triangle(point1, point2, point3);
-        }
-
         private ISet<Triangle> FindBadTriangles(Point point, HashSet<Triangle> triangles)
         {
             var badTriangles = triangles.Where(o => o.IsPointInsideCircumcircle(point));
             return new HashSet<Triangle>(badTriangles);
         }
 
-		internal static Dictionary<Point, List<Point>> FindMinimumPathVersion2(IEnumerable<Triangle> triangles)
+		internal static Dictionary<Point, List<Point>> FindMinimumPath(IEnumerable<Triangle> triangles)
 		{
             // Have triangles
             // Make Dictionary with a list
@@ -390,22 +217,7 @@ namespace DelaunayVoronoi
 
 		}
 
-        private static void PrintDictionary(Dictionary<Point, List<Point>> pointDictionary)
-        {
-            Debug.Log("PRINT DICTIONARY");
-            foreach (var point in pointDictionary)
-            {
-                string printText = "";
-                for (int i = 0; i < point.Value.Count; i++)
-                {
-                    printText += point.Value[i];
-                }
-                Debug.Log("Point "+point.Key+" = "+printText);
-            }
-            Debug.Log("PRINT DICTIONARY - DONE");
-        }
-
-        internal static Dictionary<Point, List<Point>> DelunayDictionaryToPathWays(Dictionary<Point, List<Point>> delaunayDictionary)
+        internal static Dictionary<Point, List<Point>> DelunayDictionaryToCartesianPaths(Dictionary<Point, List<Point>> delaunayDictionary)
         {
 			// Have A Dictionary
 			Dictionary<Point, List<Point>> wayDictionary = new Dictionary<Point, List<Point>>();
@@ -432,11 +244,9 @@ namespace DelaunayVoronoi
                         wayDictionary[target].Add(newMiddlePoint);
 
                         delaunayDictionary[target].Remove(point);
-                    }
-                
+                    }               
             }
             return wayDictionary;
-
 		}
     }
 }

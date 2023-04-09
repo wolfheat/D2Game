@@ -37,10 +37,10 @@ public class LevelCreator : MonoBehaviour
 	[Header ("Random Walk Dungeon Creator")]
 	[SerializeField] private RandomWalkGeneratorPresetSO walkGeneratorPreset;
 
-	IEnumerable<Triangle> delaunay;
+	IEnumerable<Triangle> delaunayTriangles;
 	List<PathPoint> delaunayPathPoints;
 	Dictionary<Point,List<Point>> delaunayDictionary;
-	Dictionary<Point,List<Point>> delaunayPathwayDictionary;
+	Dictionary<Point,List<Point>> delaunayCartesianPathsDictionary;
 
 	[Space(10, order = 0)]
 	[Header("Dispersion Dungeon Creator")]
@@ -153,28 +153,6 @@ public class LevelCreator : MonoBehaviour
 		return tile;
 	}
 
-	private void CreateStartLevel()
-    {
-		Vector2Int[] doorsAt;
-		SetPlayerAtStart(new Vector2Int(3, 3));
-
-		doorsAt = new Vector2Int[] { new Vector2Int(2, 5) };
-		CreateMiniLevel(new Vector2Int(5, 6), Vector2Int.zero, doorsAt);
-
-		doorsAt = new Vector2Int[] { new Vector2Int(4, 0), new Vector2Int(4, 8) };
-		CreateMiniLevel(new Vector2Int(9, 9), new Vector2Int(-2, 6), doorsAt);
-
-		doorsAt = new Vector2Int[] { new Vector2Int(2, 0) };
-		CreateMiniLevel(new Vector2Int(5, 6), new Vector2Int(0, 15), doorsAt);
-
-
-		CreateResourceAt(new Vector2Int(5, 8), 0);
-
-
-		Debug.Log("Level created");
-
-	}
-
 	public void PrintCurrentTilePosition()
 	{
         if (Inputs.Instance.Shift == 1)
@@ -233,96 +211,6 @@ public class LevelCreator : MonoBehaviour
 
 	}
 
-	private void CreateMiniLevel(Vector2Int roomSize, Vector2Int[] doorsAt)
-	{
-        CreateMiniLevel(roomSize, Vector2Int.zero, doorsAt);
-    }
-	private void CreateMiniLevel(Vector2Int roomSize, Vector2Int offset, Vector2Int[] doorsAt)
-	{
-
-        GameObject room = new GameObject("Room");
-        room.transform.parent = TileHolder.transform;
-        room.transform.localPosition = new Vector3(offset.x*Tilesize,0,offset.y*Tilesize);
-
-		//Create First Room = start Room 
-		for (int i = 0; i < roomSize.x; i++)
-		{
-			for (int j = 0; j < roomSize.y; j++)
-			{
-                //FLOOR TILE
-				GameObject tile;
-				int specialType = Random.Range(0, 11);
-				if (specialType < 10)
-				{
-					tile = Instantiate(floorTilesPrefab[0], room.transform);
-					if (specialType < 1)
-					{
-						int debreeType = Random.Range(0, debreePrefabs.Count);
-						//Do debree
-						GameObject debree = Instantiate(debreePrefabs[debreeType], tile.transform);
-						debree.transform.localPosition = Vector3.zero;
-					}
-					else if (specialType < 2)
-					{
-						//DECAL
-						int decalType = Random.Range(0, decalPrefabs.Count);
-						//Do debree
-						GameObject decal = Instantiate(decalPrefabs[decalType], tile.transform);
-						decal.transform.localPosition = Vector3.zero;
-						decal.gameObject.transform.Rotate(0, Random.Range(0, 360), 0);
-					}
-				}
-				else
-				{
-					int specialTile = Random.Range(0, floorTilesPrefab.Count);
-					tile = Instantiate(floorTilesPrefab[specialTile], room.transform);
-				}
-				tile.transform.localPosition = new Vector3(i * Tilesize, 0, j * Tilesize);
-
-				//foreach (Transform child in tile.transform) child.gameObject.layer = GroundLayer;
-
-				tile.layer = GroundLayer;
-
-                //WALL TILES
-                GameObject wall;
-
-                
-                if(i==0 || i == roomSize.x-1 || j==0 || j== roomSize.y-1)
-                {
-
-					bool isDoor = false;
-					//Check For Door
-					foreach (var door in doorsAt)
-					{
-						if (door.x == i && door.y == j)
-						{
-							isDoor = true;
-							break;
-						}
-					}
-
-                    // Set Position
-                    if (i==0)
-                    {
-                        CreateWallAt(Direction.left,tile,isDoor?1:0);
-				    }
-                    if (i==roomSize.x-1)
-                    {
-                        CreateWallAt(Direction.right,tile,isDoor?1:0);
-				    }
-                    if (j==0)
-                    {
-                        CreateWallAt(Direction.down,tile,isDoor?1:0);
-				    }
-                    if (j==roomSize.y-1)
-                    {
-                        CreateWallAt(Direction.up,tile,isDoor?1:0);                        
-				    }
-				}
-			}
-		}
-	}
-
     private GameObject CreateWallAt(Direction direction,GameObject tile,int type)
     {
 		GameObject wall;
@@ -351,155 +239,63 @@ public class LevelCreator : MonoBehaviour
         return wall;
     }
 
-    private void CreateLevel()
-    {
-        for (int i = 0; i < Levelsize.x; i++)
-        {
-            for (int j = 0; j < Levelsize.y; j++)
-            {
-                GameObject tile;
-				int specialType = Random.Range(0,11);
-                if (specialType < 10)
-                {
-                    tile = Instantiate(floorTilesPrefab[0], TileHolder.transform);
-                    if (specialType < 1)
-                    {
-                        int debreeType = Random.Range(0, debreePrefabs.Count);
-                        //Do debree
-                        GameObject debree = Instantiate(debreePrefabs[debreeType], tile.transform);
-                        debree.transform.localPosition = Vector3.zero;
-					}else if(specialType < 2)
-                    {
-						//DECAL
-						int decalType = Random.Range(0, decalPrefabs.Count);
-						//Do debree
-						GameObject decal = Instantiate(decalPrefabs[decalType], tile.transform);
-						decal.transform.localPosition = Vector3.zero;
-						decal.gameObject.transform.Rotate(0, Random.Range(0,360), 0);
-					}
-                }
-                else
-                {
-                    int specialTile = Random.Range(0,floorTilesPrefab.Count);
-                    tile = Instantiate(floorTilesPrefab[specialTile], TileHolder.transform);
-                }
-                tile.transform.position = new Vector3(i * Tilesize, 0, j * Tilesize);
-
-				//foreach (Transform child in tile.transform) child.gameObject.layer = GroundLayer;
-
-				tile.layer = GroundLayer;
-
-				//surfacMeshes.Add(tile.GetComponent<MeshFilter>().mesh);
-
-				//tile.gameObject.transform.Rotate(0, 90 * rot, 0);
-			}
-        }
-    }
-
-
 	public void CreateRoomDispersionDungeon()
 	{
 		double time = EditorApplication.timeSinceStartup;
-		// Generate New Room Move until not overlapping
 
-		Debug.Log("CreateRoomDispersionDungeon RUN");
 		//Clear The level
 		ClearLevel();
 
 		// Generate the level
 		List<Room> rooms = RoomMaker.GenerateRandomDungeon(DispersionRoomsAmt, HallwayRoomsRatio);
 
-		HashSet<Vector2Int> floorPositions = new HashSet<Vector2Int>();
-
-		// Select X largest rooms as main rooms.		
-
 		rooms = rooms.OrderByDescending(r => r.size.magnitude).ToList();
 
-		Debug.Log("ROOMS "+rooms.Count);
+		//Separate Rooms into Main and Rest
 		List<Room> mainRooms = rooms.Take(DispersionRoomsAmt).ToList();
-		Debug.Log("MAIN ROOMS "+mainRooms.Count+" rooms: "+rooms.Count);
 		List<Room> restRooms = rooms.GetRange(DispersionRoomsAmt,rooms.Count-DispersionRoomsAmt).ToList();
-		//List<Room> restRooms = rooms.OrderBy(r => r.size.magnitude).Take(rooms.Count- DispersionRoomsAmt).ToList();
-		Debug.Log("REST ROOMS "+restRooms.Count + " rooms: " + rooms.Count);
-		List<Room> selectedRestRooms = new List<Room>();
 
 
 		List<Vector2> roomCentersAsFloats = RoomMaker.GetCentersAsFloats(mainRooms);
 		List<Vector2Int> roomCenters = RoomMaker.GetCentersAsInts(mainRooms);
 
-		/* PRINT ROOM CENTERS
-		string roomSizeString = "";
-		string roomCenterString = "";
-		 
-		for (int i = 0; i < mainRooms.Count; i++)
-		{
-			roomSizeString += mainRooms[i].size.magnitude+" , ";
-			roomCenterString += roomCenters[i];
-		}
-		Debug.Log("Room Sizes: "+ roomSizeString);
-		Debug.Log("At Center: "+ roomCenterString);
-		*/
+		// Find Dalaunay Triangulation triangles
+		delaunayTriangles = DelaunayTriangulator.GenerateBowyerWatsonFromList(roomCentersAsFloats);
+		// Determine Minimum Path as Dictionary
+		delaunayDictionary = DelaunayTriangulator.FindMinimumPath(delaunayTriangles);
+		// Determine Actual Cartesian Paths
+		delaunayCartesianPathsDictionary = DelaunayTriangulator.DelunayDictionaryToCartesianPaths(delaunayDictionary);
 
 
-		// Find Dalaunay Triangulation lines
-		DelaunayTriangulator delaunayTriangulator = new DelaunayTriangulator();		
-		delaunay = delaunayTriangulator.BowyerWatson(roomCentersAsFloats);
-		delaunayDictionary = DelaunayTriangulator.FindMinimumPathVersion2(delaunay);
-		delaunayPathwayDictionary = DelaunayTriangulator.DelunayDictionaryToPathWays(delaunayDictionary);
+		// Select Rooms that the Cartesian Paths passes
+		List<Room> selectedRestRooms = new List<Room>();
+		selectedRestRooms = RoomMaker.SelectRooms(restRooms, delaunayCartesianPathsDictionary);
 
-
-
-		/*
-		List<RoomGameObject> restRoomsWithColliders = MakeColliders(restRooms);
-		selectedRestRooms = RoomGameObject.SelectRooms(restRoomsWithColliders, delaunayPathwayDictionary);
-		*/
-
-		selectedRestRooms = RoomMaker.SelectRooms(restRooms, delaunayPathwayDictionary);
-
+		// Remove the selected rooms from the remaining rooms, remove this restRooms array later, currently not needed any more
 		restRooms.RemoveAll(r => selectedRestRooms.Contains(r));
-		Debug.Log("SelectedRooms: "+selectedRestRooms.Count);
-		Debug.Log("RestRooms: "+restRooms.Count);
-
+		
+		// Reset the roomTypeArray (used for determine tile types and doorways)
 		roomType = new int[200, 200];
-
 		FillInRooms(mainRooms,100);
 		FillInRooms(selectedRestRooms,2);
-		FillInCorridor(delaunayPathwayDictionary,3);
+		FillInCorridor(delaunayCartesianPathsDictionary,3);
 
+		// Finally just create all tiles
 		GenerateAllTilesFromRoomTypeArray();
-
 
 
 		// TODO
 		// PathWays working but are just angled straight lines between rooms
-		// Better to use A* alg to find shortest path with weights
+		// Better to use A* alg to find shortest path with weights?
 		// Preplaces Unused Rooms should be lower cost to move through
 
-		//Debug.Log("Dictionary Size: "+delaunayDictionary.Count);
-		//Debug.Log("Dictionary Pathway Size: "+delaunayPathwayDictionary.Count);
-
-		// Make Hallway Lines between Main Rooms
-
-		// Activate secondaryRooms that these hallways intercept
-
-		// Add in a Main Hallway of a certain width around the hallway lines
-
-
-		// Generate Map to show it
-		/*
-		foreach (Room room in mainRooms){floorPositions.UnionWith(GetAllRoomTiles(room));}
-		GenerateAllTilesForThisFloorPosition(floorPositions);
-		floorPositions.Clear();
-		foreach (Room room in restRooms){floorPositions.UnionWith(GetAllRoomTiles(room));}
-		GenerateAllTilesForThisFloorPosition(floorPositions,7);
-		floorPositions.Clear();
-		foreach (Room room in selectedRestRooms){floorPositions.UnionWith(GetAllRoomTiles(room));}
-		GenerateAllTilesForThisFloorPosition(floorPositions,8);
-		*/
-
 		// Find random Room Center TODO: make sure it is a leaf room
-		int index = Random.Range(0, roomCenters.Count);
-		Vector2Int randomRoomCenter = roomCenters[index];
+
+		var leafRooms = delaunayCartesianPathsDictionary.Where(r => r.Value.Count==1).ToDictionary(r => r.Key, r => r.Value);
+
+		int index = Random.Range(0, leafRooms.Count);
+		Point startRoom = leafRooms.Keys.ElementAt(index);
+		Vector2Int randomRoomCenter = startRoom.ToVector2Int();
 
 		SetPlayerAtStart(randomRoomCenter);
 
@@ -535,10 +331,14 @@ public class LevelCreator : MonoBehaviour
 
 		int currentType = roomType[i, j];
 
-		if (roomType[i, j + 1] != currentType && !doors.Contains(Direction.up)) CreateWallAt(Direction.up, tile, 0);
-		if (roomType[i + 1, j] != currentType && !doors.Contains(Direction.right)) CreateWallAt(Direction.right, tile, 0);
-		if (roomType[i, j - 1] != currentType && !doors.Contains(Direction.down)) CreateWallAt(Direction.down, tile, 0);
-		if (roomType[i - 1, j] != currentType && !doors.Contains(Direction.left)) CreateWallAt(Direction.left, tile, 0);
+		int nextType = roomType[i, j + 1];
+		if (nextType != currentType && (nextType== 0 || currentType >= 100) && !doors.Contains(Direction.up)) CreateWallAt(Direction.up, tile, 0);
+		nextType = roomType[i + 1, j];
+		if (nextType != currentType && (nextType == 0 || currentType >= 100) && !doors.Contains(Direction.right)) CreateWallAt(Direction.right, tile, 0);
+		nextType = roomType[i, j - 1];
+		if (nextType != currentType && (nextType == 0 || currentType >= 100) && !doors.Contains(Direction.down)) CreateWallAt(Direction.down, tile, 0);
+		nextType = roomType[i - 1, j];
+		if (nextType != currentType && (nextType == 0 || currentType >= 100) && !doors.Contains(Direction.left)) CreateWallAt(Direction.left, tile, 0);
 	}
 
 	private List<Direction> IsDoorOpening(Vector2Int p)
@@ -670,14 +470,14 @@ public class LevelCreator : MonoBehaviour
 			}
 		}*/
 
-		if (delaunayPathwayDictionary != null)
+		if (delaunayCartesianPathsDictionary != null)
 		{
 			int lines = 0;
 			Gizmos.color = Color.red;
 
-			foreach (Point point in delaunayPathwayDictionary.Keys)
+			foreach (Point point in delaunayCartesianPathsDictionary.Keys)
 			{
-				foreach (var point2 in delaunayPathwayDictionary[point])
+				foreach (var point2 in delaunayCartesianPathsDictionary[point])
 				{
 					Vector3 startPoint = new Vector3((float)point.X, 0.2f, (float)point.Y);
 					//PathPoint closestNeighbor = pathPoint.closest;

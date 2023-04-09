@@ -79,6 +79,8 @@ Nov 2022
 		* Added array for all level and checking which tiles that should be additional corridors and adding them.
 		* Simple addition of walls, need to fix walls between andjecent rooms of same type and doorways
 9/4		* Walls now works so that there is a 1 tile doorway between different roomtypes.
+		* Minor code fixup
+		* Only Main rooms have walls between rooms, restrooms and corridors only have outer walls.
 
 		// TODO
 		// PathWays working but are just angled straight lines between rooms

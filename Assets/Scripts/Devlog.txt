@@ -78,7 +78,7 @@ Nov 2022
 6/4		* Selecting secondary rooms by simple position code now.
 		* Added array for all level and checking which tiles that should be additional corridors and adding them.
 		* Simple addition of walls, need to fix walls between andjecent rooms of same type and doorways
-
+9/4		* Walls now works so that there is a 1 tile doorway between different roomtypes.
 
 		// TODO
 		// PathWays working but are just angled straight lines between rooms

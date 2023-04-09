@@ -531,25 +531,26 @@ public class LevelCreator : MonoBehaviour
 	private void GenerateWallIfNeeded(int i, int j, GameObject tile)
 	{
 		// Check for Door
-		DoorInfo door = IsDoorOpening(new Vector2Int(i - 100, j - 100));
-
+		List<Direction> doors = IsDoorOpening(new Vector2Int(i - 100, j - 100));
 
 		int currentType = roomType[i, j];
 
-		if (roomType[i, j + 1] != currentType && (door == null || door.dir != Direction.up)) CreateWallAt(Direction.up, tile, 0);
-		if (roomType[i + 1, j] != currentType && (door == null || door.dir != Direction.right)) CreateWallAt(Direction.right, tile, 0);
-		if (roomType[i, j - 1] != currentType && (door == null || door.dir != Direction.down)) CreateWallAt(Direction.down, tile, 0);
-		if (roomType[i - 1, j] != currentType && (door == null || door.dir != Direction.left)) CreateWallAt(Direction.left, tile, 0);
+		if (roomType[i, j + 1] != currentType && !doors.Contains(Direction.up)) CreateWallAt(Direction.up, tile, 0);
+		if (roomType[i + 1, j] != currentType && !doors.Contains(Direction.right)) CreateWallAt(Direction.right, tile, 0);
+		if (roomType[i, j - 1] != currentType && !doors.Contains(Direction.down)) CreateWallAt(Direction.down, tile, 0);
+		if (roomType[i - 1, j] != currentType && !doors.Contains(Direction.left)) CreateWallAt(Direction.left, tile, 0);
 	}
 
-	private DoorInfo IsDoorOpening(Vector2Int p)
+	private List<Direction> IsDoorOpening(Vector2Int p)
 	{
-		foreach (DoorInfo doorOpening in doorOpenings)
-		{
-			if (doorOpening.pos == p) return doorOpening;
-		}
+		List<Direction> doorsDirections = new List<Direction>();
 
-		return null;
+		foreach (DoorInfo doorOpening in doorOpenings)		
+		{
+			if (doorOpening.pos == p) 
+			doorsDirections.Add(doorOpening.dir);
+		}
+		return doorsDirections;
 	}
 
 	private void FillInCorridor(Dictionary<Point, List<Point>> delaunayPathwayDictionary, int v,int sideSteps=1)
@@ -829,6 +830,7 @@ class DoorInfo
 		if (d.y > 0) return Direction.up;
 		if (d.x > 0) return Direction.right;
 		if (d.y < 0) return Direction.down;
-		else return Direction.left;
+
+		return Direction.left;
 	}
 }

@@ -81,6 +81,7 @@ Nov 2022
 9/4		* Walls now works so that there is a 1 tile doorway between different roomtypes.
 		* Minor code fixup
 		* Only Main rooms have walls between rooms, restrooms and corridors only have outer walls.
+10/4	* Limited size of array around actual rooms
 
 		// TODO
 		// PathWays working but are just angled straight lines between rooms

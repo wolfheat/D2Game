@@ -169,4 +169,34 @@ public static class RoomMaker
 		//Debug.Log("Count of Overlaps: "+countTrue+" Not Overlap:"+count);
 		return selectedRooms;
 	}
+
+	internal static Vector2Int GetStartVector(List<Room> rooms)
+	{
+		Vector2Int startVector = Vector2Int.zero;
+		foreach (var room in rooms)
+		{
+			if (room.pos.x < startVector.x) startVector = new Vector2Int(room.pos.x,startVector.y);
+			if (room.pos.y < startVector.y) startVector = new Vector2Int(startVector.x, room.pos.y);
+		}
+		return startVector-Vector2Int.one;
+	}
+
+	internal static Vector2Int GetSize(List<Room> rooms)
+	{
+		Vector2Int start = GetStartVector(rooms);
+		Vector2Int size = GetEndVector(rooms)-start;
+		return size;
+	}
+
+	private static Vector2Int GetEndVector(List<Room> rooms)
+	{
+		Vector2Int endVector = Vector2Int.zero;
+		foreach (var room in rooms)
+		{
+			Vector2Int roomEndVector = room.pos + room.size;
+			if (roomEndVector.x > endVector.x) endVector = new Vector2Int(roomEndVector.x, endVector.y);
+			if (roomEndVector.y > endVector.y) endVector = new Vector2Int(endVector.x, roomEndVector.y);
+		}
+		return endVector+Vector2Int.one;
+	}
 }

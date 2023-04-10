@@ -45,8 +45,13 @@ public class LevelCreator : MonoBehaviour
 	[SerializeField] private int DispersionRoomsAmt = 8;
 	[SerializeField, Range(1f,5f)] private float HallwayRoomsRatio = 2.5f;
 	[SerializeField] private bool ShowLines = false;
+	[SerializeField] private bool ShowSize = true;
 
 	List<DoorInfo> doorOpenings = new List<DoorInfo>();
+
+	Vector2Int roomTypeStart;
+	Vector2Int roomTypeSize;
+
 
 	private List<Mesh> surfacMeshes = new List<Mesh>();
     int GroundLayer;
@@ -246,6 +251,8 @@ public class LevelCreator : MonoBehaviour
 
 		// Generate the level
 		List<Room> rooms = RoomMaker.GenerateRandomDungeon(DispersionRoomsAmt, HallwayRoomsRatio);
+		roomTypeStart = RoomMaker.GetStartVector(rooms);
+		roomTypeSize = RoomMaker.GetSize(rooms);
 
 		rooms = rooms.OrderByDescending(r => r.size.magnitude).ToList();
 
@@ -273,10 +280,12 @@ public class LevelCreator : MonoBehaviour
 		restRooms.RemoveAll(r => selectedRestRooms.Contains(r));
 		
 		// Reset the roomTypeArray (used for determine tile types and doorways)
-		roomType = new int[200, 200];
+		roomType = new int[roomTypeSize.x, roomTypeSize.y];
+
 		FillInRooms(mainRooms,100);
 		FillInRooms(selectedRestRooms,2);
 		FillInCorridor(delaunayCartesianPathsDictionary,3);
+		//FillInRooms(restRooms,4);
 
 		// Finally just create all tiles
 		GenerateAllTilesFromRoomTypeArray();
@@ -309,14 +318,15 @@ public class LevelCreator : MonoBehaviour
 			for (int j = 0; j < roomType.GetLength(1); j++)
 			{
 				if (roomType[i, j] == 0) continue;
-				
+
+				Vector2Int TilePos = new Vector2Int(roomTypeStart.x + i, roomTypeStart.y + j);
 				//Create Tile
 				GameObject tile;
-				if (roomType[i, j] >= 100) tile = GenerateFloorTileAt(new Vector2Int(i-100, j-100));
-				else tile = GenerateForcedFloorTileAt(new Vector2Int(i - 100, j - 100), (roomType[i, j]+6));
+				if (roomType[i, j] >= 100) tile = GenerateFloorTileAt(TilePos);
+				else tile = GenerateForcedFloorTileAt(TilePos, roomType[i, j]+6);
 								
 				//Create Wall
-				GenerateWallIfNeeded(i,j,tile);
+				GenerateWallIfNeeded(i,j, tile);
 			}
 		}
 	}
@@ -324,7 +334,8 @@ public class LevelCreator : MonoBehaviour
 	private void GenerateWallIfNeeded(int i, int j, GameObject tile)
 	{
 		// Check for Door
-		List<Direction> doors = IsDoorOpening(new Vector2Int(i - 100, j - 100));
+		List<Direction> doors = IsDoorOpening(new Vector2Int(roomTypeStart.x + i, roomTypeStart.y + j));
+		
 
 		int currentType = roomType[i, j];
 
@@ -370,13 +381,13 @@ public class LevelCreator : MonoBehaviour
 
 					for (int i = 0; i < steps; i++)
 					{
-						if (roomType[100 + currentID.x, 100 + currentID.y] == 0 || roomType[100 + currentID.x, 100 + currentID.y] == 3)
+						if (roomType[-roomTypeStart.x + currentID.x, -roomTypeStart.y + currentID.y] == 0 || roomType[-roomTypeStart.x + currentID.x, -roomTypeStart.y + currentID.y] == 3)
 						{
-							roomType[100 + currentID.x, 100 + currentID.y] = 3;
+							roomType[-roomTypeStart.x + currentID.x, -roomTypeStart.y + currentID.y] = 3;
 							// Check neighboring positions within sideSteps distance and set them to 3
-							for (int x = 100 + currentID.x - sideSteps; x <= 100 + currentID.x + sideSteps; x++)
+							for (int x = -roomTypeStart.x + currentID.x - sideSteps; x <= -roomTypeStart.x + currentID.x + sideSteps; x++)
 							{
-								for (int y = 100 + currentID.y - sideSteps; y <= 100 + currentID.y + sideSteps; y++)
+								for (int y = -roomTypeStart.y + currentID.y - sideSteps; y <= -roomTypeStart.y + currentID.y + sideSteps; y++)
 								{
 									// Make sure the position is within the bounds of the array
 									if (x >= 0 && x < roomType.GetLength(0) && y >= 0 && y < roomType.GetLength(1))
@@ -391,10 +402,10 @@ public class LevelCreator : MonoBehaviour
 								}
 							}
 						}
-						int lastType = roomType[100 + currentID.x, 100 + currentID.y];
+						int lastType = roomType[-roomTypeStart.x + currentID.x, -roomTypeStart.y + currentID.y];
 						Vector2Int lastID = currentID;
 						currentID += step;
-						int thisType = roomType[100 + currentID.x, 100 + currentID.y];
+						int thisType = roomType[-roomTypeStart.x + currentID.x, -roomTypeStart.y + currentID.y];
 
 						//if (((thisType >= 100 && thisType <= 199)|| (lastType >= 100 && lastType <= 199)) && lastType != 0 && thisType != lastType)
 						if (lastType != 0 && thisType != lastType)
@@ -408,16 +419,16 @@ public class LevelCreator : MonoBehaviour
 		}
 	}
 
-	private void FillInRooms(List<Room> mainRooms, int type)
+	private void FillInRooms(List<Room> rooms, int type)
 	{
 		int addedRoomId = 0;
-		foreach (Room room in mainRooms)
+		foreach (Room room in rooms)
 		{
 			for (int i = 0; i < room.size.x; i++)
 			{
 				for (int j = 0; j < room.size.y; j++)
 				{
-					roomType[100+room.pos.x+i, 100 + room.pos.y+j] = type+addedRoomId;
+					roomType[-roomTypeStart.x + room.pos.x+i, -roomTypeStart.y + room.pos.y+j] = type+addedRoomId;
 				}
 			}
 			if(type == 100) addedRoomId += 1;
@@ -485,6 +496,21 @@ public class LevelCreator : MonoBehaviour
 			}
 		}
 		
+		if (ShowSize)
+		{
+			Gizmos.color = Color.green;
+
+			Vector3 startPoint = new Vector3(roomTypeStart.x, 0.2f, roomTypeStart.y);
+			Vector3 endPoint = new Vector3(roomTypeStart.x+roomTypeSize.x, 0.2f, roomTypeStart.y);
+			Vector3 endPoint2 = new Vector3(roomTypeStart.x, 0.2f, roomTypeStart.y+roomTypeSize.y);
+			Vector3 endPoint3 = new Vector3(roomTypeStart.x+roomTypeSize.x, 0.2f, roomTypeStart.y+roomTypeSize.y);
+			Gizmos.DrawLine(startPoint*2, endPoint*2);		
+			Gizmos.DrawLine(startPoint*2, endPoint2*2);					
+			Gizmos.DrawLine(endPoint3*2, endPoint*2);					
+			Gizmos.DrawLine(endPoint3*2, endPoint2*2);					
+		}
+		
+		// RoomArray Show Size
 		if (delaunayDictionary != null)
 		{
 			Gizmos.color = Color.green;

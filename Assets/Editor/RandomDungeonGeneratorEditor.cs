@@ -13,8 +13,7 @@ public class RandomDungeonGeneratorEditor : Editor
     }
 
     public override void OnInspectorGUI()
-	{
-        
+	{        
         // Draw the default inspector
 		DrawDefaultInspector();
 
@@ -34,8 +33,6 @@ public class RandomDungeonGeneratorEditor : Editor
 
             SceneView.lastActiveSceneView.pivot = new Vector3(playerPos.x,currentViewPoint,playerPos.z);
             SceneView.lastActiveSceneView.rotation = Quaternion.LookRotation(Vector3.down,Vector3.forward);
-            //SceneView.lastActiveSceneView.LookAt(new Vector3(0,0,0));
-
 		}
         if(GUILayout.Button("Create Dungeon With RoomSeparation"))
         {
@@ -46,5 +43,4 @@ public class RandomDungeonGeneratorEditor : Editor
             generator.CreateRoomDispersionDungeon();
 		}
     }
-
 }

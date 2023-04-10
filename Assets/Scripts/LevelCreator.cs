@@ -316,8 +316,7 @@ public class LevelCreator : MonoBehaviour
 				GameObject tile;
 				if (roomType[i, j] >= 100) tile = GenerateFloorTileAt(new Vector2Int(i-100, j-100));
 				else tile = GenerateForcedFloorTileAt(new Vector2Int(i - 100, j - 100), (roomType[i, j]+6));
-
-				
+								
 				//Create Wall
 				GenerateWallIfNeeded(i,j,tile);
 			}
@@ -384,7 +383,7 @@ public class LevelCreator : MonoBehaviour
 									// Make sure the position is within the bounds of the array
 									if (x >= 0 && x < roomType.GetLength(0) && y >= 0 && y < roomType.GetLength(1))
 									{
-											if (roomType[x,y] == 0)
+										if (roomType[x,y] == 0)
 										{
 											// Check if the position is within sideSteps distance
 											Vector2Int neighborID = new Vector2Int(x, y);
@@ -406,11 +405,9 @@ public class LevelCreator : MonoBehaviour
 							doorOpenings.Add(new DoorInfo(lastID, step)); 
 						}
 					}
-
 				}
 			}
 		}
-		Debug.Log("Door openings: "+doorOpenings.Count);
 	}
 
 	private void FillInRooms(List<Room> mainRooms, int type)

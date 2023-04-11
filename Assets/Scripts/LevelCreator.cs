@@ -22,6 +22,7 @@ public class LevelCreator : MonoBehaviour
     [SerializeField] private List<GameObject> decalPrefabs;
 
     [SerializeField] private List<GameObject> resourcesPrefab;
+    [SerializeField] private GameObject enemySpawnPointPrefab;
 
     [SerializeField] private GameObject highLightSquare;
     [SerializeField] private NavMeshSurface TileHolder;
@@ -186,20 +187,17 @@ public class LevelCreator : MonoBehaviour
 
     private void BakeLevelNavMesh()
     {
-        Debug.Log("Set UploadMeshData to false");
-
-        
         foreach(Mesh mesh in surfacMeshes)
         {
             mesh.UploadMeshData(false);
-        // Bake the NavMesh
         }
-        Debug.Log("Set UploadMeshData to false: DONE");
+        // Bake the NavMesh
         Debug.Log("Build NavMesh");
         TileHolder.BuildNavMesh();
-        Debug.Log("Mesh Built Now set UploadMeshData to true");
+
         foreach(Mesh mesh in surfacMeshes)
         {
+			// Make sure the new Mesh Data is Uploaded
             mesh.UploadMeshData(true);
         }
 		
@@ -284,11 +282,15 @@ public class LevelCreator : MonoBehaviour
 
 		FillInRooms(mainRooms,100);
 		FillInRooms(selectedRestRooms,2);
-		FillInCorridor(delaunayCartesianPathsDictionary,3);
+		FillInCorridorLoop(delaunayCartesianPathsDictionary,3);
 		//FillInRooms(restRooms,4);
 
 		// Finally just create all tiles
 		GenerateAllTilesFromRoomTypeArray();
+
+		// Add spawnPoints
+		List<Vector2Int> spawnPoints = GetSpawnPoints(100);
+		List<GameObject> spawnPointsAsGameObjects = PlaceSpawnPoints(spawnPoints, TileHolder.transform);
 
 
 		// TODO
@@ -296,8 +298,7 @@ public class LevelCreator : MonoBehaviour
 		// Better to use A* alg to find shortest path with weights?
 		// Preplaces Unused Rooms should be lower cost to move through
 
-		// Find random Room Center TODO: make sure it is a leaf room
-
+		// Find random Room Center
 		var leafRooms = delaunayCartesianPathsDictionary.Where(r => r.Value.Count==1).ToDictionary(r => r.Key, r => r.Value);
 
 		int index = Random.Range(0, leafRooms.Count);
@@ -308,6 +309,48 @@ public class LevelCreator : MonoBehaviour
 
 		double timeTaken = EditorApplication.timeSinceStartup - time;
 		Debug.Log("Time taken: "+timeTaken);
+	}
+
+
+
+	private List<GameObject> PlaceSpawnPoints(List<Vector2Int> positions, Transform parent)
+	{
+		List<GameObject> spawnPoints = new List<GameObject>();
+		foreach (var position in positions)
+		{
+			Vector3 placeAt = new Vector3(position.x*2, 0.2f, position.y*2);
+			GameObject newEnemySpawnPoint = Instantiate(enemySpawnPointPrefab, placeAt, Quaternion.identity);
+			newEnemySpawnPoint.transform.parent = parent;
+			spawnPoints.Add(newEnemySpawnPoint);
+		}
+		return spawnPoints;
+	}
+	
+	private List<Vector2Int> GetSpawnPoints(int v)
+	{
+		List<Vector2Int> allLegalPoints = new List<Vector2Int>();
+		List<Vector2Int> selectedPoints = new List<Vector2Int>();
+
+		for (int i = 0; i < roomType.GetLength(0); i++)
+		{
+			for (int j = 0; j < roomType.GetLength(1); j++)
+			{
+				if (roomType[i, j] == 0) continue;
+
+				Vector2Int TilePos = new Vector2Int(roomTypeStart.x + i, roomTypeStart.y + j);
+				allLegalPoints.Add(TilePos);				
+			}
+		}
+
+		if (v > allLegalPoints.Count) Debug.LogError("Requesting more points than available");
+
+		for (int i = 0; i < v; i++)
+		{
+			int index = Random.Range(0, allLegalPoints.Count);
+			selectedPoints.Add(allLegalPoints[index]);
+			allLegalPoints.RemoveAt(index);
+		}
+		return selectedPoints;
 	}
 
 	private void GenerateAllTilesFromRoomTypeArray()
@@ -361,11 +404,10 @@ public class LevelCreator : MonoBehaviour
 		return doorsDirections;
 	}
 
-	private void FillInCorridor(Dictionary<Point, List<Point>> delaunayPathwayDictionary, int v,int sideSteps=1)
+	private void FillInCorridorLoop(Dictionary<Point, List<Point>> delaunayPathwayDictionary, int v,int sideSteps=1)
 	{
-		
+		// Reset Door List
 		doorOpenings = new List<DoorInfo>();
-
 
 		foreach (var path in delaunayPathwayDictionary)
 		{
@@ -373,48 +415,53 @@ public class LevelCreator : MonoBehaviour
 			{
 				foreach (var endPoint in delaunayPathwayDictionary[startPoint])
 				{
-					Vector2Int startID = Vector2Int.RoundToInt(startPoint.ToVector2());
-					Vector2Int endID   = Vector2Int.RoundToInt(endPoint.ToVector2());
-					int steps = Math.Abs(startID.x - endID.x) + Math.Abs(startID.y - endID.y);					
-					Vector2Int step = Vector2Int.RoundToInt(((Vector2)endID - (Vector2)startID).normalized);
-					Vector2Int currentID = startID;
+					FillInCorridor(startPoint,endPoint,sideSteps);
+				}
+			}
+		}
+	}
 
-					for (int i = 0; i < steps; i++)
+	private void FillInCorridor(Point startPoint, Point endPoint, int sideSteps)
+	{
+		Vector2Int startID = Vector2Int.RoundToInt(startPoint.ToVector2());
+		Vector2Int endID = Vector2Int.RoundToInt(endPoint.ToVector2());
+		int steps = Math.Abs(startID.x - endID.x) + Math.Abs(startID.y - endID.y);
+		Vector2Int step = Vector2Int.RoundToInt(((Vector2)endID - (Vector2)startID).normalized);
+		Vector2Int currentID = startID;
+
+		for (int i = 0; i < steps; i++)
+		{
+			if (roomType[-roomTypeStart.x + currentID.x, -roomTypeStart.y + currentID.y] == 0 || roomType[-roomTypeStart.x + currentID.x, -roomTypeStart.y + currentID.y] == 3)
+			{
+				roomType[-roomTypeStart.x + currentID.x, -roomTypeStart.y + currentID.y] = 3;
+				// Check neighboring positions within sideSteps distance and set them to 3
+				for (int x = -roomTypeStart.x + currentID.x - sideSteps; x <= -roomTypeStart.x + currentID.x + sideSteps; x++)
+				{
+					for (int y = -roomTypeStart.y + currentID.y - sideSteps; y <= -roomTypeStart.y + currentID.y + sideSteps; y++)
 					{
-						if (roomType[-roomTypeStart.x + currentID.x, -roomTypeStart.y + currentID.y] == 0 || roomType[-roomTypeStart.x + currentID.x, -roomTypeStart.y + currentID.y] == 3)
+						// Make sure the position is within the bounds of the array
+						if (x >= 0 && x < roomType.GetLength(0) && y >= 0 && y < roomType.GetLength(1))
 						{
-							roomType[-roomTypeStart.x + currentID.x, -roomTypeStart.y + currentID.y] = 3;
-							// Check neighboring positions within sideSteps distance and set them to 3
-							for (int x = -roomTypeStart.x + currentID.x - sideSteps; x <= -roomTypeStart.x + currentID.x + sideSteps; x++)
+							if (roomType[x, y] == 0)
 							{
-								for (int y = -roomTypeStart.y + currentID.y - sideSteps; y <= -roomTypeStart.y + currentID.y + sideSteps; y++)
-								{
-									// Make sure the position is within the bounds of the array
-									if (x >= 0 && x < roomType.GetLength(0) && y >= 0 && y < roomType.GetLength(1))
-									{
-										if (roomType[x,y] == 0)
-										{
-											// Check if the position is within sideSteps distance
-											Vector2Int neighborID = new Vector2Int(x, y);
-											roomType[x,y] = 3;
-										}
-									}
-								}
+								// Check if the position is within sideSteps distance
+								Vector2Int neighborID = new Vector2Int(x, y);
+								roomType[x, y] = 3;
 							}
-						}
-						int lastType = roomType[-roomTypeStart.x + currentID.x, -roomTypeStart.y + currentID.y];
-						Vector2Int lastID = currentID;
-						currentID += step;
-						int thisType = roomType[-roomTypeStart.x + currentID.x, -roomTypeStart.y + currentID.y];
-
-						//if (((thisType >= 100 && thisType <= 199)|| (lastType >= 100 && lastType <= 199)) && lastType != 0 && thisType != lastType)
-						if (lastType != 0 && thisType != lastType)
-						{
-							doorOpenings.Add(new DoorInfo(currentID, -step));
-							doorOpenings.Add(new DoorInfo(lastID, step)); 
 						}
 					}
 				}
+			}
+			int lastType = roomType[-roomTypeStart.x + currentID.x, -roomTypeStart.y + currentID.y];
+			Vector2Int lastID = currentID;
+			currentID += step;
+			int thisType = roomType[-roomTypeStart.x + currentID.x, -roomTypeStart.y + currentID.y];
+
+			//if (((thisType >= 100 && thisType <= 199)|| (lastType >= 100 && lastType <= 199)) && lastType != 0 && thisType != lastType)
+			if (lastType != 0 && thisType != lastType)
+			{
+				doorOpenings.Add(new DoorInfo(currentID, -step));
+				doorOpenings.Add(new DoorInfo(lastID, step));
 			}
 		}
 	}
@@ -498,22 +545,29 @@ public class LevelCreator : MonoBehaviour
 		
 		if (ShowSize)
 		{
-			Gizmos.color = Color.green;
+			Gizmos.color = Color.cyan;
 
+			Vector3 pointCorrection = new Vector3(1,0,1);
+			Vector3 pointCorrection2 = new Vector3(1.1f,0,1.1f);
 			Vector3 startPoint = new Vector3(roomTypeStart.x, 0.2f, roomTypeStart.y);
 			Vector3 endPoint = new Vector3(roomTypeStart.x+roomTypeSize.x, 0.2f, roomTypeStart.y);
 			Vector3 endPoint2 = new Vector3(roomTypeStart.x, 0.2f, roomTypeStart.y+roomTypeSize.y);
 			Vector3 endPoint3 = new Vector3(roomTypeStart.x+roomTypeSize.x, 0.2f, roomTypeStart.y+roomTypeSize.y);
-			Gizmos.DrawLine(startPoint*2, endPoint*2);		
-			Gizmos.DrawLine(startPoint*2, endPoint2*2);					
-			Gizmos.DrawLine(endPoint3*2, endPoint*2);					
-			Gizmos.DrawLine(endPoint3*2, endPoint2*2);					
+			Gizmos.DrawLine(startPoint*2- pointCorrection, endPoint*2- pointCorrection);		
+			Gizmos.DrawLine(startPoint*2 - pointCorrection, endPoint2*2 - pointCorrection);					
+			Gizmos.DrawLine(endPoint3*2 - pointCorrection, endPoint*2 - pointCorrection);					
+			Gizmos.DrawLine(endPoint3*2 - pointCorrection, endPoint2*2 - pointCorrection);
+			Gizmos.color = Color.green;
+			Gizmos.DrawLine(startPoint * 2 - pointCorrection2, endPoint * 2 - pointCorrection2);
+			Gizmos.DrawLine(startPoint * 2 - pointCorrection2, endPoint2 * 2 - pointCorrection2);
+			Gizmos.DrawLine(endPoint3 * 2 - pointCorrection2, endPoint * 2 - pointCorrection2);
+			Gizmos.DrawLine(endPoint3 * 2 - pointCorrection2, endPoint2 * 2 - pointCorrection2);
 		}
 		
 		// RoomArray Show Size
 		if (delaunayDictionary != null)
 		{
-			Gizmos.color = Color.green;
+			Gizmos.color = Color.grey;
 
 			foreach (Point point in delaunayDictionary.Keys)
 			{

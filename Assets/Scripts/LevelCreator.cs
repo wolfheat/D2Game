@@ -377,8 +377,7 @@ public class LevelCreator : MonoBehaviour
 	private void GenerateWallIfNeeded(int i, int j, GameObject tile)
 	{
 		// Check for Door
-		List<Direction> doors = IsDoorOpening(new Vector2Int(roomTypeStart.x + i, roomTypeStart.y + j));
-		
+		List<Direction> doors = IsDoorOpening(new Vector2Int(roomTypeStart.x + i, roomTypeStart.y + j));		
 
 		int currentType = roomType[i, j];
 

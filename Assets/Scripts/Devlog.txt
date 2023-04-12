@@ -83,8 +83,12 @@ Nov 2022
 		* Only Main rooms have walls between rooms, restrooms and corridors only have outer walls.
 10/4	* Limited size of array around actual rooms
 11/4	* Enemy SpawnPoints Generated
+12/4	* Lower walls in corridors added		
 
+		
 		// TODO
+		// Maybe have certain rooms spawn enemies and not the added corridor? Restrict Start Room from spawning mobs
+
 		// PathWays working but are just angled straight lines between rooms
 		// Better to use A* alg to find shortest path with weights
 		// Preplaces Unused Rooms should be lower cost to move through

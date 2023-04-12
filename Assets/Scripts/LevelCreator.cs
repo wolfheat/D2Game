@@ -380,15 +380,16 @@ public class LevelCreator : MonoBehaviour
 		List<Direction> doors = IsDoorOpening(new Vector2Int(roomTypeStart.x + i, roomTypeStart.y + j));		
 
 		int currentType = roomType[i, j];
+		int walltype = currentType < 100 ? 1 : 0;
 
 		int nextType = roomType[i, j + 1];
-		if (nextType != currentType && (nextType== 0 || currentType >= 100) && !doors.Contains(Direction.up)) CreateWallAt(Direction.up, tile, 0);
+		if (nextType != currentType && (nextType== 0 || currentType >= 100) && !doors.Contains(Direction.up)) CreateWallAt(Direction.up, tile, walltype);
 		nextType = roomType[i + 1, j];
-		if (nextType != currentType && (nextType == 0 || currentType >= 100) && !doors.Contains(Direction.right)) CreateWallAt(Direction.right, tile, 0);
+		if (nextType != currentType && (nextType == 0 || currentType >= 100) && !doors.Contains(Direction.right)) CreateWallAt(Direction.right, tile, walltype);
 		nextType = roomType[i, j - 1];
-		if (nextType != currentType && (nextType == 0 || currentType >= 100) && !doors.Contains(Direction.down)) CreateWallAt(Direction.down, tile, 0);
+		if (nextType != currentType && (nextType == 0 || currentType >= 100) && !doors.Contains(Direction.down)) CreateWallAt(Direction.down, tile, walltype);
 		nextType = roomType[i - 1, j];
-		if (nextType != currentType && (nextType == 0 || currentType >= 100) && !doors.Contains(Direction.left)) CreateWallAt(Direction.left, tile, 0);
+		if (nextType != currentType && (nextType == 0 || currentType >= 100) && !doors.Contains(Direction.left)) CreateWallAt(Direction.left, tile, walltype);
 	}
 
 	private List<Direction> IsDoorOpening(Vector2Int p)

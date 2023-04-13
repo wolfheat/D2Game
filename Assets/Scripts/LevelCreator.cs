@@ -180,6 +180,7 @@ public class LevelCreator : MonoBehaviour
 
 	private void SetPlayerAtStart(Vector2Int pos)
     {
+		Debug.Log("Set player at: " + pos);
         playerController.SetToPosition(new Vector3(pos.x*Tilesize,0,pos.y*Tilesize));
     }
 
@@ -311,8 +312,13 @@ public class LevelCreator : MonoBehaviour
 		Vector2Int startRoomCenter = startRoom.ToVector2Int();
 		Vector2Int endRoomCenter = endRoom.ToVector2Int();
 
+
 		SetPlayerAtStart(startRoomCenter);
 		SetPortal(endRoomCenter);
+
+		//GeneratePerlinGround
+		FindObjectOfType<TerrainGenerator>().GenerateTerrain(roomType,roomTypeStart);
+
 
 		// Add spawnPoints
 		List<Vector2Int> spawnPoints = GetSpawnPoints(100,startRoomCenter);

@@ -86,7 +86,7 @@ Nov 2022
 12/4	* Lower walls in corridors added		
 13/4	* Created fast way to determine player start and endportal, 
 		* Limited enemy spawn positions away from start position
-		
+		* Made terrain under level that merge with play area.
 		
 		// TODO
 		// Maybe have certain rooms spawn enemies and not the added corridor?

@@ -84,7 +84,8 @@ Nov 2022
 10/4	* Limited size of array around actual rooms
 11/4	* Enemy SpawnPoints Generated
 12/4	* Lower walls in corridors added		
-
+13/4	* Created fast way to determine player start and endportal
+		
 		
 		// TODO
 		// Maybe have certain rooms spawn enemies and not the added corridor? Restrict Start Room from spawning mobs

@@ -20,6 +20,7 @@ public class LevelCreator : MonoBehaviour
     [SerializeField] private List<GameObject> wallTilesPrefab;
     [SerializeField] private List<GameObject> debreePrefabs;
     [SerializeField] private List<GameObject> decalPrefabs;
+    [SerializeField] private List<GameObject> specialPrefabs;
 
     [SerializeField] private List<GameObject> resourcesPrefab;
     [SerializeField] private GameObject enemySpawnPointPrefab;
@@ -302,24 +303,39 @@ public class LevelCreator : MonoBehaviour
 		var leafRooms = delaunayCartesianPathsDictionary.Where(r => r.Value.Count==1).ToDictionary(r => r.Key, r => r.Value);
 
 		int index = Random.Range(0, leafRooms.Count);
-		Point startRoom = leafRooms.Keys.ElementAt(index);
-		Vector2Int randomRoomCenter = startRoom.ToVector2Int();
+		Point testStartRoom = leafRooms.Keys.ElementAt(index);
+		Debug.Log("TestStartPoint Set at: "+testStartRoom);
+		Point endRoom = RoomMaker.FurthestRoomFrom(leafRooms, testStartRoom);
+		Debug.Log("EndPoint Set TO: "+endRoom);
+		Point startRoom = RoomMaker.FurthestRoomFrom(leafRooms, endRoom);
+		Debug.Log("StartPoint Replaced By: "+startRoom);
 
-		SetPlayerAtStart(randomRoomCenter);
+		Vector2Int startRoomCenter = startRoom.ToVector2Int();
+		Vector2Int endRoomCenter = endRoom.ToVector2Int();
+
+		SetPlayerAtStart(startRoomCenter);
+		SetPortal(endRoomCenter);
 
 		double timeTaken = EditorApplication.timeSinceStartup - time;
 		Debug.Log("Time taken: "+timeTaken);
 	}
 
-
+	private void SetPortal(Vector2Int pos)
+	{
+		Debug.Log("Create Portal at: "+pos);
+		//Portal
+		GameObject portal = Instantiate(specialPrefabs[0], TileHolder.transform);
+		portal.transform.position = new Vector3(pos.x*Tilesize,0,pos.y*Tilesize);
+	}
 
 	private List<GameObject> PlaceSpawnPoints(List<Vector2Int> positions, Transform parent)
 	{
 		List<GameObject> spawnPoints = new List<GameObject>();
 		foreach (var position in positions)
 		{
-			Vector3 placeAt = new Vector3(position.x*2, 0.2f, position.y*2);
-			GameObject newEnemySpawnPoint = Instantiate(enemySpawnPointPrefab, placeAt, Quaternion.identity);
+			GameObject newEnemySpawnPoint = Instantiate(enemySpawnPointPrefab);
+			Vector3 placeAt = new Vector3(position.x*Tilesize, newEnemySpawnPoint.transform.position.y, position.y* Tilesize);
+			newEnemySpawnPoint.transform.position = placeAt;
 			newEnemySpawnPoint.transform.parent = parent;
 			spawnPoints.Add(newEnemySpawnPoint);
 		}
@@ -626,8 +642,6 @@ public class LevelCreator : MonoBehaviour
 			RoomMaker.SetClosestRooms(rooms);
 			RoomMaker.MoveOverlap(rooms);
 		}
-
-
 
 		HashSet<Vector2Int> floorPositions = new HashSet<Vector2Int>();
 

@@ -1,5 +1,6 @@
 ﻿using DelaunayVoronoi;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -198,5 +199,27 @@ public static class RoomMaker
 			if (roomEndVector.y > endVector.y) endVector = new Vector2Int(endVector.x, roomEndVector.y);
 		}
 		return endVector+Vector2Int.one;
+	}
+
+	internal static Point FurthestRoomFrom(Dictionary<Point, List<Point>> leafRooms, Point start)
+	{
+		float maxDistance = 0;
+		Point furthestPoint = start;
+		string to = "";
+
+
+		foreach (var room in leafRooms)
+		{
+			if (room.Key == start) continue;
+			float distance = room.Key.ManHattanDistance(start);
+			if (distance > maxDistance)
+			{
+				maxDistance = distance;
+				furthestPoint = room.Key;
+			}
+			to += room.Key;
+		}
+		Debug.Log("Checking Furthest Room From "+start+": "+to);
+		return furthestPoint;
 	}
 }

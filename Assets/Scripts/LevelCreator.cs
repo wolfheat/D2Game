@@ -48,6 +48,7 @@ public class LevelCreator : MonoBehaviour
 	[SerializeField, Range(1f,5f)] private float HallwayRoomsRatio = 2.5f;
 	[SerializeField] private bool ShowLines = false;
 	[SerializeField] private bool ShowSize = true;
+	[SerializeField] private bool VisualizeCorridors = true;
 
 	List<DoorInfo> doorOpenings = new List<DoorInfo>();
 
@@ -59,6 +60,7 @@ public class LevelCreator : MonoBehaviour
     int GroundLayer;
     int ResourceLayer;
 	public const float Tilesize = 2f;
+	public const float EnemyDistanceFromPlayerSpawn = 8f;
 	private Vector2Int Levelsize = new Vector2Int(25,15);
 
 	int[,] roomType = new int[200, 200];
@@ -289,10 +291,6 @@ public class LevelCreator : MonoBehaviour
 		// Finally just create all tiles
 		GenerateAllTilesFromRoomTypeArray();
 
-		// Add spawnPoints
-		List<Vector2Int> spawnPoints = GetSpawnPoints(100);
-		List<GameObject> spawnPointsAsGameObjects = PlaceSpawnPoints(spawnPoints, TileHolder.transform);
-
 
 		// TODO
 		// PathWays working but are just angled straight lines between rooms
@@ -315,6 +313,10 @@ public class LevelCreator : MonoBehaviour
 
 		SetPlayerAtStart(startRoomCenter);
 		SetPortal(endRoomCenter);
+
+		// Add spawnPoints
+		List<Vector2Int> spawnPoints = GetSpawnPoints(100,startRoomCenter);
+		List<GameObject> spawnPointsAsGameObjects = PlaceSpawnPoints(spawnPoints, TileHolder.transform);
 
 		double timeTaken = EditorApplication.timeSinceStartup - time;
 		Debug.Log("Time taken: "+timeTaken);
@@ -342,7 +344,7 @@ public class LevelCreator : MonoBehaviour
 		return spawnPoints;
 	}
 	
-	private List<Vector2Int> GetSpawnPoints(int v)
+	private List<Vector2Int> GetSpawnPoints(int v, Vector2Int start)
 	{
 		List<Vector2Int> allLegalPoints = new List<Vector2Int>();
 		List<Vector2Int> selectedPoints = new List<Vector2Int>();
@@ -352,8 +354,11 @@ public class LevelCreator : MonoBehaviour
 			for (int j = 0; j < roomType.GetLength(1); j++)
 			{
 				if (roomType[i, j] == 0) continue;
-
 				Vector2Int TilePos = new Vector2Int(roomTypeStart.x + i, roomTypeStart.y + j);
+
+				//Check if to close to Player start position
+				if (Vector2.Distance(start, TilePos) < EnemyDistanceFromPlayerSpawn) continue;
+
 				allLegalPoints.Add(TilePos);				
 			}
 		}
@@ -381,7 +386,7 @@ public class LevelCreator : MonoBehaviour
 				Vector2Int TilePos = new Vector2Int(roomTypeStart.x + i, roomTypeStart.y + j);
 				//Create Tile
 				GameObject tile;
-				if (roomType[i, j] >= 100) tile = GenerateFloorTileAt(TilePos);
+				if (roomType[i, j] >= 100 || !VisualizeCorridors) tile = GenerateFloorTileAt(TilePos);
 				else tile = GenerateForcedFloorTileAt(TilePos, roomType[i, j]+6);
 								
 				//Create Wall

@@ -84,11 +84,13 @@ Nov 2022
 10/4	* Limited size of array around actual rooms
 11/4	* Enemy SpawnPoints Generated
 12/4	* Lower walls in corridors added		
-13/4	* Created fast way to determine player start and endportal
+13/4	* Created fast way to determine player start and endportal, 
+		* Limited enemy spawn positions away from start position
 		
 		
 		// TODO
-		// Maybe have certain rooms spawn enemies and not the added corridor? Restrict Start Room from spawning mobs
+		// Maybe have certain rooms spawn enemies and not the added corridor?
+		// Limit obstacles from spawning in front of doorways
 
 		// PathWays working but are just angled straight lines between rooms
 		// Better to use A* alg to find shortest path with weights

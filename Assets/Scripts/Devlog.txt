@@ -97,7 +97,7 @@ Nov 2022
 
 		// Make Objects scavangeble and droppabe by enemies
 
-		// Make inventory for objects
+		// Make inventory for objects, and general UI
 
 		// PathWays working but are just angled straight lines between rooms
 		// Better to use A* alg to find shortest path with weights

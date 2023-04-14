@@ -11,17 +11,43 @@ public class TerrainGenerator : MonoBehaviour
 
     Terrain terrain;
 
-    int[,] level;
+    int[,] terrainLevel;
 
     Vector2Int startPosition;
 
 	public void GenerateTerrain(int[,] levelIn,Vector2Int pos)
     {
-        level = levelIn;
+        terrainLevel = LevelToTerrain(levelIn);
         startPosition = pos;
         terrain = GetComponent<Terrain>();
         GenerateTerrainData();
     }
+
+    private int[,] LevelToTerrain(int[,] levelIn)
+    {
+        int scaling = 2;
+		int[,] newTerrainLevel = new int[length*scaling, width*scaling];
+
+        BoundsInt area = new BoundsInt(new Vector3Int(-2,-2,0), new Vector3Int(5,5,1));
+
+		for (int x = 0; x < levelIn.GetLength(0); x++)
+		{
+			for (int y = 0; y < levelIn.GetLength(1); y++)
+			{
+                if (levelIn[x, y] == 0) continue;
+
+                for (int i = area.xMin; i < area.xMax; i++)
+                {
+                    for (int j = area.yMin; j < area.yMax; j++)
+                    {
+				        newTerrainLevel[scaling * y+i, scaling * x+j] = 1;
+                    }
+                }
+			}
+		}
+        return newTerrainLevel;
+
+	}
 
     private void GenerateTerrainData()
     {
@@ -42,23 +68,21 @@ public class TerrainGenerator : MonoBehaviour
             }
         }
 
-        int Xoffset = 128 + startPosition.x*2;
-        int Yoffset = 128 + startPosition.y*2;   
-
-		for (int x = 0; x < level.GetLength(0); x++)
+        int Xoffset = 128 + startPosition.y*2;
+        int Yoffset = 128 + startPosition.x*2;   
+        
+		for (int x = 0; x < terrainLevel.GetLength(0); x++)
         {
-            for (int y = 0; y < level.GetLength(1); y++)
+            for (int y = 0; y < terrainLevel.GetLength(1); y++)
             {
                 // If under level make 0
-                if (level[x, y] != 0)
+                if (terrainLevel[x, y] != 0)
                 {
-                    heightsArray[2 * y + Yoffset, 2 * x + Xoffset] = 0;
-                    heightsArray[2 * y + 1 + Yoffset,2 * x + Xoffset] = 0;
-                    heightsArray[2 * y + 1 + Yoffset,2 * x + 1 + Xoffset] = 0;
-                    heightsArray[2 * y + Yoffset,2 * x + 1 + Xoffset] = 0;
+                    heightsArray[x+Xoffset, y+Yoffset] = 0;
                 }
             }
         }
+        
         return heightsArray;
     }
 

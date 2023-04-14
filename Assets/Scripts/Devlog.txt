@@ -87,7 +87,8 @@ Nov 2022
 13/4	* Created fast way to determine player start and endportal, 
 		* Limited enemy spawn positions away from start position
 		* Made terrain under level that merge with play area.
-		
+14/4	* Terrain now has a small ledge around buildings that look more natural.
+
 		// TODO
 		// Maybe have certain rooms spawn enemies and not the added corridor?
 		// Limit obstacles from spawning in front of doorways

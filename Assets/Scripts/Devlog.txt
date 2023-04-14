@@ -93,6 +93,12 @@ Nov 2022
 		// Maybe have certain rooms spawn enemies and not the added corridor?
 		// Limit obstacles from spawning in front of doorways
 
+		// Make Hitpoints text show when hitting enemy or getting hit yourself, over time damage etc
+
+		// Make Objects scavangeble and droppabe by enemies
+
+		// Make inventory for objects
+
 		// PathWays working but are just angled straight lines between rooms
 		// Better to use A* alg to find shortest path with weights
 		// Preplaces Unused Rooms should be lower cost to move through

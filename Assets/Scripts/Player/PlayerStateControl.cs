@@ -6,15 +6,22 @@ public class PlayerStateControl : MonoBehaviour
 {
 	private Animator animator;
 	private UIController UIController;
+	private PlayerController PlayerController;
 	public PlayerState State { get; private set;}
 
 	private void Start()
 	{
 		UIController = FindObjectOfType<UIController>();
+		PlayerController = FindObjectOfType<PlayerController>();
 		animator = GetComponent<Animator>();
 	}
 	public void SetState(PlayerState newState)
 	{
+		//Set speed of animation
+		animator.speed = PlayerController.attackSpeedMultiplier;
+
+
+
 		//Debug.Log("Setting state: From: "+playerState+" To: "+newState);
 		switch (newState)
 		{

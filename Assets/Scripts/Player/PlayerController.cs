@@ -27,8 +27,8 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private LayerMask Resource;
 	[SerializeField] private LayerMask UI;
 	[SerializeField] private TextMeshProUGUI stateText;
-	[SerializeField] private PlayerStateControl playerState;
 
+	private PlayerStateControl playerState;
 	private Camera mainCamera;
 	private WayPointController WayPointController;
 	private NavMeshAgent navMeshAgent;
@@ -39,6 +39,8 @@ public class PlayerController : MonoBehaviour
 	private ClickInfo wayPointToShow;
 		
 	private float attackTime = 1.22f;
+	public float attackSpeedMultiplier = 1.8f;
+
 	private const float StopDistance = 0.1f;
 	private const float MinGatherDistance = 1f;
 	private float mouseClickTimer = 0f;
@@ -63,13 +65,6 @@ public class PlayerController : MonoBehaviour
 
 	private void Start()
 	{
-		Quaternion rot = Quaternion.Euler(0,0,0);
-		Quaternion rot2 = Quaternion.Euler(0,0,0);
-
-		float angle = Quaternion.Angle(rot, rot2);
-		Debug.Log("Angle = "+angle);
-
-		Debug.Log("Player start run");
 		navMeshAgent = GetComponent<NavMeshAgent>();
 		playerState = GetComponent<PlayerStateControl>();
 		WayPointController = FindObjectOfType<WayPointController>();
@@ -269,7 +264,7 @@ public class PlayerController : MonoBehaviour
 		playerState.SetState(PlayerState.AttackSwordSwing);
 
 		// Wait For Attack to finish
-		yield return new WaitForSeconds(attackTime);
+		yield return new WaitForSeconds(attackTime/attackSpeedMultiplier);
 
 		attackLock = false;
 		

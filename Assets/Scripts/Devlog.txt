@@ -88,6 +88,8 @@ Nov 2022
 		* Limited enemy spawn positions away from start position
 		* Made terrain under level that merge with play area.
 14/4	* Terrain now has a small ledge around buildings that look more natural.
+15/4	* Moved directory
+
 
 		// TODO
 		// Maybe have certain rooms spawn enemies and not the added corridor?

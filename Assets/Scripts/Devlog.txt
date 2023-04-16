@@ -89,9 +89,10 @@ Nov 2022
 		* Made terrain under level that merge with play area.
 14/4	* Terrain now has a small ledge around buildings that look more natural.
 15/4	* Moved directory
-
-
+16/4	* Added UI popup when reaching portal. Pressing ok will make new level.
+		
 		// TODO
+		// Player can get stuck sometimes fix
 		// Maybe have certain rooms spawn enemies and not the added corridor?
 		// Limit obstacles from spawning in front of doorways
 

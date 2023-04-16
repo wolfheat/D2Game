@@ -82,9 +82,11 @@ public class LevelCreator : MonoBehaviour
 
 	public void CreateNewLevel()
 	{
+		RequestActivatePlayerNavmesh(false);
 		CreateRoomDispersionDungeon();
 		BakeLevelNavMesh();
-		RequestActivatePlayerNavmesh();
+		RequestActivatePlayerNavmesh(true);
+		
 	}
 
 	public void CreateGeneratedLevel()
@@ -189,11 +191,12 @@ public class LevelCreator : MonoBehaviour
     {
 		Debug.Log("Set player at: " + pos);
         playerController.SetToPosition(new Vector3(pos.x*Tilesize,0,pos.y*Tilesize));
+		Debug.Log("PLayerController now at: " + playerController.transform.position);
     }
 
-    private void RequestActivatePlayerNavmesh()
+    private void RequestActivatePlayerNavmesh(bool activate)
     {
-        playerController.EnableNavMesh(true);
+        playerController.EnableNavMesh(activate);
 	}
 
     private void BakeLevelNavMesh()
@@ -321,6 +324,7 @@ public class LevelCreator : MonoBehaviour
 
 
 		SetPlayerAtStart(startRoomCenter);
+
 		SetPortal(endRoomCenter);
 
 		// 

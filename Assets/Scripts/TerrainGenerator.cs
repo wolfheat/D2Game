@@ -1,4 +1,5 @@
 using System;
+using UnityEditor;
 using UnityEngine;
 
 public class TerrainGenerator : MonoBehaviour
@@ -9,9 +10,11 @@ public class TerrainGenerator : MonoBehaviour
 	[SerializeField] int depth = -10;
     [SerializeField] int scale = 30;
 
-    Terrain terrain;
+    public Terrain terrain;
+    public Terrain storedTerrain;
 
     int[,] terrainLevel;
+    float[,] terrainDataArray;
 
     Vector2Int startPosition;
 
@@ -19,9 +22,15 @@ public class TerrainGenerator : MonoBehaviour
     {
         terrainLevel = LevelToTerrain(levelIn);
         startPosition = pos;
-        terrain = GetComponent<Terrain>();
+        UpdateTerrain();
         GenerateTerrainData();
     }
+
+    public void UpdateTerrain()
+    {
+		terrain = GetComponent<Terrain>();
+	}
+
 
     private int[,] LevelToTerrain(int[,] levelIn)
     {
@@ -58,13 +67,13 @@ public class TerrainGenerator : MonoBehaviour
 
     private float[,] GenerateHeights()
     {
-        float[,] heightsArray = new float[width, length];
+		terrainDataArray = new float[width, length];
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < length; y++)
             {
-                // If under level make 0
-                heightsArray[x,y] = CalculateHeight(x,y);
+				// If under level make 0
+				terrainDataArray[x,y] = CalculateHeight(x,y);
             }
         }
 
@@ -78,12 +87,12 @@ public class TerrainGenerator : MonoBehaviour
                 // If under level make 0
                 if (terrainLevel[x, y] != 0)
                 {
-                    heightsArray[x+Xoffset, y+Yoffset] = 0;
+					terrainDataArray[x+Xoffset, y+Yoffset] = 0;
                 }
             }
         }
         
-        return heightsArray;
+        return terrainDataArray;
     }
 
     private float CalculateHeight(int x, int y)
@@ -92,4 +101,34 @@ public class TerrainGenerator : MonoBehaviour
         float yCoord = (float)y / length*scale;
         return Mathf.PerlinNoise(xCoord,yCoord);
     }
+
+	internal void LoadTerrain()
+	{
+		terrain = GetComponent<Terrain>();
+		Debug.Log("LOADD Terrain");
+        terrain = storedTerrain;
+	}
+    
+	internal void StoreTerrain()
+	{
+		terrain = GetComponent<Terrain>();
+		Debug.Log("STORE Terrain");
+        storedTerrain = terrain;
+	}
+
+	internal Terrain GetTerrain()
+	{
+        return GetComponent<Terrain>();
+	}
+	internal void ApplyTerrain(float[,] terraDataArrayIn)
+	{
+        Debug.Log("Applyu terrain");
+        terrainDataArray = terraDataArrayIn;
+        terrain.terrainData.SetHeights(0,0,terrainDataArray);
+	}
+
+	internal float[,] GetTerrainDataArray()
+	{
+        return terrainDataArray;
+	}
 }

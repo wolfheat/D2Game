@@ -2,11 +2,12 @@ using UnityEngine;
 using UnityEditor;
 
 [CustomEditor(typeof(LevelCreator),true)]
+[InitializeOnLoad]
 public class RandomDungeonGeneratorEditor : Editor
 {
 	LevelCreator generator;
     private int currentViewPoint = 20;
-
+	
 	private void Awake()
     {
         generator = (LevelCreator)target;
@@ -41,6 +42,10 @@ public class RandomDungeonGeneratorEditor : Editor
         if(GUILayout.Button("Create Dungeon With RoomDispersion"))
         {
             generator.CreateRoomDispersionDungeon();
+		}
+        if(GUILayout.Button("ResetTerrain"))
+        {
+            generator.ResetTerrain();
 		}
     }
 }

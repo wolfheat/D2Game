@@ -69,6 +69,8 @@ public class PlayerController : MonoBehaviour
 		playerState = GetComponent<PlayerStateControl>();
 		WayPointController = FindObjectOfType<WayPointController>();
 		soundmaster = FindObjectOfType<SoundMaster>();
+
+
 	}
 	private void Update()
 	{

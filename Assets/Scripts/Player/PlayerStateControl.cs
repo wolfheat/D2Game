@@ -14,15 +14,13 @@ public class PlayerStateControl : MonoBehaviour
 		UIController = FindObjectOfType<UIController>();
 		PlayerController = FindObjectOfType<PlayerController>();
 		animator = GetComponent<Animator>();
+
 	}
 	public void SetState(PlayerState newState)
 	{
 		//Set speed of animation
 		animator.speed = PlayerController.attackSpeedMultiplier;
 
-
-
-		//Debug.Log("Setting state: From: "+playerState+" To: "+newState);
 		switch (newState)
 		{
 			case PlayerState.Idle:

@@ -12,6 +12,8 @@ public enum Direction {left,down,right,up}
 
 public class LevelCreator : MonoBehaviour
 {
+    [SerializeField] private TerrainStoredSO storedTerrainSO;
+
     //[SerializeField] private GameObject playerControllerParent;
     [SerializeField] private PlayerController playerController;
     [SerializeField] private UIController UIController;
@@ -55,7 +57,7 @@ public class LevelCreator : MonoBehaviour
 	Vector2Int roomTypeStart;
 	Vector2Int roomTypeSize;
 
-
+	private TerrainGenerator terrainGenerator;
 	private List<Mesh> surfacMeshes = new List<Mesh>();
     int GroundLayer;
     int ResourceLayer;
@@ -72,18 +74,23 @@ public class LevelCreator : MonoBehaviour
         ResourceLayer = LayerMask.NameToLayer("Resources");
 		Inputs.Instance.Controls.Land.X.performed += _ => PrintCurrentTilePosition();
 
-		//CreateStartLevel();
+		terrainGenerator = FindObjectOfType<TerrainGenerator>();
 
-		//CreateGeneratedLevel();
+		CreateNewLevel();
 
+	}
+
+	public void CreateNewLevel()
+	{
 		CreateRoomDispersionDungeon();
-
 		BakeLevelNavMesh();
 		RequestActivatePlayerNavmesh();
 	}
 
-    public void CreateGeneratedLevel()
+	public void CreateGeneratedLevel()
     {
+
+
 		//Clear The level
 		ClearLevel();
         //Generate the level
@@ -317,10 +324,17 @@ public class LevelCreator : MonoBehaviour
 		SetPortal(endRoomCenter);
 
 		// 
-
 		//GeneratePerlinGround
-		FindObjectOfType<TerrainGenerator>().GenerateTerrain(roomType,roomTypeStart);
+		if (terrainGenerator == null) terrainGenerator = FindObjectOfType<TerrainGenerator>();
+		terrainGenerator.GenerateTerrain(roomType, roomTypeStart);
+		terrainGenerator.UpdateTerrain();
 
+
+		//Store terrain if in Editor
+		if (Application.isEditor)
+		{
+			terrainGenerator.StoreTerrain();
+		}
 
 		// Add spawnPoints
 		List<Vector2Int> spawnPoints = GetSpawnPoints(100,startRoomCenter);
@@ -328,6 +342,17 @@ public class LevelCreator : MonoBehaviour
 
 		double timeTaken = EditorApplication.timeSinceStartup - time;
 		Debug.Log("Time taken: "+timeTaken);
+	}
+
+	private void OnApplicationQuit()
+	{
+		
+	}
+
+	public void ResetTerrain()
+	{
+		if (terrainGenerator == null) terrainGenerator = FindObjectOfType<TerrainGenerator>();
+		terrainGenerator.LoadTerrain();
 	}
 
 	private void SetPortal(Vector2Int pos)
@@ -714,4 +739,5 @@ public class LevelCreator : MonoBehaviour
 		}
 		return tiles;
 	}
+
 }

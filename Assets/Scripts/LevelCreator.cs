@@ -435,6 +435,14 @@ public class LevelCreator : MonoBehaviour
 
 		int currentType = roomType[i, j];
 		int walltype = currentType < 100 ? 1 : 0;
+		if (currentType >= 100)
+		{
+			if(Random.Range(0, 10) <= 1)
+			{
+				walltype = 2+Random.Range(0, wallTilesPrefab.Count-3);
+			}
+		}
+
 
 		int nextType = roomType[i, j + 1];
 		if (nextType != currentType && (nextType== 0 || currentType >= 100) && !doors.Contains(Direction.up)) CreateWallAt(Direction.up, tile, walltype);

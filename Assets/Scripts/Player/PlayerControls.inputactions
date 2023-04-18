@@ -132,6 +132,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "F",
+                    "type": "Button",
+                    "id": "367d0a8b-5238-44d6-9bbf-cb6742131cdc",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "ZoomIn",
                     "type": "Value",
                     "id": "aec21b3d-e5ca-4ea5-89cc-5525f647ba10",
@@ -304,6 +313,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "ZoomIn",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "efcc1ba6-4469-41d8-9093-faf03210c799",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "F",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

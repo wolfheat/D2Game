@@ -191,7 +191,6 @@ public class LevelCreator : MonoBehaviour
     {
 		Debug.Log("Set player at: " + pos);
         playerController.SetToPosition(new Vector3(pos.x*Tilesize,0,pos.y*Tilesize));
-		Debug.Log("PLayerController now at: " + playerController.transform.position);
     }
 
     private void RequestActivatePlayerNavmesh(bool activate)

@@ -11,14 +11,6 @@ public class FaceCamera : MonoBehaviour
         cam = Camera.main;
     }
 
-	private void OnTriggerEnter(Collider other)
-	{
-		if(other.GetComponent<PlayerController>() != null)
-		{
-			Debug.Log("PICK ME UP");
-		}
-	}
-
 	private void Update()
     {
         CalculateAndFaceCamera();

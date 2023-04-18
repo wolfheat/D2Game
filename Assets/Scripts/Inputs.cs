@@ -10,6 +10,7 @@ public class Inputs : MonoBehaviour
 	public PlayerControls Controls { get; private set; }
 
 	public float Shift { get; private set; }
+	public float F { get; private set; }
 	public float G { get; private set; }
 	public float X { get; private set; }
 	public float CTRL { get; private set; }
@@ -49,6 +50,8 @@ public class Inputs : MonoBehaviour
 		Controls.Land.Space.performed += _ => Space = _.ReadValue<float>();
 		Controls.Land.Space.canceled+= _ => Space = _.ReadValue<float>();
 		Controls.Land.CTRL.canceled+= _ => CTRL = _.ReadValue<float>();
+		Controls.Land.F.performed += _ => F = _.ReadValue<float>();
+		Controls.Land.F.canceled+= _ => F = _.ReadValue<float>();
 		Controls.Land.G.performed += _ => G = _.ReadValue<float>();
 		Controls.Land.G.canceled+= _ => G = _.ReadValue<float>();
 		Controls.Land.X.performed += _ => X = _.ReadValue<float>();

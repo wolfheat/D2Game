@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class Inputs : MonoBehaviour
@@ -16,6 +17,12 @@ public class Inputs : MonoBehaviour
 	public float Space { get; private set; }
 		
 	public float Zooming { get; private set; }
+	public bool PointerOverUI { get; private set; }
+
+	private void Update()
+	{
+		PointerOverUI = EventSystem.current.IsPointerOverGameObject();
+	}
 
 	private void Awake()
 	{

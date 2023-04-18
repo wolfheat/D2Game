@@ -5,9 +5,6 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.EnhancedTouch;
-using UnityEngine.InputSystem.HID;
-using UnityEngine.Playables;
 
 public class ClickInfo
 {
@@ -74,7 +71,6 @@ public class PlayerController : MonoBehaviour
 	}
 	private void Update()
 	{
-
 		CheckIfReachedTarget();
 		GetPlayerInput();
 	}
@@ -156,7 +152,7 @@ public class PlayerController : MonoBehaviour
 	private bool GetClickInfo(ClickType type)
 	{
 		// Clicking UI element, ignore gameplay clicks
-		if (EventSystem.current.IsPointerOverGameObject()){	return false;	}
+		if (Inputs.Instance.PointerOverUI){	return false;}
 
 		// Used to limit input recognitions when mouse is held
 		mouseClickTimer = 0;

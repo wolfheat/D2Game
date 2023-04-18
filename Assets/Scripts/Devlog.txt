@@ -92,6 +92,9 @@ Nov 2022
 16/4	* Added UI popup when reaching portal. Pressing ok will make new level.
 17/4	* Fixed terrain issue by having separate terrain for editor and runtime mode.
 		* Fixed Zoom Init, And Click Issue
+18/4	* Fixed warning of checking if over UI with new Input System.
+		* Added Items as sprites that always face camera
+
 
 		// TODO
 		// Player can get stuck sometimes fix

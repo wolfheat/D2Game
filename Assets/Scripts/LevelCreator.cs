@@ -418,7 +418,10 @@ public class LevelCreator : MonoBehaviour
 	private void GenerateWallIfNeeded(int i, int j, GameObject tile)
 	{
 		// Check for Door
-		List<Direction> doors = IsDoorOpening(new Vector2Int(roomTypeStart.x + i, roomTypeStart.y + j));		
+		List<Direction> doors = IsDoorOpening(new Vector2Int(roomTypeStart.x + i, roomTypeStart.y + j));
+
+		// Qhickfix to clean up doorways from clutter
+		if (doors.Count > 0) RemoveAllExtra(tile);
 
 		int currentType = roomType[i, j];
 		int walltype = currentType < 100 ? 1 : 0;
@@ -438,6 +441,18 @@ public class LevelCreator : MonoBehaviour
 		if (nextType != currentType && (nextType == 0 || currentType >= 100) && !doors.Contains(Direction.down)) CreateWallAt(Direction.down, tile, walltype);
 		nextType = roomType[i - 1, j];
 		if (nextType != currentType && (nextType == 0 || currentType >= 100) && !doors.Contains(Direction.left)) CreateWallAt(Direction.left, tile, walltype);
+	}
+
+	private void RemoveAllExtra(GameObject tile)
+	{
+		Transform[] children = tile.transform.GetComponentsInChildren<Transform>();
+		if(children.Length <= 1) return;
+
+		for (int i = children.Length-1; i >= 0; i--)
+		{
+			if (children[i] == tile.transform) continue;
+			if(children[i] != tile.transform) DestroyImmediate(children[i].gameObject);
+		}
 	}
 
 	private List<Direction> IsDoorOpening(Vector2Int p)

@@ -327,34 +327,16 @@ public class LevelCreator : MonoBehaviour
 
 		SetPortal(endRoomCenter);
 
-		// 
 		//GeneratePerlinGround
 		if (terrainGenerator == null) terrainGenerator = FindObjectOfType<TerrainGenerator>();
 		terrainGenerator.GenerateTerrain(roomType, roomTypeStart);
-
-		//Store terrain if in Editor
-		if (!Application.isPlaying)
-		{
-			terrainGenerator.StoreTerrain();
-		}
-
+				
 		// Add spawnPoints
 		List<Vector2Int> spawnPoints = GetSpawnPoints(100,startRoomCenter);
 		List<GameObject> spawnPointsAsGameObjects = PlaceSpawnPoints(spawnPoints, TileHolder.transform);
 
 		double timeTaken = EditorApplication.timeSinceStartup - time;
 		Debug.Log("Time taken: "+timeTaken);
-	}
-
-	private void OnApplicationQuit()
-	{
-		//ResetTerrain();
-	}
-
-	public void ResetTerrain()
-	{
-		if (terrainGenerator == null) terrainGenerator = FindObjectOfType<TerrainGenerator>();
-		terrainGenerator.LoadTerrain();
 	}
 
 	private void SetPortal(Vector2Int pos)

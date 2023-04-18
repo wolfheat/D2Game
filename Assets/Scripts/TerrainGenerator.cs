@@ -16,7 +16,6 @@ public class TerrainGenerator : MonoBehaviour
 
     int[,] terrainLevel;
     float[,] terrainDataArray;
-    float[,] storedTerrainDataArray;
 
     [SerializeField] TerrainStoredSO storedTerrainData;
 
@@ -57,31 +56,24 @@ public class TerrainGenerator : MonoBehaviour
 
     private void GenerateTerrainData()
     {
-        ActivateCorrectTerrain();
-        if (Application.isPlaying)
-        {
-            runtimeTerrain.terrainData.heightmapResolution = 257;
-		    runtimeTerrain.terrainData.size = new Vector3(width,depth,length);
-		    runtimeTerrain.terrainData.SetHeights(0,0,GenerateHeights());
-        }
-        else
-        {
-			editorTerrain.terrainData.heightmapResolution = 257;
-			editorTerrain.terrainData.size = new Vector3(width, depth, length);
-			editorTerrain.terrainData.SetHeights(0, 0, GenerateHeights());
-		}
-
+        ActivateCorrectTerrain();        
+		terrain.terrainData.heightmapResolution = 257;
+		terrain.terrainData.size = new Vector3(width,depth,length);
+		terrain.terrainData.SetHeights(0,0,GenerateHeights());
+        
     }
 
 	private void ActivateCorrectTerrain()
 	{
         if (Application.isPlaying)
         {
+            terrain = runtimeTerrain;
             runtimeTerrain.GetComponent<Terrain>().enabled = true;
             editorTerrain.GetComponent<Terrain>().enabled = false;
 		}
         else
         {
+            terrain = editorTerrain;
 			editorTerrain.GetComponent<Terrain>().enabled = true;
 			runtimeTerrain.GetComponent<Terrain>().enabled = false;
 		}
@@ -123,33 +115,4 @@ public class TerrainGenerator : MonoBehaviour
         float yCoord = (float)y / length*scale;
         return Mathf.PerlinNoise(xCoord,yCoord);
     }
-
-	internal void LoadTerrain()
-	{
-        ActivateCorrectTerrain();
-	}
-
-	internal void StoreTerrain()
-	{
-        // Should autostore"
-        //editorTerrain = terrain;        
-	}
-
-	private int CountNonZeros()
-	{
-        Debug.Log("Counting Zeros, nonzerosstoredsince before: "+storedTerrainData.amount);
-        int amt = 0;
-		for (int i = 0; i < terrainDataArray.GetLength(0); i++)
-		{
-			for (int j = 0; j < terrainDataArray.GetLength(1); j++)
-			{
-				if (terrainDataArray[i, j] == 0)
-				{
-					amt++;
-				}
-			}
-		}
-        Debug.Log("NON ZEROS: "+amt);
-        return amt;
-	}
-}
+ }

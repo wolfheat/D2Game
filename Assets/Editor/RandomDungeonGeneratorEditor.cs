@@ -35,17 +35,9 @@ public class RandomDungeonGeneratorEditor : Editor
             SceneView.lastActiveSceneView.pivot = new Vector3(playerPos.x,currentViewPoint,playerPos.z);
             SceneView.lastActiveSceneView.rotation = Quaternion.LookRotation(Vector3.down,Vector3.forward);
 		}
-        if(GUILayout.Button("Create Dungeon With RoomSeparation"))
-        {
-            generator.CreateRoomSeparationDungeon();
-		}
         if(GUILayout.Button("Create Dungeon With RoomDispersion"))
         {
             generator.CreateRoomDispersionDungeon();
-		}
-        if(GUILayout.Button("ResetTerrain"))
-        {
-            generator.ResetTerrain();
 		}
     }
 }

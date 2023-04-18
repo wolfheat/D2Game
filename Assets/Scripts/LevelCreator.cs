@@ -256,13 +256,16 @@ public class LevelCreator : MonoBehaviour
 
 	public void CreateRoomDispersionDungeon()
 	{
+		// Start Method Execution Timer 
 		double time = EditorApplication.timeSinceStartup;
 
-		//Clear The level
+		//Clear The Level
 		ClearLevel();
 
-		// Generate the level
+		// Generate The Level
 		List<Room> rooms = RoomMaker.GenerateRandomDungeon(DispersionRoomsAmt, HallwayRoomsRatio);
+
+		// Set Gameplay Area
 		roomTypeStart = RoomMaker.GetStartVector(rooms);
 		roomTypeSize = RoomMaker.GetSize(rooms);
 
@@ -272,7 +275,7 @@ public class LevelCreator : MonoBehaviour
 		List<Room> mainRooms = rooms.Take(DispersionRoomsAmt).ToList();
 		List<Room> restRooms = rooms.GetRange(DispersionRoomsAmt,rooms.Count-DispersionRoomsAmt).ToList();
 
-
+		// Get all Rooms Centerpoints
 		List<Vector2> roomCentersAsFloats = RoomMaker.GetCentersAsFloats(mainRooms);
 		List<Vector2Int> roomCenters = RoomMaker.GetCentersAsInts(mainRooms);
 
@@ -282,7 +285,6 @@ public class LevelCreator : MonoBehaviour
 		delaunayDictionary = DelaunayTriangulator.FindMinimumPath(delaunayTriangles);
 		// Determine Actual Cartesian Paths
 		delaunayCartesianPathsDictionary = DelaunayTriangulator.DelunayDictionaryToCartesianPaths(delaunayDictionary);
-
 
 		// Select Rooms that the Cartesian Paths passes
 		List<Room> selectedRestRooms = new List<Room>();
@@ -294,48 +296,49 @@ public class LevelCreator : MonoBehaviour
 		// Reset the roomTypeArray (used for determine tile types and doorways)
 		roomType = new int[roomTypeSize.x, roomTypeSize.y];
 
+		// Fill In Main Rooms, Corridor Rooms and Corridor
 		FillInRooms(mainRooms,100);
 		FillInRooms(selectedRestRooms,2);
 		FillInCorridorLoop(delaunayCartesianPathsDictionary,3);
-		//FillInRooms(restRooms,4);
 
 		// Finally just create all tiles
 		GenerateAllTilesFromRoomTypeArray();
-
 
 		// TODO
 		// PathWays working but are just angled straight lines between rooms
 		// Better to use A* alg to find shortest path with weights?
 		// Preplaces Unused Rooms should be lower cost to move through
 
-		// Find random Room Center
+		// Find Leaf Rooms (All Rooms with One Exit)
 		var leafRooms = delaunayCartesianPathsDictionary.Where(r => r.Value.Count==1).ToDictionary(r => r.Key, r => r.Value);
 
+		// Calculate Player Start Position and Portal Room Position		
 		int index = Random.Range(0, leafRooms.Count);
 		Point testStartRoom = leafRooms.Keys.ElementAt(index);
-		Debug.Log("TestStartPoint Set at: "+testStartRoom);
 		Point endRoom = RoomMaker.FurthestRoomFrom(leafRooms, testStartRoom);
-		Debug.Log("EndPoint Set TO: "+endRoom);
 		Point startRoom = RoomMaker.FurthestRoomFrom(leafRooms, endRoom);
-		Debug.Log("StartPoint Replaced By: "+startRoom);
 
-		Vector2Int startRoomCenter = startRoom.ToVector2Int();
+		// Place End Portal
 		Vector2Int endRoomCenter = endRoom.ToVector2Int();
-
-
-		SetPlayerAtStart(startRoomCenter);
-
 		SetPortal(endRoomCenter);
 
-		//GeneratePerlinGround
+		//Place Player
+		Vector2Int startRoomCenter = startRoom.ToVector2Int();
+		SetPlayerAtStart(startRoomCenter);
+
+
+		// Generate Ground Terrain
 		if (terrainGenerator == null) terrainGenerator = FindObjectOfType<TerrainGenerator>();
 		terrainGenerator.GenerateTerrain(roomType, roomTypeStart);
 				
-		// Add spawnPoints
+		// Add Random SpawnPoints
 		List<Vector2Int> spawnPoints = GetSpawnPoints(100,startRoomCenter);
 		List<GameObject> spawnPointsAsGameObjects = PlaceSpawnPoints(spawnPoints, TileHolder.transform);
 
+		// Stop Method Execution Timer
 		double timeTaken = EditorApplication.timeSinceStartup - time;
+
+		// Show Method Complete Time
 		Debug.Log("Time taken: "+timeTaken);
 	}
 
@@ -426,7 +429,6 @@ public class LevelCreator : MonoBehaviour
 				walltype = 2+Random.Range(0, wallTilesPrefab.Count-3);
 			}
 		}
-
 
 		int nextType = roomType[i, j + 1];
 		if (nextType != currentType && (nextType== 0 || currentType >= 100) && !doors.Contains(Direction.up)) CreateWallAt(Direction.up, tile, walltype);
@@ -528,47 +530,12 @@ public class LevelCreator : MonoBehaviour
 		}
 	}
 
-	private List<RoomGameObject> MakeColliders(List<Room> restRooms)
-	{
-		List<RoomGameObject> roomObjects = new List<RoomGameObject>();
-		foreach (Room room in restRooms)
-		{
-			Vector2 size = room.size;
-			Vector2 center = room.pos + size / 2f;
-			GameObject roomObject = new GameObject("Room Collider");
-			BoxCollider2D collider = roomObject.AddComponent<BoxCollider2D>();
-			collider.size = size;
-			collider.offset = center;
-			RoomGameObject roomGameObject = roomObject.AddComponent<RoomGameObject>();
-			roomGameObject.originalRoom = room;
-			roomGameObject.col = collider;
-			roomObjects.Add(roomGameObject);
-		}
-		return roomObjects;
-	}
-
 	private void OnDrawGizmos()
 	{
 		if(!ShowLines) return;
 		Gizmos.color = Color.green;
 		Gizmos.DrawLine(Vector3.up, Vector3.right);
-		/*
-		if (delaunay != null)
-		{
-			Gizmos.color = Color.red;
-
-			foreach (Triangle triangle in delaunay)
-			{
-				for (int i = 0; i < 3; i++)
-				{
-					Vector3 startPoint = new Vector3((float)triangle.Vertices[i].X, 0.2f, (float)triangle.Vertices[i].Y);
-					Vector3 endPoint = new Vector3((float)triangle.Vertices[(i+1)%3].X, 0.2f, (float)triangle.Vertices[(i + 1) % 3].Y);
-					//Debug.Log("Drawing line "+startPoint+" to "+endPoint);
-					Gizmos.DrawLine(startPoint*2, endPoint*2);		
-				}
-			}
-		}*/
-
+		
 		if (delaunayCartesianPathsDictionary != null)
 		{
 			int lines = 0;
@@ -648,88 +615,4 @@ public class LevelCreator : MonoBehaviour
 		}
 		UnityEditor.EditorApplication.QueuePlayerLoopUpdate();
 	}
-
-	public void CreateRoomSeparationDungeon()
-	{
-		Debug.Log("CreateRoomSeparationDungeon RUN");
-		//Clear The level
-		ClearLevel();
-
-		// Generate the level
-		List<Room> rooms = new List<Room>(); 
-
-
-		// Generate X Rooms at Distance X from center at random
-		for (int i = 0; i < SeparationRoomsAmt; i++)
-		{
-			Room newRoom = RoomMaker.GenerateRandomRoom();
-			rooms.Add(newRoom);
-		}
-
-		// Separate Rooms Until they dont overlap
-		for (int i = 0; i < SeparateTries; i++)
-		{
-			RoomMaker.SetClosestRooms(rooms);
-			RoomMaker.MoveOverlap(rooms);
-		}
-
-		HashSet<Vector2Int> floorPositions = new HashSet<Vector2Int>();
-
-		// Generate Map to show it
-		foreach (Room room in rooms)
-		{
-			floorPositions.UnionWith(GetRoomBorders(room));
-		}
-
-		// Select X largest rooms as main rooms.
-
-		// Find Dalaunay Triangulation lines
-
-		// Make Hallway Lines between Main Rooms
-
-		// Activate secondaryRooms that these hallways intercept
-
-		// Add in a Main Hallway of a certain width around the hallway lines
-
-
-		GenerateAllTilesForThisFloorPosition(floorPositions);
-		SetPlayerAtStart(walkGeneratorPreset.playerStartPosition);
-	}
-
-	private void GenerateAllTilesForThisFloorPosition(HashSet<Vector2Int> floorPositions,int ForceType = 0)
-	{
-		foreach (var floor in floorPositions)
-		{
-			if (ForceType == 0) GenerateFloorTileAt(floor);
-			else GenerateForcedFloorTileAt(floor, ForceType);
-		}
-
-	}
-
-	private HashSet<Vector2Int> GetRoomBorders(Room room)
-	{
-		HashSet<Vector2Int> tiles = new HashSet<Vector2Int>();
-		for (int i = 0; i < room.size.x; i++)
-		{
-			for (int j = 0; j < room.size.y; j++)
-			{
-				if(i==0 || j == 0 || i == room.size.x - 1 || j == room.size.y - 1)
-					tiles.Add(new Vector2Int(room.pos.x+i, room.pos.y + j));
-			}
-		}
-		return tiles;
-	}
-	private HashSet<Vector2Int> GetAllRoomTiles(Room room)
-	{
-		HashSet<Vector2Int> tiles = new HashSet<Vector2Int>();
-		for (int i = 0; i < room.size.x; i++)
-		{
-			for (int j = 0; j < room.size.y; j++)
-			{			
-				tiles.Add(new Vector2Int(room.pos.x+i, room.pos.y + j));
-			}
-		}
-		return tiles;
-	}
-
 }

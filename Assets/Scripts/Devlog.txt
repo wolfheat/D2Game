@@ -91,6 +91,7 @@ Nov 2022
 15/4	* Moved directory
 16/4	* Added UI popup when reaching portal. Pressing ok will make new level.
 17/4	* Fixed terrain issue by having separate terrain for editor and runtime mode.
+		* Fixed Zoom Init, And Click Issue
 
 		// TODO
 		// Player can get stuck sometimes fix

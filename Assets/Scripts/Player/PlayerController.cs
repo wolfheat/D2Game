@@ -156,10 +156,7 @@ public class PlayerController : MonoBehaviour
 	private bool GetClickInfo(ClickType type)
 	{
 		// Clicking UI element, ignore gameplay clicks
-		if (EventSystem.current.IsPointerOverGameObject())
-		{
-			return false;
-		}
+		if (EventSystem.current.IsPointerOverGameObject()){	return false;	}
 
 		// Used to limit input recognitions when mouse is held
 		mouseClickTimer = 0;

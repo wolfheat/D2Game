@@ -90,7 +90,8 @@ Nov 2022
 14/4	* Terrain now has a small ledge around buildings that look more natural.
 15/4	* Moved directory
 16/4	* Added UI popup when reaching portal. Pressing ok will make new level.
-		
+17/4	* Fixed terrain issue by having separate terrain for editor and runtime mode.
+
 		// TODO
 		// Player can get stuck sometimes fix
 		// Maybe have certain rooms spawn enemies and not the added corridor?

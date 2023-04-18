@@ -12,4 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a186af95934cf5498db8d681566f0b7, type: 3}
   m_Name: StoredTerrain
   m_EditorClassIdentifier: 
+  arrayAsString: '{}'
+  testString: Just Test Text
   test: 1
+  amount: 3034

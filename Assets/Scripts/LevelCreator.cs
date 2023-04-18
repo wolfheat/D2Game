@@ -331,11 +331,9 @@ public class LevelCreator : MonoBehaviour
 		//GeneratePerlinGround
 		if (terrainGenerator == null) terrainGenerator = FindObjectOfType<TerrainGenerator>();
 		terrainGenerator.GenerateTerrain(roomType, roomTypeStart);
-		terrainGenerator.UpdateTerrain();
-
 
 		//Store terrain if in Editor
-		if (Application.isEditor)
+		if (!Application.isPlaying)
 		{
 			terrainGenerator.StoreTerrain();
 		}
@@ -350,7 +348,7 @@ public class LevelCreator : MonoBehaviour
 
 	private void OnApplicationQuit()
 	{
-		
+		//ResetTerrain();
 	}
 
 	public void ResetTerrain()

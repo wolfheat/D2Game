@@ -11,10 +11,14 @@ public class TerrainGenerator : MonoBehaviour
     [SerializeField] int scale = 30;
 
     public Terrain terrain;
-    public Terrain storedTerrain;
+    public Terrain runtimeTerrain;
+    public Terrain editorTerrain;
 
     int[,] terrainLevel;
     float[,] terrainDataArray;
+    float[,] storedTerrainDataArray;
+
+    [SerializeField] TerrainStoredSO storedTerrainData;
 
     Vector2Int startPosition;
 
@@ -22,15 +26,8 @@ public class TerrainGenerator : MonoBehaviour
     {
         terrainLevel = LevelToTerrain(levelIn);
         startPosition = pos;
-        UpdateTerrain();
         GenerateTerrainData();
     }
-
-    public void UpdateTerrain()
-    {
-		terrain = GetComponent<Terrain>();
-	}
-
 
     private int[,] LevelToTerrain(int[,] levelIn)
     {
@@ -60,12 +57,37 @@ public class TerrainGenerator : MonoBehaviour
 
     private void GenerateTerrainData()
     {
-        terrain.terrainData.heightmapResolution = 257;
-		terrain.terrainData.size = new Vector3(width,depth,length);
-        terrain.terrainData.SetHeights(0,0,GenerateHeights());        
+        ActivateCorrectTerrain();
+        if (Application.isPlaying)
+        {
+            runtimeTerrain.terrainData.heightmapResolution = 257;
+		    runtimeTerrain.terrainData.size = new Vector3(width,depth,length);
+		    runtimeTerrain.terrainData.SetHeights(0,0,GenerateHeights());
+        }
+        else
+        {
+			editorTerrain.terrainData.heightmapResolution = 257;
+			editorTerrain.terrainData.size = new Vector3(width, depth, length);
+			editorTerrain.terrainData.SetHeights(0, 0, GenerateHeights());
+		}
+
     }
 
-    private float[,] GenerateHeights()
+	private void ActivateCorrectTerrain()
+	{
+        if (Application.isPlaying)
+        {
+            runtimeTerrain.GetComponent<Terrain>().enabled = true;
+            editorTerrain.GetComponent<Terrain>().enabled = false;
+		}
+        else
+        {
+			editorTerrain.GetComponent<Terrain>().enabled = true;
+			runtimeTerrain.GetComponent<Terrain>().enabled = false;
+		}
+	}
+
+	private float[,] GenerateHeights()
     {
 		terrainDataArray = new float[width, length];
         for (int x = 0; x < width; x++)
@@ -104,31 +126,30 @@ public class TerrainGenerator : MonoBehaviour
 
 	internal void LoadTerrain()
 	{
-		terrain = GetComponent<Terrain>();
-		Debug.Log("LOADD Terrain");
-        terrain = storedTerrain;
+        ActivateCorrectTerrain();
 	}
-    
+
 	internal void StoreTerrain()
 	{
-		terrain = GetComponent<Terrain>();
-		Debug.Log("STORE Terrain");
-        storedTerrain = terrain;
+        // Should autostore"
+        //editorTerrain = terrain;        
 	}
 
-	internal Terrain GetTerrain()
+	private int CountNonZeros()
 	{
-        return GetComponent<Terrain>();
-	}
-	internal void ApplyTerrain(float[,] terraDataArrayIn)
-	{
-        Debug.Log("Applyu terrain");
-        terrainDataArray = terraDataArrayIn;
-        terrain.terrainData.SetHeights(0,0,terrainDataArray);
-	}
-
-	internal float[,] GetTerrainDataArray()
-	{
-        return terrainDataArray;
+        Debug.Log("Counting Zeros, nonzerosstoredsince before: "+storedTerrainData.amount);
+        int amt = 0;
+		for (int i = 0; i < terrainDataArray.GetLength(0); i++)
+		{
+			for (int j = 0; j < terrainDataArray.GetLength(1); j++)
+			{
+				if (terrainDataArray[i, j] == 0)
+				{
+					amt++;
+				}
+			}
+		}
+        Debug.Log("NON ZEROS: "+amt);
+        return amt;
 	}
 }

@@ -96,10 +96,12 @@ Nov 2022
 		* Added Items as sprites that always face camera
 19/4	* Scaling of PickUp items now work for different size of sprites
 		* Added particle System to Pickups
-
+		* Made it so its possible to click outside game area and move towards that spot.
 
 		// TODO
 		// Player can get stuck sometimes fix
+		// Holding left button updates direction to slow, fix
+
 		// Maybe have certain rooms spawn enemies and not the added corridor?
 		// Limit obstacles from spawning in front of doorways
 

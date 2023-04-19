@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.HID;
 
 public class ClickInfo
 {
@@ -22,6 +23,7 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private Collider attackCollider;
 	[SerializeField] private LayerMask GroundLayers;
 	[SerializeField] private LayerMask Resource;
+	[SerializeField] private LayerMask TerrainLayers;
 	[SerializeField] private LayerMask UI;
 	[SerializeField] private TextMeshProUGUI stateText;
 
@@ -154,32 +156,65 @@ public class PlayerController : MonoBehaviour
 		// Clicking UI element, ignore gameplay clicks
 		if (Inputs.Instance.PointerOverUI){	return false;}
 
-		// Used to limit input recognitions when mouse is held
-		mouseClickTimer = 0;
-		Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
+		// Get Player ActionType = Gather, Move, Attack, Powerattack
+        Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
 		RaycastHit hit;
-		PlayerActionType playerActionType = PlayerActionType.Undefined;
+        Physics.Raycast(ray.origin, ray.direction, out hit, 1000f);
+		Vector3 clickPoint = new Vector3(hit.point.x,0,hit.point.z);
 
-				
-		bool clickOnResource = Physics.Raycast(ray.origin, ray.direction, out hit, 1000f, layerMask: Resource) && hit.collider;
-		bool clickOnFloor = Physics.Raycast(ray.origin, ray.direction, out hit, 1000f, layerMask: GroundLayers) && hit.collider;			
-		
-		if (holdPosition) playerActionType = (type==ClickType.Right?PlayerActionType.PowerAttack:PlayerActionType.Attack);
-		//else if (clickOnResource && Inputs.Instance.G == 1) playerActionType = PlayerActionType.Gather; //If G is needed as additional requirement to start gathering
-		else if (clickOnResource) playerActionType = PlayerActionType.Gather;
-		else if (clickOnFloor) playerActionType = PlayerActionType.Move;		
-		else return false;
+        PlayerActionType playerActionType = DeterminePLayerActionType(ray, type, out hit);
 
-		// If no valid point is clicked, treat it as clicking in front of player
-		if (!clickOnResource && !clickOnFloor) hit.point = transform.position + transform.forward; 
+        NavMeshHit navhit;
+        if (!NavMesh.SamplePosition(clickPoint, out navhit, 1f, NavMesh.AllAreas))
+        {
+            // The clicked point is outside the NavMesh
+            // Find the closest point on the NavMesh to the clicked point
+            navhit.position = GetClosestClickPointWhenClickingOutside(clickPoint);            
+        }
+
+		Vector3 clickPosition = playerActionType == PlayerActionType.Gather ? hit.point : navhit.position;
 
 		// Set ClickInfo
-		clickInfo = new ClickInfo(type,playerActionType,hit.point);
+        clickInfo = new ClickInfo(type, playerActionType, clickPosition);
 		return true;
+		
 	}
 
-	
-	private void DoClickAction()
+    private PlayerActionType DeterminePLayerActionType(Ray ray,ClickType type , out RaycastHit hit)
+    {
+        bool clickOnResource = Physics.Raycast(ray.origin, ray.direction, out hit, 1000f, layerMask: Resource);
+        PlayerActionType playerActionType = PlayerActionType.Move;
+        if (holdPosition) playerActionType = (type == ClickType.Right ? PlayerActionType.PowerAttack : PlayerActionType.Attack);
+        else if (clickOnResource) playerActionType = PlayerActionType.Gather;
+		return playerActionType;
+    }
+
+    private Vector3 GetClosestClickPointWhenClickingOutside(Vector3 point)
+    {		
+		Vector3 pointInPlane = new Vector3(point.x,transform.position.y,point.z);
+		Debug.Log("Point in plane: "+pointInPlane);
+		Vector3 calculatedDestination = transform.position;
+		Vector3 step = (pointInPlane - transform.position).normalized*0.3f;
+		Vector3 pointToCheck = calculatedDestination;
+		
+		int steps = 0;
+
+		Debug.Log("CalculatedDestination starts at: "+calculatedDestination+" with stepsize: "+step);
+		
+
+		NavMeshHit navhit;
+
+		while (NavMesh.SamplePosition(pointToCheck,out navhit,0.1f,NavMesh.AllAreas) && steps < 200) 
+		{
+			calculatedDestination = pointToCheck;
+            pointToCheck += step;
+			steps++;
+		}
+		Debug.Log("Exited derived click point after iterations: "+steps+" point: "+calculatedDestination);
+		return calculatedDestination;
+    }
+
+    private void DoClickAction()
 	{
 		if(gatherCoroutine!=null && clickInfo.actionType != PlayerActionType.Gather) AnimationStopGatheringEvent();
 		//Debug.Log("Do action of type: "+clickInfo.actionType);

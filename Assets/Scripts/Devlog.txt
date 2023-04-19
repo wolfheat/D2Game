@@ -94,6 +94,8 @@ Nov 2022
 		* Fixed Zoom Init, And Click Issue
 18/4	* Fixed warning of checking if over UI with new Input System.
 		* Added Items as sprites that always face camera
+19/4	* Scaling of PickUp items now work for different size of sprites
+		* Added particle System to Pickups
 
 
 		// TODO

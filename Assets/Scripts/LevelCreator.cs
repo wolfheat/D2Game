@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +6,7 @@ using UnityEngine.AI;
 using Random = UnityEngine.Random;
 using DelaunayVoronoi;
 using UnityEditor;
-
+using Math = System.Math;
 public enum Direction {left,down,right,up}
 
 public class LevelCreator : MonoBehaviour
@@ -92,7 +91,6 @@ public class LevelCreator : MonoBehaviour
 	public void CreateGeneratedLevel()
     {
 
-
 		//Clear The level
 		ClearLevel();
         //Generate the level
@@ -125,6 +123,12 @@ public class LevelCreator : MonoBehaviour
 
 	private GameObject GenerateForcedFloorTileAt(Vector2Int pos,int index)
 	{
+		int[,] variable = new int[2,2];
+		int[] a = new int[2];
+        int[] b = new int[2];
+
+		
+
 		GameObject tile;
 		tile = Instantiate(floorTilesPrefab[index], TileHolder.transform);
 		tile.transform.localPosition = new Vector3(pos.x * Tilesize, 0, pos.y * Tilesize);

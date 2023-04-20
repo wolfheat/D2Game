@@ -101,8 +101,8 @@ public class PlayerController : MonoBehaviour
 			// Left button is held
 			MouseClick();
 			mouseClickTimer = 0;
-		}
-	}
+		}else if(Inputs.Instance.LClick != 1f) mouseClickTimer = 0;
+    }
 	
 
 	public void EnableNavMesh(bool enable)
@@ -268,7 +268,7 @@ public class PlayerController : MonoBehaviour
 
 	private IEnumerator AttackAt()
 	{
-
+		Debug.Log("Starting Attack");
 		attackLock = true;
 		// Workaround for going from attack to attack
 		if (playerState.State == PlayerState.AttackSwordSwing)
@@ -348,7 +348,7 @@ public class PlayerController : MonoBehaviour
 		{
 			if (attackLock) { 
 				SaveAction(); 
-				//Debug.Log("STORE INPUT, ATTACKLOCK ACTIVE"); 
+				Debug.Log("STORE INPUT, ATTACKLOCK ACTIVE"); 
 			}
 			else DoClickAction();
 		}
@@ -362,7 +362,7 @@ public class PlayerController : MonoBehaviour
 		{
 			if (attackLock) { 
 				SaveAction(); 
-				//Debug.Log("STORE INPUT, ATTACKLOCK ACTIVE");
+				Debug.Log("STORE INPUT, ATTACKLOCK ACTIVE");
 			}
 			else DoClickAction();
 		}

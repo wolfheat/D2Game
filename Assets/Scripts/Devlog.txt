@@ -98,6 +98,7 @@ Nov 2022
 		* Added particle System to Pickups
 		* Made it so its possible to click outside game area and move towards that spot.
 
+
 		// TODO
 		// Player can get stuck sometimes fix
 		// Holding left button updates direction to slow, fix

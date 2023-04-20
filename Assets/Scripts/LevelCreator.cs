@@ -127,7 +127,6 @@ public class LevelCreator : MonoBehaviour
 		int[] a = new int[2];
         int[] b = new int[2];
 
-		
 
 		GameObject tile;
 		tile = Instantiate(floorTilesPrefab[index], TileHolder.transform);

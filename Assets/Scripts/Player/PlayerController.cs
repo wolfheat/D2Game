@@ -199,9 +199,6 @@ public class PlayerController : MonoBehaviour
 		
 		int steps = 0;
 
-		Debug.Log("CalculatedDestination starts at: "+calculatedDestination+" with stepsize: "+step);
-		
-
 		NavMeshHit navhit;
 
 		while (NavMesh.SamplePosition(pointToCheck,out navhit,0.1f,NavMesh.AllAreas) && steps < 200) 
@@ -210,7 +207,6 @@ public class PlayerController : MonoBehaviour
             pointToCheck += step;
 			steps++;
 		}
-		Debug.Log("Exited derived click point after iterations: "+steps+" point: "+calculatedDestination);
 		return calculatedDestination;
     }
 

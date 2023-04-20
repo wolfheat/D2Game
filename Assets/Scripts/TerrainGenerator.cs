@@ -5,8 +5,8 @@ using UnityEngine;
 public class TerrainGenerator : MonoBehaviour
 {
 
-    int width = 256;
-    int length = 256;
+    int width = 512;
+    int length = 512;
 	[SerializeField] int depth = -10;
     [SerializeField] int scale = 30;
 
@@ -50,6 +50,41 @@ public class TerrainGenerator : MonoBehaviour
                 }
 			}
 		}
+
+        // Calculate Holes under
+        bool[,] holes = new bool[newTerrainLevel.GetLength(0), newTerrainLevel.GetLength(1)];
+        for (int x = -area.xMin; x < newTerrainLevel.GetLength(0)-area.xMax-1; x++)
+        {
+            for (int y = -area.yMin; y < newTerrainLevel.GetLength(1)-area.yMax-1; y++)
+            {
+
+                bool isHole = true;
+                for (int i = area.xMin; i < area.xMax; i++)
+                {
+                    for (int j = area.yMin; j < area.yMax; j++)
+                    {
+                        if (newTerrainLevel[x + i, y + j] != 1)
+                        {
+                            isHole = false;
+                            continue;
+                        }
+                    }
+                    if (!isHole) continue;
+                }                
+                if(isHole) holes[x, y] = true;
+            }
+        }
+
+        // Add the Holes
+        for (int x = 0; x < newTerrainLevel.GetLength(0); x++)
+        {
+            for (int y = 0; y < newTerrainLevel.GetLength(1); y++)
+            {
+                if (holes[x, y] == true) newTerrainLevel[x, y] = -1;
+            }
+        }
+        //t.terrainData.SetHoles(0, 0, b);
+        
         return newTerrainLevel;
 
 	}
@@ -99,9 +134,12 @@ public class TerrainGenerator : MonoBehaviour
             for (int y = 0; y < terrainLevel.GetLength(1); y++)
             {
                 // If under level make 0
-                if (terrainLevel[x, y] != 0)
+                if (terrainLevel[x, y] == 1)
                 {
 					terrainDataArray[x+Xoffset, y+Yoffset] = 0;
+                }else if (terrainLevel[x, y] == -1)
+                {
+                    terrainDataArray[x + Xoffset, y + Yoffset] = 0.1f;
                 }
             }
         }

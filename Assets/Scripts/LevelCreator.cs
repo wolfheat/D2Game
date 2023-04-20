@@ -60,7 +60,7 @@ public class LevelCreator : MonoBehaviour
 	private List<Mesh> surfacMeshes = new List<Mesh>();
     int GroundLayer;
     int ResourceLayer;
-	public const float Tilesize = 2f;
+	public const int Tilesize = 2;
 	public const float EnemyDistanceFromPlayerSpawn = 8f;
 	private Vector2Int Levelsize = new Vector2Int(25,15);
 
@@ -123,11 +123,7 @@ public class LevelCreator : MonoBehaviour
 
 	private GameObject GenerateForcedFloorTileAt(Vector2Int pos,int index)
 	{
-		int[,] variable = new int[2,2];
-		int[] a = new int[2];
-        int[] b = new int[2];
-
-
+		
 		GameObject tile;
 		tile = Instantiate(floorTilesPrefab[index], TileHolder.transform);
 		tile.transform.localPosition = new Vector3(pos.x * Tilesize, 0, pos.y * Tilesize);
@@ -267,15 +263,16 @@ public class LevelCreator : MonoBehaviour
 		// Generate The Level
 		List<Room> rooms = RoomMaker.GenerateRandomDungeon(DispersionRoomsAmt, HallwayRoomsRatio);
 
-		// Set Gameplay Area
-		roomTypeStart = RoomMaker.GetStartVector(rooms);
-		roomTypeSize = RoomMaker.GetSize(rooms);
-
-		rooms = rooms.OrderByDescending(r => r.size.magnitude).ToList();
-
 		//Separate Rooms into Main and Rest
+		rooms = rooms.OrderByDescending(r => r.size.magnitude).ToList();
 		List<Room> mainRooms = rooms.Take(DispersionRoomsAmt).ToList();
 		List<Room> restRooms = rooms.GetRange(DispersionRoomsAmt,rooms.Count-DispersionRoomsAmt).ToList();
+
+        List<Room> activeRooms = mainRooms.Concat(restRooms).ToList();
+
+        // Set Gameplay Area
+        roomTypeStart = RoomMaker.GetStartVector(activeRooms);
+		roomTypeSize = RoomMaker.GetSize(activeRooms);
 
 		// Get all Rooms Centerpoints
 		List<Vector2> roomCentersAsFloats = RoomMaker.GetCentersAsFloats(mainRooms);
@@ -306,11 +303,6 @@ public class LevelCreator : MonoBehaviour
 		// Finally just create all tiles
 		GenerateAllTilesFromRoomTypeArray();
 
-		// TODO
-		// PathWays working but are just angled straight lines between rooms
-		// Better to use A* alg to find shortest path with weights?
-		// Preplaces Unused Rooms should be lower cost to move through
-
 		// Find Leaf Rooms (All Rooms with One Exit)
 		var leafRooms = delaunayCartesianPathsDictionary.Where(r => r.Value.Count==1).ToDictionary(r => r.Key, r => r.Value);
 
@@ -331,7 +323,7 @@ public class LevelCreator : MonoBehaviour
 
 		// Generate Ground Terrain
 		if (terrainGenerator == null) terrainGenerator = FindObjectOfType<TerrainGenerator>();
-		terrainGenerator.GenerateTerrain(roomType, roomTypeStart);
+		terrainGenerator.GenerateTerrain(roomType, roomTypeStart, Tilesize);
 				
 		// Add Random SpawnPoints
 		List<Vector2Int> spawnPoints = GetSpawnPoints(100,startRoomCenter);

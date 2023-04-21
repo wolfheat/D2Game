@@ -150,6 +150,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "ESC",
+                    "type": "Button",
+                    "id": "f7e238b6-cae0-4881-a7c2-201c9295fa66",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "ZoomIn",
                     "type": "Value",
                     "id": "aec21b3d-e5ca-4ea5-89cc-5525f647ba10",
@@ -344,6 +353,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "W",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "869c9600-79e6-46ba-8569-5bd91df35728",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ESC",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

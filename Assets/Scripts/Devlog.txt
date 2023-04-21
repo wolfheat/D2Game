@@ -101,7 +101,7 @@ Nov 2022
 		* Player Can now swap to Bow and arrow
 21/4	* Continious firing of arrows, Arrows hit correct aiming direction, + cleaned up a lot of code
 		* BUILD PC: 59s, 126Mb
-		* Added Demo Text
+		* Added Demo Text, Exit Screen
 
 		// Change arrow shooting sound
 		// Make bow animation better, change speed of animation?

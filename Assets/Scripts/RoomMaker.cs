@@ -174,11 +174,15 @@ public static class RoomMaker
 	internal static Vector2Int GetStartVector(List<Room> rooms)
 	{
 		Vector2Int startVector = Vector2Int.zero;
+		string print = "Checking Room";
 		foreach (var room in rooms)
 		{
+			print += room.pos.ToString();
 			if (room.pos.x < startVector.x) startVector = new Vector2Int(room.pos.x,startVector.y);
 			if (room.pos.y < startVector.y) startVector = new Vector2Int(startVector.x, room.pos.y);
 		}
+		Debug.Log(print);
+		Debug.Log("Start Pos: "+startVector);
 		return startVector-Vector2Int.one;
 	}
 

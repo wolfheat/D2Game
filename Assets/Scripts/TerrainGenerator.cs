@@ -1,6 +1,7 @@
 using System;
 using UnityEditor;
 using UnityEngine;
+using Math = System.Math;
 
 public class TerrainGenerator : MonoBehaviour
 {
@@ -24,24 +25,33 @@ public class TerrainGenerator : MonoBehaviour
 
 	public void GenerateTerrain(int[,] levelIn,Vector2Int pos, int tileSizeIn)
     {
-        /* Try to better version
+        ///* Try to better version
         startPosition = pos;
         tileSize = tileSizeIn;
         terrainLevel = LevelToTerrainB(levelIn);
-        CalculateTerrainSizeNeeded(levelIn);
+        CalculateTerrainSizeNeeded(levelIn,pos);
+        SetTerrainDataStats();
 
         GenerateTerrainData();
-        */
         
+        /*
         terrainLevel = LevelToTerrain(levelIn);
         startPosition = pos;
         GenerateTerrainData();
+        */
     }
 
-    private void CalculateTerrainSizeNeeded(int[,] level)
+    private void CalculateTerrainSizeNeeded(int[,] level, Vector2Int pos)
     {
+        // Calculate top corner
+        Vector2Int top = pos+ new Vector2Int(level.GetLength(0),level.GetLength(1));
+        int maxX = Math.Max(top.x, Math.Abs(pos.x));        
+        int maxY = Math.Max(top.y, Math.Abs(pos.y));
+        int max = Math.Max(maxX, maxY);
+
+
         int margin = 20;
-        int levelMaxWidthOrHeightUnscaled = level.GetLength(0)>level.GetLength(1)?level.GetLength(0):level.GetLength(1);
+        int levelMaxWidthOrHeightUnscaled = max*2;
         int levelMaxWidthOrHeight = levelMaxWidthOrHeightUnscaled * tileSize+margin;
         int size = 1;
         while (size < levelMaxWidthOrHeight)
@@ -52,12 +62,22 @@ public class TerrainGenerator : MonoBehaviour
         Debug.Log("Size of Terrain set to: "+size+" Level was size: "+levelMaxWidthOrHeight);
         width = size;
         length = size;
+
+        PlaceInCenter();
+
+    }
+
+    private void PlaceInCenter()
+    {
+        transform.position = new Vector3(-width/2,transform.position.y,-length/2);
     }
 
     private int[,] LevelToTerrainB(int[,] levelIn)
     {
+        int border = 2;
         
-		int[,] newTerrainLevel = new int[length*tileSize, width*tileSize];
+		int[,] newTerrainLevel = new int[length*tileSize+border*2, width*tileSize+border*2];
+
 
         BoundsInt area = new BoundsInt(new Vector3Int(-2,-2,0), new Vector3Int(5,5,1));
 
@@ -71,12 +91,13 @@ public class TerrainGenerator : MonoBehaviour
                 {
                     for (int j = area.yMin; j < area.yMax; j++)
                     {
-				        newTerrainLevel[(-area.xMin)+ j + tileSize * y+(-area.yMin)+i, tileSize * x+j] = 1; 
+				        newTerrainLevel[border + j + tileSize * y, border + i + tileSize * x] = 1; 
                     }
                 }
 			}
 		}
 
+        /*
         // Calculate Holes under
         bool[,] holes = new bool[newTerrainLevel.GetLength(0), newTerrainLevel.GetLength(1)];
         for (int x = -area.xMin; x < newTerrainLevel.GetLength(0)-area.xMax-1; x++)
@@ -110,7 +131,7 @@ public class TerrainGenerator : MonoBehaviour
             }
         }
         //t.terrainData.SetHoles(0, 0, b);
-        
+        */
         return newTerrainLevel;
 
 	}
@@ -176,13 +197,18 @@ public class TerrainGenerator : MonoBehaviour
 
 	}
 
-    private void GenerateTerrainData()
+    private void SetTerrainDataStats()
     {
-        ActivateCorrectTerrain();  
-            
-		terrain.terrainData.SetDetailResolution(width,length);
-		terrain.terrainData.heightmapResolution = width+1;
-		terrain.terrainData.size = new Vector3(width,depth,length);
+        ActivateCorrectTerrain();
+
+        if(width<=512)terrain.terrainData.SetDetailResolution(width, length);
+        else terrain.terrainData.SetDetailResolution(512, 512);
+        terrain.terrainData.heightmapResolution = width + 1;
+        terrain.terrainData.size = new Vector3(width, depth, length);
+    }
+    
+    private void GenerateTerrainData()
+    {       
 		terrain.terrainData.SetHeights(0,0,GenerateHeights());
         
     }
@@ -215,8 +241,8 @@ public class TerrainGenerator : MonoBehaviour
             }
         }
 
-        int Xoffset = width/2 + startPosition.y*tileSize;
-        int Yoffset = length/2 + startPosition.x*tileSize;   
+        int Xoffset = width/2 + startPosition.y*tileSize-2;
+        int Yoffset = length/2 + startPosition.x*tileSize-2;   
 
         for (int x = 0; x < terrainLevel.GetLength(0); x++)
         {
@@ -238,8 +264,8 @@ public class TerrainGenerator : MonoBehaviour
 
     private float CalculateHeight(int x, int y)
     {
-        float xCoord = (float)x / width *scale;   
-        float yCoord = (float)y / length*scale;
+        float xCoord = (float)x / 256 *scale;   
+        float yCoord = (float)y / 256*scale;
         return Mathf.PerlinNoise(xCoord,yCoord);
     }
  }

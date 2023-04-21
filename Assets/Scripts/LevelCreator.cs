@@ -268,11 +268,6 @@ public class LevelCreator : MonoBehaviour
 		List<Room> mainRooms = rooms.Take(DispersionRoomsAmt).ToList();
 		List<Room> restRooms = rooms.GetRange(DispersionRoomsAmt,rooms.Count-DispersionRoomsAmt).ToList();
 
-        List<Room> activeRooms = mainRooms.Concat(restRooms).ToList();
-
-        // Set Gameplay Area
-        roomTypeStart = RoomMaker.GetStartVector(activeRooms);
-		roomTypeSize = RoomMaker.GetSize(activeRooms);
 
 		// Get all Rooms Centerpoints
 		List<Vector2> roomCentersAsFloats = RoomMaker.GetCentersAsFloats(mainRooms);
@@ -292,8 +287,15 @@ public class LevelCreator : MonoBehaviour
 		// Remove the selected rooms from the remaining rooms, remove this restRooms array later, currently not needed any more
 		restRooms.RemoveAll(r => selectedRestRooms.Contains(r));
 		
-		// Reset the roomTypeArray (used for determine tile types and doorways)
-		roomType = new int[roomTypeSize.x, roomTypeSize.y];
+        List<Room> activeRooms = mainRooms.Concat(selectedRestRooms).ToList();
+
+        // Set Gameplay Area
+        roomTypeStart = RoomMaker.GetStartVector(activeRooms);
+        roomTypeSize = RoomMaker.GetSize(activeRooms);
+		Debug.Log("Level Start: "+roomTypeStart);
+		Debug.Log("Level Size: "+roomTypeSize);
+        // Reset the roomTypeArray (used for determine tile types and doorways)
+        roomType = new int[roomTypeSize.x, roomTypeSize.y];
 
 		// Fill In Main Rooms, Corridor Rooms and Corridor
 		FillInRooms(mainRooms,100);
@@ -303,8 +305,9 @@ public class LevelCreator : MonoBehaviour
 		// Finally just create all tiles
 		GenerateAllTilesFromRoomTypeArray();
 
-		// Find Leaf Rooms (All Rooms with One Exit)
-		var leafRooms = delaunayCartesianPathsDictionary.Where(r => r.Value.Count==1).ToDictionary(r => r.Key, r => r.Value);
+
+        // Find Leaf Rooms (All Rooms with One Exit)
+        var leafRooms = delaunayCartesianPathsDictionary.Where(r => r.Value.Count==1).ToDictionary(r => r.Key, r => r.Value);
 
 		// Calculate Player Start Position and Portal Room Position		
 		int index = Random.Range(0, leafRooms.Count);

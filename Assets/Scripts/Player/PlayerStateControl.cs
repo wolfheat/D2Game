@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum PlayerState { Idle, MoveTo, MoveToGather, AttackSwordSwing, BowLaunch, Chase, Death, Dead, Decay, Gather }
+public enum PlayerState { Idle, MoveTo, MoveToGather, AttackSwordSwing, ShootArrow, Chase, Death, Dead, Decay, Gather }
 
 public class PlayerStateControl : MonoBehaviour
 {
@@ -34,6 +34,9 @@ public class PlayerStateControl : MonoBehaviour
 				break;
 			case PlayerState.MoveToGather:
 				animator.CrossFade("Run", 0.1f);
+				break;
+			case PlayerState.ShootArrow:
+				animator.CrossFade("ShootArrow", 0.1f);
 				break;
 			case PlayerState.Gather:
 				animator.CrossFade("Gather", 0.1f);

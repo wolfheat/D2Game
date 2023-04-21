@@ -206,7 +206,7 @@ namespace DelaunayVoronoi
                 }
 
                 emergencyCounter++;
-                if (emergencyCounter == 100) Debug.LogError("Emergency Counter 100");
+                if (emergencyCounter == 500) Debug.LogError("Emergency Counter 100");
             }
 
             Debug.Log("Dictionary Created, size: "+connectedDictionary.Count);

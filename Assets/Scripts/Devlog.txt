@@ -97,6 +97,13 @@ Nov 2022
 19/4	* Scaling of PickUp items now work for different size of sprites
 		* Added particle System to Pickups
 		* Made it so its possible to click outside game area and move towards that spot.
+20/4	* Remade Terrain so it scales with size.
+		* Player Can now swap to Bow and arrow
+
+		// Change arrow shooting sound
+		// Make bow animation better, change speed of animation?
+		// Make sure colliders work correctly, player should not take damage of its own arrows, enemies should etc
+		// Double shooting arrows, second arrow wont shoot, check and fix
 
 
 		// TODO

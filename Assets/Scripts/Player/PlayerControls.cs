@@ -163,6 +163,15 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""W"",
+                    ""type"": ""Button"",
+                    ""id"": ""6d81560c-918a-4a26-a8a7-06a1488f2a09"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""ZoomIn"",
                     ""type"": ""Value"",
                     ""id"": ""aec21b3d-e5ca-4ea5-89cc-5525f647ba10"",
@@ -348,6 +357,17 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""action"": ""F"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4f1bf4a0-9bbf-4cf6-bec1-af70723e2de3"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""W"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -371,6 +391,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_Land_CTRL = m_Land.FindAction("CTRL", throwIfNotFound: true);
         m_Land_G = m_Land.FindAction("G", throwIfNotFound: true);
         m_Land_F = m_Land.FindAction("F", throwIfNotFound: true);
+        m_Land_W = m_Land.FindAction("W", throwIfNotFound: true);
         m_Land_ZoomIn = m_Land.FindAction("ZoomIn", throwIfNotFound: true);
     }
 
@@ -446,6 +467,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_Land_CTRL;
     private readonly InputAction m_Land_G;
     private readonly InputAction m_Land_F;
+    private readonly InputAction m_Land_W;
     private readonly InputAction m_Land_ZoomIn;
     public struct LandActions
     {
@@ -466,6 +488,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @CTRL => m_Wrapper.m_Land_CTRL;
         public InputAction @G => m_Wrapper.m_Land_G;
         public InputAction @F => m_Wrapper.m_Land_F;
+        public InputAction @W => m_Wrapper.m_Land_W;
         public InputAction @ZoomIn => m_Wrapper.m_Land_ZoomIn;
         public InputActionMap Get() { return m_Wrapper.m_Land; }
         public void Enable() { Get().Enable(); }
@@ -521,6 +544,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @F.started -= m_Wrapper.m_LandActionsCallbackInterface.OnF;
                 @F.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnF;
                 @F.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnF;
+                @W.started -= m_Wrapper.m_LandActionsCallbackInterface.OnW;
+                @W.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnW;
+                @W.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnW;
                 @ZoomIn.started -= m_Wrapper.m_LandActionsCallbackInterface.OnZoomIn;
                 @ZoomIn.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnZoomIn;
                 @ZoomIn.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnZoomIn;
@@ -573,6 +599,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @F.started += instance.OnF;
                 @F.performed += instance.OnF;
                 @F.canceled += instance.OnF;
+                @W.started += instance.OnW;
+                @W.performed += instance.OnW;
+                @W.canceled += instance.OnW;
                 @ZoomIn.started += instance.OnZoomIn;
                 @ZoomIn.performed += instance.OnZoomIn;
                 @ZoomIn.canceled += instance.OnZoomIn;
@@ -597,6 +626,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnCTRL(InputAction.CallbackContext context);
         void OnG(InputAction.CallbackContext context);
         void OnF(InputAction.CallbackContext context);
+        void OnW(InputAction.CallbackContext context);
         void OnZoomIn(InputAction.CallbackContext context);
     }
 }

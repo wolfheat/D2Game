@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.HID;
 
 public class ClickInfo
 {
@@ -16,6 +15,7 @@ public class ClickInfo
 	public ClickInfo(ClickType t, PlayerActionType pt, Vector3 p) { type = t; actionType = pt; pos = p; }	
 }
 public enum ClickType {Left,Right}
+public enum WeaponType {Sword,Bow}
 public enum PlayerActionType {Attack, PowerAttack ,Move, Gather, Undefined}
 
 public class PlayerController : MonoBehaviour
@@ -27,7 +27,13 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private LayerMask UI;
 	[SerializeField] private TextMeshProUGUI stateText;
 
-	private PlayerStateControl playerState;
+	[SerializeField] private GameObject[] weapons;
+
+	[SerializeField] private GameObject shootPoint;
+    private ArrowHolder arrowHolder;
+	private Projectiles projectiles;
+
+    private PlayerStateControl playerState;
 	private Camera mainCamera;
 	private WayPointController WayPointController;
 	private NavMeshAgent navMeshAgent;
@@ -37,6 +43,8 @@ public class PlayerController : MonoBehaviour
 	private ClickInfo savedAction;
 	private ClickInfo wayPointToShow;
 		
+	private WeaponType currentWeapon = WeaponType.Sword;
+
 	private float attackTime = 1.22f;
 	public float attackSpeedMultiplier = 1.8f;
 
@@ -52,17 +60,45 @@ public class PlayerController : MonoBehaviour
 	private Coroutine gatherCoroutine;
 
 	private void OnEnable()
-	{
-		mainCamera = Camera.main;
+    {
+        arrowHolder = FindObjectOfType<ArrowHolder>();
+        projectiles = FindObjectOfType<Projectiles>();
+        mainCamera = Camera.main;
 		Inputs.Instance.Controls.Land.LeftClick.performed += _ => MouseClick();
 		Inputs.Instance.Controls.Land.LeftClick.canceled += _ => ShowWaypointIfAvailable();
 		Inputs.Instance.Controls.Land.RightClick.performed += _ => MouseRightClick();
 		Inputs.Instance.Controls.Land.RightClick.canceled += _ => ShowWaypointIfAvailable();
+		Inputs.Instance.Controls.Land.W.started += _ => SwapWeapon();
 		Inputs.Instance.Controls.Land.Shift.started += Shift;
 		Inputs.Instance.Controls.Land.Shift.canceled += Shift;
 	}
 
-	private void Start()
+	private void SwapWeapon()
+	{
+		if (attackLock) return;
+
+		ChangeCurrentWeapon();		
+		SwapWeaponVisuals();
+		
+
+	}
+
+    private void ChangeCurrentWeapon()
+    {
+        if (currentWeapon == WeaponType.Sword) currentWeapon = WeaponType.Bow;
+        else currentWeapon = WeaponType.Sword;
+    }
+
+    private void SwapWeaponVisuals()
+    {
+		foreach (var weapon in weapons)
+		{
+			weapon.gameObject.SetActive(false);
+		}
+		weapons[(int)currentWeapon].gameObject.SetActive(true);
+    }
+
+    private void Start()
 	{
 		navMeshAgent = GetComponent<NavMeshAgent>();
 		playerState = GetComponent<PlayerStateControl>();
@@ -262,8 +298,28 @@ public class PlayerController : MonoBehaviour
 		soundmaster.PlaySFX(SoundMaster.SFX.Gather);		
 	}
 
-	private IEnumerator AttackAt()
+	private IEnumerator FaceAttackDirection()
 	{
+        //Face position
+        Vector3 endLookDirection = (clickInfo.pos - transform.position).normalized;
+        Quaternion startRotation = transform.rotation;
+        Quaternion targetRotation = Quaternion.LookRotation(endLookDirection, Vector3.up);
+
+        // Rotate at constant speed but with max timeout
+        bool rotationComplete = false;
+        while (!rotationComplete)
+        {
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, RotationSpeed * Time.deltaTime);
+            if (Quaternion.Angle(transform.rotation, targetRotation) < 10f) rotationComplete = true;
+            yield return null;
+        }
+        transform.rotation = targetRotation;
+    }
+
+    private IEnumerator AttackAt()
+	{
+		// Depending on Current Weapon Implement correct attack
+
 		Debug.Log("Starting Attack");
 		attackLock = true;
 		// Workaround for going from attack to attack
@@ -273,32 +329,27 @@ public class PlayerController : MonoBehaviour
 			yield return null;			
 		}
 		
-		//Face position
-		Vector3 endLookDirection = (clickInfo.pos-transform.position).normalized;
-		Quaternion startRotation = transform.rotation;
-		Quaternion targetRotation = Quaternion.LookRotation(endLookDirection,Vector3.up);
+		yield return StartCoroutine(FaceAttackDirection());
 
-		// Rotate at constant speed but with max timeout
-		bool rotationComplete = false;
-		while (!rotationComplete)
-		{
-			transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, RotationSpeed*Time.deltaTime);
-			if(Quaternion.Angle(transform.rotation,targetRotation)<10f) rotationComplete = true;
-			yield return null;
-		}
-		transform.rotation = targetRotation;
-		playerState.SetState(PlayerState.AttackSwordSwing);
+		if(currentWeapon == WeaponType.Sword) playerState.SetState(PlayerState.AttackSwordSwing);
+		else playerState.SetState(PlayerState.ShootArrow);
 
-		// Wait For Attack to finish
-		yield return new WaitForSeconds(attackTime/attackSpeedMultiplier);
+        // Wait For Attack to finish
+        yield return new WaitForSeconds(attackTime/attackSpeedMultiplier);
 
 		attackLock = false;
 		
 		yield return null;
 		LoadAction();
 	}
-
-	private void LoadAction()
+    private void PlayerShootEvent()
+    {
+        Arrow newArrow = Instantiate(projectiles.arrowPrefab, arrowHolder.transform, false);
+        newArrow.transform.position = shootPoint.transform.position;// transform.position;
+        newArrow.transform.rotation = transform.rotation;
+        newArrow.destructable = true;
+    }
+    private void LoadAction()
 	{
 		if (savedAction != null)
 		{
@@ -400,6 +451,7 @@ public class PlayerController : MonoBehaviour
 		//Debug.Log("Shoot Arrow Event");
 		yield return new WaitForSeconds(0.05f);
 		soundmaster.PlaySFX(SoundMaster.SFX.ShootArrow);
+		PlayerShootEvent();
 	}
 	
 	private IEnumerator AnimationSwordSwingEvent()

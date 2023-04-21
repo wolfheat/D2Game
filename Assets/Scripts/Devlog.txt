@@ -99,6 +99,7 @@ Nov 2022
 		* Made it so its possible to click outside game area and move towards that spot.
 20/4	* Remade Terrain so it scales with size.
 		* Player Can now swap to Bow and arrow
+21/4	* Continious firing of arrows, Arrows hit correct aiming direction, + cleaned up a lot of code
 
 		// Change arrow shooting sound
 		// Make bow animation better, change speed of animation?

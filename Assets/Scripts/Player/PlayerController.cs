@@ -64,9 +64,9 @@ public class PlayerController : MonoBehaviour
         arrowHolder = FindObjectOfType<ArrowHolder>();
         projectiles = FindObjectOfType<Projectiles>();
         mainCamera = Camera.main;
-		Inputs.Instance.Controls.Land.LeftClick.performed += _ => MouseClick();
+		Inputs.Instance.Controls.Land.LeftClick.performed += _ => MouseClick(ClickType.Left);
 		Inputs.Instance.Controls.Land.LeftClick.canceled += _ => ShowWaypointIfAvailable();
-		Inputs.Instance.Controls.Land.RightClick.performed += _ => MouseRightClick();
+		Inputs.Instance.Controls.Land.RightClick.performed += _ => MouseClick(ClickType.Right);
 		Inputs.Instance.Controls.Land.RightClick.canceled += _ => ShowWaypointIfAvailable();
 		Inputs.Instance.Controls.Land.W.started += _ => SwapWeapon();
 		Inputs.Instance.Controls.Land.Shift.started += Shift;
@@ -135,7 +135,7 @@ public class PlayerController : MonoBehaviour
 		if (Inputs.Instance.LClick == 1f && mouseClickTimer > HoldMouseDuration)
 		{
 			// Left button is held
-			MouseClick();
+			MouseClick(ClickType.Left);
 			mouseClickTimer = 0;
 		}else if(Inputs.Instance.LClick != 1f) mouseClickTimer = 0;
     }
@@ -194,75 +194,81 @@ public class PlayerController : MonoBehaviour
 
 		// Get Player ActionType = Gather, Move, Attack, Powerattack
         Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
-		RaycastHit hit;
-        Physics.Raycast(ray.origin, ray.direction, out hit, 1000f);
-		Vector3 clickPoint = new Vector3(hit.point.x,0,hit.point.z);
+        
+        Physics.Raycast(ray.origin, ray.direction, out RaycastHit hit, 1000f);
+		
+		Vector3 clickPoint = new Vector3(hit.point.x, 0, hit.point.z);
 
-        PlayerActionType playerActionType = DeterminePLayerActionType(ray, type, out hit);
+        PlayerActionType playerActionType = DeterminePlayerActionType(ray, type, ref hit);
 
-        NavMeshHit navhit;
-        if (!NavMesh.SamplePosition(clickPoint, out navhit, 1f, NavMesh.AllAreas))
+        if (!NavMesh.SamplePosition(clickPoint, out NavMeshHit navhit, 1f, NavMesh.AllAreas))
         {
-            // The clicked point is outside the NavMesh
-            // Find the closest point on the NavMesh to the clicked point
+            // The clicked point is outside the NavMesh, Find the closest point on the NavMesh to the clicked point
             navhit.position = GetClosestClickPointWhenClickingOutside(clickPoint);            
         }
 
+		// Determin what position was clicked
 		Vector3 clickPosition = playerActionType == PlayerActionType.Gather ? hit.point : navhit.position;
 
-		// Set ClickInfo
+		// Set ClickInfo i.e (LeftMouse, MoveTo, Position)
         clickInfo = new ClickInfo(type, playerActionType, clickPosition);
 		return true;
 		
-	}
+    }
 
-    private PlayerActionType DeterminePLayerActionType(Ray ray,ClickType type , out RaycastHit hit)
+    private PlayerActionType DeterminePlayerActionType(Ray ray,ClickType type , ref RaycastHit hit)
     {
-        bool clickOnResource = Physics.Raycast(ray.origin, ray.direction, out hit, 1000f, layerMask: Resource);
-        PlayerActionType playerActionType = PlayerActionType.Move;
-        if (holdPosition) playerActionType = (type == ClickType.Right ? PlayerActionType.PowerAttack : PlayerActionType.Attack);
-        else if (clickOnResource) playerActionType = PlayerActionType.Gather;
-		return playerActionType;
+		// Check if "Hold position" is down (Shift) and what type of click was made. 
+		if (holdPosition) return (type == ClickType.Right ? PlayerActionType.PowerAttack : PlayerActionType.Attack);
+
+		// Check if clicked on resource
+        if (Physics.Raycast(ray.origin, ray.direction, out hit, 1000f, layerMask: Resource)) return PlayerActionType.Gather;
+
+		// Return Default = Move
+		return PlayerActionType.Move;
     }
 
     private Vector3 GetClosestClickPointWhenClickingOutside(Vector3 point)
-    {		
+    {
+		float stepSize = 0.3f;
+
+		// Move the clicked point to be in the players plane
 		Vector3 pointInPlane = new Vector3(point.x,transform.position.y,point.z);
-		Debug.Log("Point in plane: "+pointInPlane);
-		Vector3 calculatedDestination = transform.position;
-		Vector3 step = (pointInPlane - transform.position).normalized*0.3f;
-		Vector3 pointToCheck = calculatedDestination;
+
+		// Step size vector for the iteration towards the clicked point
+		Vector3 step = (pointInPlane - transform.position).normalized*stepSize;
+
+		// The Methods resulting point
+		Vector3 calculatedDestination = transform.position+step;
 		
-		int steps = 0;
-
-		NavMeshHit navhit;
-
-		while (NavMesh.SamplePosition(pointToCheck,out navhit,0.1f,NavMesh.AllAreas) && steps < 200) 
+		// Iterate from the players position towards the clicked point, with max steps = 200
+		for (int i = 0; i < 200; i++)
 		{
-			calculatedDestination = pointToCheck;
-            pointToCheck += step;
-			steps++;
-		}
+			if(!NavMesh.SamplePosition(calculatedDestination,out NavMeshHit navHit, 0.1f, NavMesh.AllAreas)) 
+				return calculatedDestination-step;
+			calculatedDestination += step;
+		}		
 		return calculatedDestination;
     }
 
     private void DoClickAction()
 	{
+		// Currently gathering but requesting anything else
 		if(gatherCoroutine!=null && clickInfo.actionType != PlayerActionType.Gather) AnimationStopGatheringEvent();
-		//Debug.Log("Do action of type: "+clickInfo.actionType);
+
 		switch (clickInfo.actionType)
 		{
 			case PlayerActionType.Attack:
 				StartCoroutine(AttackAt()); 
-				StoreWaypointToShow(clickInfo);
+				wayPointToShow = clickInfo;
 				break;
 			case PlayerActionType.PowerAttack:
 				StartCoroutine(AttackAt());
-				StoreWaypointToShow(clickInfo);
+				wayPointToShow = clickInfo;
 				break;
 			case PlayerActionType.Move:
 				NavigateTo(); 
-				StoreWaypointToShow(clickInfo);
+				wayPointToShow = clickInfo;
 				break;
 			case PlayerActionType.Gather:
 				gatherCoroutine = StartCoroutine(GatherAt(clickInfo.pos));
@@ -323,7 +329,7 @@ public class PlayerController : MonoBehaviour
 		Debug.Log("Starting Attack");
 		attackLock = true;
 		// Workaround for going from attack to attack
-		if (playerState.State == PlayerState.AttackSwordSwing)
+		if (playerState.State == PlayerState.AttackSwordSwing || playerState.State == PlayerState.ShootArrow)
 		{
 			playerState.SetState(PlayerState.Idle);
 			yield return null;			
@@ -342,13 +348,7 @@ public class PlayerController : MonoBehaviour
 		yield return null;
 		LoadAction();
 	}
-    private void PlayerShootEvent()
-    {
-        Arrow newArrow = Instantiate(projectiles.arrowPrefab, arrowHolder.transform, false);
-        newArrow.transform.position = shootPoint.transform.position;// transform.position;
-        newArrow.transform.rotation = transform.rotation;
-        newArrow.destructable = true;
-    }
+
     private void LoadAction()
 	{
 		if (savedAction != null)
@@ -365,55 +365,31 @@ public class PlayerController : MonoBehaviour
 
 	private void SaveAction()
 	{
-		//Debug.Log("Saving action");
 		savedAction = clickInfo;
-		StoreWaypointToShow(clickInfo);		
-	}
-
-	private void StoreWaypointToShow(ClickInfo savedAction)
-	{
-		//Debug.Log("Saving wayPointToShow: "+savedAction);
-		wayPointToShow = savedAction;
+		wayPointToShow = clickInfo;		
 	}
 
 	// --------CONTROLLER INPUTS--------------------------------------------------------
-	private void ShowWaypointIfAvailable() // Left/Right-Click Released
+	private void ShowWaypointIfAvailable() 
 	{
-		if (wayPointToShow != null)
+        // Left or Right Mouse Button Released
+        if (wayPointToShow != null)
 		{
-			//Debug.Log("There is a waypoint to show here");
 			WayPointController.ShowWaypoint(wayPointToShow);
 		}
 		wayPointToShow = null;
 	}
 
-	private void MouseRightClick()
+	private void MouseClick(ClickType type)
 	{
-		bool validClick = GetClickInfo(ClickType.Right);
-		if (!validClick) Debug.Log("Unvalid click point (Right)");
-		else
-		{
-			if (attackLock) { 
-				SaveAction(); 
-				Debug.Log("STORE INPUT, ATTACKLOCK ACTIVE"); 
-			}
-			else DoClickAction();
-		}
-	}
-
-	private void MouseClick()
-	{
-		bool validClick = GetClickInfo(ClickType.Left);
-		if (!validClick) Debug.Log("Unvalid click point (Left)");
-		else
-		{
-			if (attackLock) { 
-				SaveAction(); 
-				Debug.Log("STORE INPUT, ATTACKLOCK ACTIVE");
-			}
-			else DoClickAction();
-		}
-	}
+        bool validClick = GetClickInfo(type);
+        if (validClick)
+        {
+            if (attackLock) SaveAction();
+            else DoClickAction();
+        }
+		// Else not valid = Over UI etc
+    }
 
 	private void Shift(InputAction.CallbackContext context)
 	{
@@ -431,10 +407,9 @@ public class PlayerController : MonoBehaviour
 	// --------ANIMATION EVENTS--------------------------------------------------------
 	private void AnimationStopGatheringEvent()
 	{
-		
-		StopCoroutine(gatherCoroutine);
+		if(gatherCoroutine != null) StopCoroutine(gatherCoroutine);
 		gatherCoroutine = null;
-		//Debug.Log("Gathering Complete Event");
+
 		navMeshAgent.destination = transform.position;
 		playerState.SetState(PlayerState.Idle);
 		soundmaster.StopSFX();
@@ -448,21 +423,27 @@ public class PlayerController : MonoBehaviour
 
 	private IEnumerator AnimationShootArrowEvent()
 	{
-		//Debug.Log("Shoot Arrow Event");
 		yield return new WaitForSeconds(0.05f);
+
+		// Shoot the arrow
+        Arrow newArrow = Instantiate(projectiles.arrowPrefab, arrowHolder.transform, false);
+        newArrow.transform.position = shootPoint.transform.position;// transform.position;
+        newArrow.transform.rotation = transform.rotation;
+        newArrow.destructable = true;
+
+		// Play Sound
 		soundmaster.PlaySFX(SoundMaster.SFX.ShootArrow);
-		PlayerShootEvent();
-	}
+    }
 	
 	private IEnumerator AnimationSwordSwingEvent()
 	{
-		//Debug.Log("SwordSwing Event");
-
+		// Runs at attack moment to check what enemies were hit
 		attackDidHit = false;
 		attackCollider.enabled = true;
 		yield return new WaitForSeconds(0.05f);
 		attackCollider.enabled = false;
 
+		// Play Sound
 		if (attackDidHit) soundmaster.PlaySFX(SoundMaster.SFX.SwordHit);
 		else soundmaster.PlaySFX(SoundMaster.SFX.SwingSwordMiss);
 

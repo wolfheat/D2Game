@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour

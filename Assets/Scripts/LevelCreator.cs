@@ -30,11 +30,6 @@ public class LevelCreator : MonoBehaviour
     [SerializeField] private NavMeshSurface TileHolder;
 
 	[Space(10, order = 0)]
-	[Header ("Separation Dungeon Creator")]
-	[SerializeField] private int SeparationRoomsAmt = 5;
-	[SerializeField] private int SeparateTries = 10;
-
-	[Space(10, order = 0)]
 	[Header ("Random Walk Dungeon Creator")]
 	[SerializeField] private RandomWalkGeneratorPresetSO walkGeneratorPreset;
 

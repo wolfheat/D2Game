@@ -9,7 +9,7 @@ public static class RoomMaker
 {
 	private static int RoomMinSize = 4;
 	private static int RoomMaxSize = 10;
-	private static int RoomMaxDev = 3;
+	//private static int RoomMaxDev = 3;
 	private static int MoveStrength = 2;
 
 	public static Room GenerateRandomRoom()

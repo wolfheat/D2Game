@@ -20,7 +20,7 @@ public class SoundMaster : MonoBehaviour
     private int currentEncounterMusic = 0;
 
     private float presetVolume = 0.8f;
-    private float presetSFXVolume = 0.1f;
+    //private float presetSFXVolume = 0.1f;
     private float presetSFXStepVolume = 0.5f;
 
     private float totalFadeOutTime = 3.5f;

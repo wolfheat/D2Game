@@ -100,6 +100,8 @@ Nov 2022
 20/4	* Remade Terrain so it scales with size.
 		* Player Can now swap to Bow and arrow
 21/4	* Continious firing of arrows, Arrows hit correct aiming direction, + cleaned up a lot of code
+		* BUILD PC: 59s, 126Mb
+		* Added Demo Text
 
 		// Change arrow shooting sound
 		// Make bow animation better, change speed of animation?
@@ -108,7 +110,7 @@ Nov 2022
 
 
 		// TODO
-		// Player can get stuck sometimes fix
+		// Player can get stuck sometimes fix, fixed?
 		// Holding left button updates direction to slow, fix
 
 		// Maybe have certain rooms spawn enemies and not the added corridor?

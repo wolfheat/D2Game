@@ -255,7 +255,9 @@ public class LevelCreator : MonoBehaviour
 	public void CreateRoomDispersionDungeon()
 	{
 		// Start Method Execution Timer 
+#if UNITY_EDITOR 
 		double time = EditorApplication.timeSinceStartup;
+#endif
 
 		//Clear The Level
 		ClearLevel();
@@ -332,11 +334,13 @@ public class LevelCreator : MonoBehaviour
 		List<Vector2Int> spawnPoints = GetSpawnPoints(100,startRoomCenter);
 		List<GameObject> spawnPointsAsGameObjects = PlaceSpawnPoints(spawnPoints, TileHolder.transform);
 
-		// Stop Method Execution Timer
-		double timeTaken = EditorApplication.timeSinceStartup - time;
-
+        // Stop Method Execution Timer
+#if UNITY_EDITOR
+        double timeTaken = EditorApplication.timeSinceStartup - time;
 		// Show Method Complete Time
 		Debug.Log("Time taken: "+timeTaken);
+#endif
+
 	}
 
 	private void SetPortal(Vector2Int pos)
@@ -625,6 +629,8 @@ public class LevelCreator : MonoBehaviour
 
 			}
 		}
-		UnityEditor.EditorApplication.QueuePlayerLoopUpdate();
+#if UNITY_EDITOR
+		//UnityEditor.EditorApplication.QueuePlayerLoopUpdate();
+#endif
 	}
 }

@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour
 {
 	[SerializeField] private Collider attackCollider;
 	[SerializeField] private LayerMask GroundLayers;
-	[SerializeField] private LayerMask Resource;
+	[SerializeField] private LayerMask ResourceLayer;
 	[SerializeField] private LayerMask TerrainLayers;
 	[SerializeField] private LayerMask UI;
 	[SerializeField] private TextMeshProUGUI stateText;
@@ -45,11 +45,14 @@ public class PlayerController : MonoBehaviour
 		
 	private WeaponType currentWeapon = WeaponType.Sword;
 
+
+	private ResourceNode activeNode;
+
 	private float attackTime = 1.22f;
 	public float attackSpeedMultiplier = 1.8f;
 
 	private const float StopDistance = 0.1f;
-	private const float MinGatherDistance = 1f;
+	private const float MinGatherDistance = 1.5f;
 	private float mouseClickTimer = 0f;
 	private const float HoldMouseDuration = 0.2f;
 	private const float RotationSpeed = 900f;
@@ -222,10 +225,19 @@ public class PlayerController : MonoBehaviour
 		if (holdPosition) return (type == ClickType.Right ? PlayerActionType.PowerAttack : PlayerActionType.Attack);
 
 		// Check if clicked on resource
-        if (Physics.Raycast(ray.origin, ray.direction, out hit, 1000f, layerMask: Resource)) return PlayerActionType.Gather;
+		if (Physics.Raycast(ray.origin, ray.direction, out hit, 1000f, layerMask: ResourceLayer))
+		{
+			// Get clicked Node if available
+			if (hit.collider.TryGetComponent(out activeNode))
+			{
+				Debug.Log("Hit a Resource");
+			}
 
-		// Return Default = Move
-		return PlayerActionType.Move;
+            return PlayerActionType.Gather;
+		}
+
+        // Return Default = Move
+        return PlayerActionType.Move;
     }
 
     private Vector3 GetClosestClickPointWhenClickingOutside(Vector3 point)
@@ -254,7 +266,7 @@ public class PlayerController : MonoBehaviour
     private void DoClickAction()
 	{
 		// Currently gathering but requesting anything else
-		if(gatherCoroutine!=null && clickInfo.actionType != PlayerActionType.Gather) AnimationStopGatheringEvent();
+		if(gatherCoroutine!=null && clickInfo.actionType != PlayerActionType.Gather) ForcedStopGatheringEvent();
 
 		switch (clickInfo.actionType)
 		{
@@ -295,7 +307,8 @@ public class PlayerController : MonoBehaviour
 			Debug.Log("Setting Move To Gatherpoint for navmesh");
 		}
 		while ((transform.position - pos).magnitude > MinGatherDistance)
-		{ 
+		{
+			Debug.Log("Distance to Resounce: "+ (transform.position - pos).magnitude);
 			yield return null;		
 		}
 		navMeshAgent.SetDestination(transform.position);
@@ -405,15 +418,21 @@ public class PlayerController : MonoBehaviour
 	}
 
 	// --------ANIMATION EVENTS--------------------------------------------------------
-	private void AnimationStopGatheringEvent()
+	private void ForcedStopGatheringEvent(bool completedEntireGathering = false)
 	{
 		if(gatherCoroutine != null) StopCoroutine(gatherCoroutine);
 		gatherCoroutine = null;
-
 		navMeshAgent.destination = transform.position;
-		playerState.SetState(PlayerState.Idle);
+        // Generate Item
+        if (activeNode != null && completedEntireGathering) activeNode.Harvest();
+        playerState.SetState(PlayerState.Idle);
 		soundmaster.StopSFX();
 	}
+	private void AnimationStopGatheringEvent()
+	{
+		ForcedStopGatheringEvent(true);
+	}
+
 	private void AnimationStepEvent()
 	{
 		//Debug.Log("Animation Step Event");

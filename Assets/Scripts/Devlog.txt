@@ -102,6 +102,8 @@ Nov 2022
 21/4	* Continious firing of arrows, Arrows hit correct aiming direction, + cleaned up a lot of code
 		* BUILD PC: 59s, 126Mb
 		* Added Demo Text, Exit Screen
+23/4	* Added Nodes that are harvestable. Load these with (item data) when creating new level.
+
 
 		// Change arrow shooting sound
 		// The remove all childre method for clearing doorways removes ground for cracked tile floor.
@@ -127,11 +129,7 @@ Nov 2022
 		// Better to use A* alg to find shortest path with weights
 		// Preplaces Unused Rooms should be lower cost to move through
 
-		* TODO: Implement Minimum Spanning Tree
-
-		* Game can lock up sometimes, why? Prob because of inf loop in player action move/attack
 		* Arrows stop at the player collider, maybe should stick to the actual character instead
-		* When they turn they turn instantly make smooth?
 
 todo	
 		* Make so Enemy stops chase earlier if player is not visable.

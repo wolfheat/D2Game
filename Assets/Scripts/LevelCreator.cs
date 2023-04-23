@@ -23,7 +23,8 @@ public class LevelCreator : MonoBehaviour
     [SerializeField] private List<GameObject> decalPrefabs;
     [SerializeField] private List<GameObject> specialPrefabs;
 
-    [SerializeField] private List<GameObject> resourcesPrefab;
+    [SerializeField] private List<ResourceNode> resourcesPrefab;
+    [SerializeField] private List<ItemData> itemDataList;
     [SerializeField] private GameObject enemySpawnPointPrefab;
 
     [SerializeField] private GameObject highLightSquare;
@@ -65,7 +66,7 @@ public class LevelCreator : MonoBehaviour
 	private void Start()
     {
         GroundLayer = LayerMask.NameToLayer("Ground");
-        ResourceLayer = LayerMask.NameToLayer("Resources");
+        ResourceLayer = LayerMask.NameToLayer("ResourceLayer");
 		Inputs.Instance.Controls.Land.X.performed += _ => PrintCurrentTilePosition();
 
 		terrainGenerator = FindObjectOfType<TerrainGenerator>();
@@ -213,10 +214,10 @@ public class LevelCreator : MonoBehaviour
 	private void CreateResourceAt(Vector2Int position, int type)
 	{
 		//Create Resource
-		GameObject resource = Instantiate(resourcesPrefab[type], TileHolder.transform);
+		ResourceNode resource = Instantiate(resourcesPrefab[type], TileHolder.transform);
         resource.transform.position = new Vector3(position.x*Tilesize,0,position.y*Tilesize);
-        resource.layer = ResourceLayer;
 
+		resource.LoadWithItem(itemDataList[0]);
 	}
 
     private GameObject CreateWallAt(Direction direction,GameObject tile,int type)
@@ -328,6 +329,16 @@ public class LevelCreator : MonoBehaviour
 		// Add Random SpawnPoints
 		List<Vector2Int> spawnPoints = GetSpawnPoints(100,startRoomCenter);
 		List<GameObject> spawnPointsAsGameObjects = PlaceSpawnPoints(spawnPoints, TileHolder.transform);
+
+		// Create Resources
+		
+		CreateResourceAt(spawnPoints[0],0);
+		CreateResourceAt(spawnPoints[1],0);
+		CreateResourceAt(spawnPoints[2],0);
+		CreateResourceAt(spawnPoints[3],0);
+		CreateResourceAt(spawnPoints[4],0);
+		
+
 
         // Stop Method Execution Timer
 #if UNITY_EDITOR

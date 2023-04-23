@@ -167,6 +167,7 @@ public class PlayerController : MonoBehaviour
 	{
 		// get position X distance in front of player
 		navMeshAgent.SetDestination(transform.position+transform.forward*StopDistance);
+		if (gatherCoroutine != null) ForcedStopGatheringEvent();
 	}
 
 	private void OnCollisionEnter(Collision collision)
@@ -420,11 +421,13 @@ public class PlayerController : MonoBehaviour
 	// --------ANIMATION EVENTS--------------------------------------------------------
 	private void ForcedStopGatheringEvent(bool completedEntireGathering = false)
 	{
+		Debug.Log("Forced Stop Gathering");
 		if(gatherCoroutine != null) StopCoroutine(gatherCoroutine);
 		gatherCoroutine = null;
 		navMeshAgent.destination = transform.position;
         // Generate Item
         if (activeNode != null && completedEntireGathering) activeNode.Harvest();
+
         playerState.SetState(PlayerState.Idle);
 		soundmaster.StopSFX();
 	}

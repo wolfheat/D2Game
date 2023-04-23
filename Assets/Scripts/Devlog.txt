@@ -103,7 +103,7 @@ Nov 2022
 		* BUILD PC: 59s, 126Mb
 		* Added Demo Text, Exit Screen
 23/4	* Added Nodes that are harvestable. Load these with (item data) when creating new level.
-
+		* Shift now stops player if he moves towards a node
 
 		// Change arrow shooting sound
 		// The remove all childre method for clearing doorways removes ground for cracked tile floor.

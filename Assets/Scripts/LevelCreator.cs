@@ -28,7 +28,11 @@ public class LevelCreator : MonoBehaviour
     [SerializeField] private GameObject enemySpawnPointPrefab;
 
     [SerializeField] private GameObject highLightSquare;
-    [SerializeField] private NavMeshSurface TileHolder;
+    
+    private NavMeshSurface navMeshSurface;
+    [SerializeField] private GameObject tileHolder;
+    [SerializeField] private GameObject resourceHolder;
+    [SerializeField] private GameObject itemHolder;
 
 	[Space(10, order = 0)]
 	[Header ("Random Walk Dungeon Creator")]
@@ -70,8 +74,10 @@ public class LevelCreator : MonoBehaviour
 		Inputs.Instance.Controls.Land.X.performed += _ => PrintCurrentTilePosition();
 
 		terrainGenerator = FindObjectOfType<TerrainGenerator>();
+        navMeshSurface = tileHolder.GetComponent<NavMeshSurface>();
 
-		CreateNewLevel();
+
+        CreateNewLevel();
 
 	}
 
@@ -111,17 +117,22 @@ public class LevelCreator : MonoBehaviour
 
 	public void ClearLevel()
 	{
-		Transform[] children = TileHolder.GetComponentsInChildren<Transform>();
-		Debug.Log("CLEARING LEVEL, CHILDREN BEFORE: "+children.Length);
-		for (int i = children.Length-1; i > 0; i--)	
-			DestroyImmediate(children[i].gameObject);		
+		RemoveAllChildren(tileHolder.GetComponentsInChildren<Transform>());
+		RemoveAllChildren(resourceHolder.GetComponentsInChildren<Transform>());
+		RemoveAllChildren(itemHolder.GetComponentsInChildren<Transform>());
 	}
 
-	private GameObject GenerateForcedFloorTileAt(Vector2Int pos,int index)
+    private void RemoveAllChildren(Transform[] children)
+    {
+        for (int i = children.Length - 1; i > 0; i--)
+            DestroyImmediate(children[i].gameObject);
+    }
+
+    private GameObject GenerateForcedFloorTileAt(Vector2Int pos,int index)
 	{
 		
 		GameObject tile;
-		tile = Instantiate(floorTilesPrefab[index], TileHolder.transform);
+		tile = Instantiate(floorTilesPrefab[index], tileHolder.transform);
 		tile.transform.localPosition = new Vector3(pos.x * Tilesize, 0, pos.y * Tilesize);
 		tile.layer = GroundLayer;
 		return tile;
@@ -134,7 +145,7 @@ public class LevelCreator : MonoBehaviour
 		int specialType = Random.Range(0, 11);
 		if (specialType < 10)
 		{
-			tile = Instantiate(floorTilesPrefab[0], TileHolder.transform);
+			tile = Instantiate(floorTilesPrefab[0], tileHolder.transform);
 			if (specialType < 1)
 			{
 				int debreeType = Random.Range(0, debreePrefabs.Count);
@@ -155,7 +166,7 @@ public class LevelCreator : MonoBehaviour
 		else
 		{
 			int specialTile = Random.Range(0, 7);
-			tile = Instantiate(floorTilesPrefab[specialTile], TileHolder.transform);
+			tile = Instantiate(floorTilesPrefab[specialTile], tileHolder.transform);
 		}
 		tile.transform.localPosition = new Vector3(pos.x * Tilesize, 0, pos.y * Tilesize);
 
@@ -201,7 +212,7 @@ public class LevelCreator : MonoBehaviour
         }
         // Bake the NavMesh
         Debug.Log("Build NavMesh");
-        TileHolder.BuildNavMesh();
+        navMeshSurface.BuildNavMesh();
 
         foreach(Mesh mesh in surfacMeshes)
         {
@@ -214,9 +225,8 @@ public class LevelCreator : MonoBehaviour
 	private void CreateResourceAt(Vector2Int position, int type)
 	{
 		//Create Resource
-		ResourceNode resource = Instantiate(resourcesPrefab[type], TileHolder.transform);
+		ResourceNode resource = Instantiate(resourcesPrefab[type], resourceHolder.transform);
         resource.transform.position = new Vector3(position.x*Tilesize,0,position.y*Tilesize);
-
 		resource.LoadWithItem(itemDataList[0]);
 	}
 
@@ -328,7 +338,7 @@ public class LevelCreator : MonoBehaviour
 				
 		// Add Random SpawnPoints
 		List<Vector2Int> spawnPoints = GetSpawnPoints(100,startRoomCenter);
-		List<GameObject> spawnPointsAsGameObjects = PlaceSpawnPoints(spawnPoints, TileHolder.transform);
+		List<GameObject> spawnPointsAsGameObjects = PlaceSpawnPoints(spawnPoints, tileHolder.transform);
 
 		// Create Resources
 		
@@ -353,7 +363,7 @@ public class LevelCreator : MonoBehaviour
 	{
 		Debug.Log("Create Portal at: "+pos);
 		//Portal
-		GameObject portal = Instantiate(specialPrefabs[0], TileHolder.transform);
+		GameObject portal = Instantiate(specialPrefabs[0], tileHolder.transform);
 		portal.transform.position = new Vector3(pos.x*Tilesize,0,pos.y*Tilesize);
 	}
 

@@ -10,19 +10,18 @@ public class Arrow : MonoBehaviour
     Rigidbody rb;
 
 
-	private void Start()
+	private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        SetDirection();
-
 	}
 
-    public void SetDirection()
+    public void RandomizeDirection()
     {
-		float lambda = 3f;
+		float lambda = 0f;
+		//float lambda = 3f;
 		Quaternion randomRotation = transform.rotation * Quaternion.Euler(Random.Range(-lambda, lambda), Random.Range(-lambda, lambda), 0);
 		transform.rotation = randomRotation;
-        
+        rb.transform.rotation = randomRotation;
         rb.AddForce(transform.forward * velocity, ForceMode.VelocityChange);                
     }
 

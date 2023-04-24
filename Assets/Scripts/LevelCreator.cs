@@ -33,6 +33,7 @@ public class LevelCreator : MonoBehaviour
     [SerializeField] private GameObject tileHolder;
     [SerializeField] private GameObject resourceHolder;
     [SerializeField] private GameObject itemHolder;
+    [SerializeField] private GameObject projectilesHolder;
 
 	[Space(10, order = 0)]
 	[Header ("Random Walk Dungeon Creator")]
@@ -120,6 +121,7 @@ public class LevelCreator : MonoBehaviour
 		RemoveAllChildren(tileHolder.GetComponentsInChildren<Transform>());
 		RemoveAllChildren(resourceHolder.GetComponentsInChildren<Transform>());
 		RemoveAllChildren(itemHolder.GetComponentsInChildren<Transform>());
+		RemoveAllChildren(projectilesHolder.GetComponentsInChildren<Transform>());
 	}
 
     private void RemoveAllChildren(Transform[] children)
@@ -568,8 +570,9 @@ public class LevelCreator : MonoBehaviour
 		if(!ShowLines) return;
 		Gizmos.color = Color.green;
 		Gizmos.DrawLine(Vector3.up, Vector3.right);
-		
-		if (delaunayCartesianPathsDictionary != null)
+        
+
+        if (delaunayCartesianPathsDictionary != null)
 		{
 			int lines = 0;
 			Gizmos.color = Color.red;

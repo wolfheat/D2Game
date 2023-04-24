@@ -11,8 +11,9 @@ public class ClickInfo
 	public ClickType type;
 	public PlayerActionType actionType;
 	public Vector3 pos = Vector3.zero;
-	//Constructor
-	public ClickInfo(ClickType t, PlayerActionType pt, Vector3 p) { type = t; actionType = pt; pos = p; }	
+	
+
+	public ClickInfo(ClickType t, PlayerActionType pt, Vector3 p) { type = t; actionType = pt; pos = p;}	
 }
 public enum ClickType {Left,Right}
 public enum WeaponType {Sword,Bow}
@@ -29,10 +30,7 @@ public class PlayerController : MonoBehaviour
 
 	[SerializeField] private GameObject[] weapons;
 
-	[SerializeField] private GameObject shootPoint;
-    private ArrowHolder arrowHolder;
-	private Projectiles projectiles;
-
+    private PlayerAnimationEventController playerAnimationEventController;
     private PlayerStateControl playerState;
 	private Camera mainCamera;
 	private WayPointController WayPointController;
@@ -45,28 +43,24 @@ public class PlayerController : MonoBehaviour
 		
 	private WeaponType currentWeapon = WeaponType.Sword;
 
-
 	private ResourceNode activeNode;
     public ResourceNode ActiveNode { get { return activeNode; }}
 
-    private float attackTime = 1.22f;
-	public float attackSpeedMultiplier = 1.8f;
-
+    // Settings - Constants
 	private const float StopDistance = 0.1f;
 	private const float MinGatherDistance = 1.5f;
-	private float mouseClickTimer = 0f;
 	private const float HoldMouseDuration = 0.2f;
-	private const float RotationSpeed = 900f;
+	private const float rotationSpeed = 900f;
+
+
+	private float mouseClickTimer = 0f;
 	private bool attackLock = false;
-	private bool attackDidHit = false;
 	private bool holdPosition = false;
 
 	private Coroutine gatherCoroutine;
 
 	private void OnEnable()
     {
-        arrowHolder = FindObjectOfType<ArrowHolder>();
-        projectiles = FindObjectOfType<Projectiles>();
         mainCamera = Camera.main;
 		Inputs.Instance.Controls.Land.LeftClick.performed += _ => MouseClick(ClickType.Left);
 		Inputs.Instance.Controls.Land.LeftClick.canceled += _ => ShowWaypointIfAvailable();
@@ -83,8 +77,6 @@ public class PlayerController : MonoBehaviour
 
 		ChangeCurrentWeapon();		
 		SwapWeaponVisuals();
-		
-
 	}
 
     private void ChangeCurrentWeapon()
@@ -106,11 +98,12 @@ public class PlayerController : MonoBehaviour
 	{
 		navMeshAgent = GetComponent<NavMeshAgent>();
 		playerState = GetComponent<PlayerStateControl>();
+		playerAnimationEventController = GetComponent<PlayerAnimationEventController>();
+
 		WayPointController = FindObjectOfType<WayPointController>();
 		soundmaster = FindObjectOfType<SoundMaster>();
-
-
-	}
+		
+    }
 	private void Update()
 	{
 		CheckIfReachedTarget();
@@ -168,7 +161,7 @@ public class PlayerController : MonoBehaviour
 	{
 		// get position X distance in front of player
 		navMeshAgent.SetDestination(transform.position+transform.forward*StopDistance);
-		if (gatherCoroutine != null) ForcedStopGatheringEvent();
+		if (gatherCoroutine != null) playerAnimationEventController.ForcedStopGatheringEvent();
 	}
 
 	private void OnCollisionEnter(Collision collision)
@@ -187,8 +180,8 @@ public class PlayerController : MonoBehaviour
 		if (collider.gameObject.layer == LayerMask.NameToLayer("Enemies"))
 		{
 			Enemy enemy = collider.gameObject.GetComponent<Enemy>();
-			enemy.Hit(25);
-			attackDidHit = true;
+			enemy.Hit(CharacterStats.HitDamage);
+			playerAnimationEventController.AttackDidHit = true;
 		}		
 	}
 
@@ -203,6 +196,12 @@ public class PlayerController : MonoBehaviour
         Physics.Raycast(ray.origin, ray.direction, out RaycastHit hit, 1000f);
 		
 		Vector3 clickPoint = new Vector3(hit.point.x, 0, hit.point.z);
+		Vector3 aim = playerAnimationEventController.ShootPoint;
+
+        float lineScalarValue =  (aim.y - ray.origin.y) /ray.direction.y;
+		Vector3 aimPoint = ray.origin + ray.direction * lineScalarValue;
+
+        playerAnimationEventController.Aim = aimPoint;
 
         PlayerActionType playerActionType = DeterminePlayerActionType(ray, type, ref hit);
 
@@ -268,7 +267,7 @@ public class PlayerController : MonoBehaviour
     private void DoClickAction()
 	{
 		// Currently gathering but requesting anything else
-		if(gatherCoroutine!=null && clickInfo.actionType != PlayerActionType.Gather) ForcedStopGatheringEvent();
+		if(gatherCoroutine!=null && clickInfo.actionType != PlayerActionType.Gather) playerAnimationEventController.ForcedStopGatheringEvent();
 
 		switch (clickInfo.actionType)
 		{
@@ -331,7 +330,7 @@ public class PlayerController : MonoBehaviour
         bool rotationComplete = false;
         while (!rotationComplete)
         {
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, RotationSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
             if (Quaternion.Angle(transform.rotation, targetRotation) < 10f) rotationComplete = true;
             yield return null;
         }
@@ -357,7 +356,7 @@ public class PlayerController : MonoBehaviour
 		else playerState.SetState(PlayerState.ShootArrow);
 
         // Wait For Attack to finish
-        yield return new WaitForSeconds(attackTime/attackSpeedMultiplier);
+        yield return new WaitForSeconds(CharacterStats.AttackTime / CharacterStats.AttackSpeedMultiplyer);
 
 		attackLock = false;
 		
@@ -420,56 +419,17 @@ public class PlayerController : MonoBehaviour
 		}		
 	}
 
-	// --------ANIMATION EVENTS--------------------------------------------------------
-	private void ForcedStopGatheringEvent(bool completedEntireGathering = false)
-	{
-		Debug.Log("Forced Stop Gathering");
-		if(gatherCoroutine != null) StopCoroutine(gatherCoroutine);
-		gatherCoroutine = null;
-		navMeshAgent.destination = transform.position;
-        // Generate Item
-        if (activeNode != null && completedEntireGathering) activeNode.Harvest();
+    // --------ANIMATION EVENTS--------------------------------------------------------
 
-        playerState.SetState(PlayerState.Idle);
-		soundmaster.StopSFX();
-	}
-	private void AnimationStopGatheringEvent()
-	{
-		ForcedStopGatheringEvent(true);
-	}
-
-	private void AnimationStepEvent()
-	{
-		//Debug.Log("Animation Step Event");
-		soundmaster.StopStepSFX();
-		soundmaster.PlayStepSFX();
-	}
-
-	private IEnumerator AnimationShootArrowEvent()
-	{
-		yield return new WaitForSeconds(0.05f);
-
-		// Shoot the arrow
-        Arrow newArrow = Instantiate(projectiles.arrowPrefab, arrowHolder.transform, false);
-        newArrow.transform.position = shootPoint.transform.position;// transform.position;
-        newArrow.transform.rotation = transform.rotation;
-        newArrow.destructable = true;
-
-		// Play Sound
-		soundmaster.PlaySFX(SoundMaster.SFX.ShootArrow);
+    public void GatherNodeIfActive()
+    {
+        if (activeNode != null)
+            activeNode.Harvest();
     }
-	
-	private IEnumerator AnimationSwordSwingEvent()
-	{
-		// Runs at attack moment to check what enemies were hit
-		attackDidHit = false;
-		attackCollider.enabled = true;
-		yield return new WaitForSeconds(0.05f);
-		attackCollider.enabled = false;
 
-		// Play Sound
-		if (attackDidHit) soundmaster.PlaySFX(SoundMaster.SFX.SwordHit);
-		else soundmaster.PlaySFX(SoundMaster.SFX.SwingSwordMiss);
-
-	}
+    public void StopGathering()
+    {
+        if (gatherCoroutine != null) StopCoroutine(gatherCoroutine);
+        gatherCoroutine = null;
+    }
 }

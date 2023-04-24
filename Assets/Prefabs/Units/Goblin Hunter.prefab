@@ -1102,7 +1102,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4555534974110732243}
-  m_Layer: 8
+  m_Layer: 11
   m_Name: LukStrela
   m_TagString: Untagged
   m_Icon: {fileID: 0}

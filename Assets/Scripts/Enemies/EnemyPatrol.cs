@@ -19,7 +19,7 @@ public class EnemyPatrol : MonoBehaviour
 	private Animator animator;
     [SerializeField] private List<WaypointMarker> wayPoints = new List<WaypointMarker>();
     [SerializeField] private GameObject shootPoint;
-    private Projectiles projectiles;
+    private ProjectilesSpawner projectiles;		
     private ArrowHolder arrowHolder;
 
     private const float MIN_IDLE_TIME = 2f;
@@ -42,14 +42,14 @@ public class EnemyPatrol : MonoBehaviour
 	private void Awake()
 	{
         player = FindObjectOfType<PlayerController>();
-		projectiles = FindObjectOfType<Projectiles>();
+		projectiles = FindObjectOfType<ProjectilesSpawner>();
 		arrowHolder = FindObjectOfType<ArrowHolder>();		
         animator = GetComponent<Animator>();
         navMeshAgent = GetComponent<NavMeshAgent>();
 		enemyState = GetComponent<EnemyStateController>();
 		Debug.Log("Setting agent for enemy");
 		enemyState.agent = navMeshAgent;
-
+		
 	}
 	private void Start()
     {

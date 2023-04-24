@@ -168,6 +168,7 @@ GameObject:
   - component: {fileID: 266501334900288439}
   - component: {fileID: 266501334900288436}
   - component: {fileID: 4164192072801063857}
+  - component: {fileID: 4688628822791541763}
   - component: {fileID: 40668592806979638}
   - component: {fileID: 8021652925725917514}
   - component: {fileID: 266501334900288438}
@@ -270,7 +271,7 @@ MonoBehaviour:
   GroundLayers:
     serializedVersion: 2
     m_Bits: 64
-  Resource:
+  ResourceLayer:
     serializedVersion: 2
     m_Bits: 0
   TerrainLayers:
@@ -281,9 +282,20 @@ MonoBehaviour:
     m_Bits: 0
   stateText: {fileID: 0}
   weapons: []
+--- !u!114 &4688628822791541763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 266501334900288442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b2ef9bafcbb1aa408d3c378669117de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackCollider: {fileID: 0}
   shootPoint: {fileID: 0}
-  projectiles: {fileID: 0}
-  attackSpeedMultiplier: 1.8
 --- !u!114 &40668592806979638
 MonoBehaviour:
   m_ObjectHideFlags: 0

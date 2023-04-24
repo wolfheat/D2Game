@@ -105,7 +105,7 @@ Nov 2022
 23/4	* Added Nodes that are harvestable. Load these with (item data) when creating new level.
 		* Shift now stops player if he moves towards a node
 		* Scavenging, Mining, Fishing now has nodes and custom animations
-
+24/4	* Modified arrow shooting. Arrows now pass through the aimed position, not above the clickpoint.
 
 		// Change arrow shooting sound
 		// The remove all childre method for clearing doorways removes ground for cracked tile floor.

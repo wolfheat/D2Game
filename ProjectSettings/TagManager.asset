@@ -17,11 +17,11 @@ TagManager:
   - Enemies
   - Player
   - Obstacle
-  - Arrows
+  - EnemyProjectiles
   - ResourceLayer
   - Items
   - Terrain
-  - 
+  - PlayerProjectiles
   - 
   - 
   - 

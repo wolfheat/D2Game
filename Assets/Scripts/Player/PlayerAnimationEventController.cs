@@ -30,8 +30,7 @@ class PlayerAnimationEventController : MonoBehaviour
         Debug.Log("Forced Stop Gathering");
 
 		playerController.StopGathering();
-		playerController.GatherNodeIfActive();
-
+		if(completedEntireGathering) playerController.GatherNodeIfActive();
             
         navMeshAgent.destination = transform.position;
         // Generate Item

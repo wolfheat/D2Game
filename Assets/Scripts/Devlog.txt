@@ -108,12 +108,15 @@ Nov 2022
 24/4	* Modified arrow shooting. Arrows now pass through the aimed position, not above the clickpoint.
 		* Player Arrows and Enemy arrows now work. Enemies take damage and can be killed by arrows.
 
+		// Interfaces!!! 
+
 		// Change arrow shooting sound
 		// The remove all childre method for clearing doorways removes ground for cracked tile floor.
 		// Make bow animation better, change speed of animation?
 		// Make sure colliders work correctly, player should not take damage of its own arrows, enemies should etc
 		// Double shooting arrows, second arrow wont shoot, check and fix
 
+		// Make it so tiles dont have enemies, resources, obstacles only one on each
 
 		// TODO
 		// Player can get stuck sometimes fix, fixed?

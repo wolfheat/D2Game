@@ -47,8 +47,9 @@ public class PlayerController : MonoBehaviour
 
 
 	private ResourceNode activeNode;
+    public ResourceNode ActiveNode { get { return activeNode; }}
 
-	private float attackTime = 1.22f;
+    private float attackTime = 1.22f;
 	public float attackSpeedMultiplier = 1.8f;
 
 	private const float StopDistance = 0.1f;
@@ -284,7 +285,7 @@ public class PlayerController : MonoBehaviour
 				wayPointToShow = clickInfo;
 				break;
 			case PlayerActionType.Gather:
-				gatherCoroutine = StartCoroutine(GatherAt(clickInfo.pos));
+				gatherCoroutine = StartCoroutine(GatherAt(activeNode));
 				break;
 			default:	
 			break;
@@ -297,8 +298,9 @@ public class PlayerController : MonoBehaviour
 		navMeshAgent.SetDestination(clickInfo.pos);
 	}
 
-	private IEnumerator GatherAt(Vector3 pos)
+	private IEnumerator GatherAt(ResourceNode node)
 	{
+		Vector3 pos = node.transform.position;	
 		//If to far move closer
 		if((transform.position-pos).magnitude > MinGatherDistance) 
 		{

@@ -104,6 +104,8 @@ Nov 2022
 		* Added Demo Text, Exit Screen
 23/4	* Added Nodes that are harvestable. Load these with (item data) when creating new level.
 		* Shift now stops player if he moves towards a node
+		* Scavenging, Mining, Fishing now has nodes and custom animations
+
 
 		// Change arrow shooting sound
 		// The remove all childre method for clearing doorways removes ground for cracked tile floor.

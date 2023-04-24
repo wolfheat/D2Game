@@ -6,20 +6,20 @@ public class PlayerStateControl : MonoBehaviour
 {
 	private Animator animator;
 	private UIController UIController;
-	private PlayerController PlayerController;
+	private PlayerController playerController;
 	public PlayerState State { get; private set;}
 
 	private void Start()
 	{
 		UIController = FindObjectOfType<UIController>();
-		PlayerController = FindObjectOfType<PlayerController>();
+		playerController = FindObjectOfType<PlayerController>();
 		animator = GetComponent<Animator>();
 
 	}
 	public void SetState(PlayerState newState)
 	{
 		//Set speed of animation
-		animator.speed = PlayerController.attackSpeedMultiplier;
+		animator.speed = playerController.attackSpeedMultiplier;
 
 		switch (newState)
 		{
@@ -39,7 +39,23 @@ public class PlayerStateControl : MonoBehaviour
 				animator.CrossFade("ShootArrow", 0.1f);
 				break;
 			case PlayerState.Gather:
+				switch (playerController.ActiveNode.Type)
+				{
+					case ResourceType.Mining:
+				animator.CrossFade("Mining", 0.1f);
+						return;
+					case ResourceType.Fishing:
+				animator.CrossFade("FishingCast", 0.1f);
+						return;
+					case ResourceType.Scavenging:
 				animator.CrossFade("Gather", 0.1f);
+						return;
+					case ResourceType.Woodcutting:
+				animator.CrossFade("Gather", 0.1f);
+						return;
+					default:
+						break;
+				}
 				break;
 			case PlayerState.Death:
 				break;

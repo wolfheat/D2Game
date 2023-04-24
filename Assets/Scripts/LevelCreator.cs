@@ -341,13 +341,14 @@ public class LevelCreator : MonoBehaviour
 		List<GameObject> spawnPointsAsGameObjects = PlaceSpawnPoints(spawnPoints, tileHolder.transform);
 
 		// Create Resources
-		
-		CreateResourceAt(spawnPoints[0],0);
-		CreateResourceAt(spawnPoints[1],0);
-		CreateResourceAt(spawnPoints[2],0);
-		CreateResourceAt(spawnPoints[3],0);
-		CreateResourceAt(spawnPoints[4],0);
-		
+
+		for (int i = 0; i < 4; i++)
+		{
+			CreateResourceAt(spawnPoints[i*3],0);
+			CreateResourceAt(spawnPoints[i*3+1],1);
+			CreateResourceAt(spawnPoints[i*3+2],2);
+		}
+
 
 
         // Stop Method Execution Timer

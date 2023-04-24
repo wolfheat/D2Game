@@ -15,6 +15,7 @@ public class Waypoint : MonoBehaviour
 public class EnemyPatrol : MonoBehaviour
 {
     private PlayerController player;
+    public Vector3 Aim { get; private set; }
     private LayerMask playerLayermask;
 	private Animator animator;
     [SerializeField] private List<WaypointMarker> wayPoints = new List<WaypointMarker>();
@@ -166,7 +167,7 @@ public class EnemyPatrol : MonoBehaviour
 			}
             if (hit.collider.gameObject.layer != playerLayermask.value)
 			{
-				Debug.Log("hitting layer " + hit.collider.gameObject.layer);
+				//Debug.Log("hitting layer " + hit.collider.gameObject.layer);
 			}else return true;
         }
         else
@@ -197,16 +198,15 @@ public class EnemyPatrol : MonoBehaviour
 
     private void FacePlayer()
     {
-		transform.rotation = Quaternion.LookRotation(player.transform.position - transform.position, Vector3.up);		
-	}
+		transform.rotation = Quaternion.LookRotation(player.transform.position - transform.position, Vector3.up);
+        Aim = player.transform.position+Vector3.up;
+
+    }
 
 	// --------ANIMATION EVENTS--------------------------------------------------------
 	private void EnemyShootEvent()
 	{
-		Arrow newArrow = Instantiate(projectiles.arrowPrefab, arrowHolder.transform, false);
-		newArrow.transform.position = shootPoint.transform.position;// transform.position;
-		newArrow.transform.rotation = transform.rotation;
-		newArrow.destructable = true;
+        projectiles.ShootArrow(shootPoint.transform, Aim);
 	}
 
 	private void EnemyShootAnimationStart()

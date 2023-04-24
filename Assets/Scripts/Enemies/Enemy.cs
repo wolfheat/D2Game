@@ -14,7 +14,7 @@ public class Enemy : MonoBehaviour
         enemyPatrol = GetComponent<EnemyPatrol>();
     }
 
-	public void Hit(int dmg)
+    public void Hit(int dmg)
     {
         //Debug.Log("Enemy hit by "+dmg+" damage");
         health -= dmg;

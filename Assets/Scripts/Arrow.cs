@@ -6,6 +6,7 @@ public class Arrow : MonoBehaviour
 {
     private float velocity = 40f;
     private float life = 3f;
+    public int DMG { get; set; } = 50;
     public bool destructable = false;
     Rigidbody rb;
 
@@ -28,18 +29,32 @@ public class Arrow : MonoBehaviour
 
 
 	private void OnCollisionEnter(Collision collider)
-	{
-        //Debug.Log("Arrow hit trigger enter");
+    {
+        if(collider.transform.TryGetComponent<Enemy>(out Enemy enemy))
+        {
+            enemy.Hit(DMG);
+            transform.parent = enemy.transform;
+        }
+        else if(collider.transform.TryGetComponent<PlayerController>(out PlayerController player))
+        {
+            player.TakeHit(DMG);
+            transform.parent = player.transform;
+            // Player take damage
+        }        
+        StopArrow();
+    }
+
+    private void StopArrow()
+    {
         velocity = 0;
         rb.constraints = RigidbodyConstraints.FreezeAll;
         rb.useGravity = false;
         Collider col = gameObject.GetComponent<Collider>();
         col.enabled = false;
-	}
+    }
 
 
-
-	private void Update()
+    private void Update()
     {
         if (!destructable) return;
         //transform.position += transform.forward * velocity * Time.deltaTime;
@@ -55,5 +70,11 @@ public class Arrow : MonoBehaviour
     public void Destroy()
     {
         if(destructable) Die();
+    }
+
+    internal void Stop()
+    {
+        rb.velocity = Vector3.zero;
+        rb.isKinematic = true;
     }
 }

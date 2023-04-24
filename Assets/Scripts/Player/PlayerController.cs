@@ -432,4 +432,9 @@ public class PlayerController : MonoBehaviour
         if (gatherCoroutine != null) StopCoroutine(gatherCoroutine);
         gatherCoroutine = null;
     }
+
+    internal void TakeHit(int damage)
+    {
+		Debug.Log("Player Take Hit: "+damage);
+    }
 }

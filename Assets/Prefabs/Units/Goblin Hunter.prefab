@@ -512,7 +512,6 @@ GameObject:
   - component: {fileID: 6008790244982742103}
   - component: {fileID: 7646000017327993373}
   - component: {fileID: 4770627255400599833}
-  - component: {fileID: 793053147809857797}
   m_Layer: 8
   m_Name: Goblin Hunter
   m_TagString: Untagged
@@ -596,7 +595,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b7f2425a177def42a678177dc062ed7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wayPoints: []
   shootPoint: {fileID: 3413405555269287827}
 --- !u!114 &6008790244982742103
 MonoBehaviour:
@@ -610,7 +608,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c96fadf003688d47ae928652a451a34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  agent: {fileID: 0}
 --- !u!114 &7646000017327993373
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -647,19 +644,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &793053147809857797
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1575731187882306628}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cdeb23932f1338043a9116a73b445581, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  miniPrefab: {fileID: 7127679530053498660, guid: d7fc8cb725cb51f4e8f080aa986dec61, type: 3}
 --- !u!1 &1771608823769216139
 GameObject:
   m_ObjectHideFlags: 0

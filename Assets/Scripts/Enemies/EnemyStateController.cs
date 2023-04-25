@@ -65,7 +65,8 @@ public class EnemyStateController : MonoBehaviour
 				animator.CrossFade("Walk", 0.1f);
 				break;
 			case EnemyState.Attack:
-				animator.CrossFade("AttackGoblinShootArrow", 0.1f);
+                Agent.isStopped = true;
+                animator.CrossFade("AttackGoblinShootArrow", 0.1f);
 				break;
 			case EnemyState.Death:
 				break;

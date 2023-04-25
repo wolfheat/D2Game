@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    [SerializeField] Enemy enemyPrefab;
+    [SerializeField] EnemyController enemyPrefab;
     [SerializeField] WaypointMarker waypointPrefab;
     [SerializeField] GameObject waypointHolder;
     [SerializeField] GameObject enemyHolder;
@@ -45,8 +45,10 @@ public class EnemySpawner : MonoBehaviour
 		}
 		newEnemy.WayPoints = waypointList;
 		wayPointController.UpdateWaypointMarkers();
-        Debug.Log("Spawning Enemy at: "+newEnemy.transform.position);
-	}
+        Debug.Log("Spawning Enemy at: "+newEnemy.transform.position+ " New Enemy get Waypoints: " + newEnemy.WayPoints.Count);
+
+
+    }
 
     private void SpawnNewEnemy()
     {
@@ -79,8 +81,7 @@ public class EnemySpawner : MonoBehaviour
         wp2.transform.position = firstWaypointPosition;
         //Debug.Log("Waypoints Created: ");
         
-        List<WaypointMarker> waypointList = new List<WaypointMarker>() { wp1, wp2};
-        newEnemy.WayPoints = waypointList;
+        newEnemy.WayPoints = new List<WaypointMarker>() { wp1, wp2 };
 
         wayPointController.UpdateWaypointMarkers();
 	}

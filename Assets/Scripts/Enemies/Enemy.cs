@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 public class Enemy : BaseUnit
 {
-    public List<WaypointMarker> WayPoints { get; set; } = new List<WaypointMarker>();
+    public List<WaypointMarker> WayPoints { get; set; }
     protected EnemyStateController enemyState;
     protected PlayerController player;
     private LayerMask playerLayermask;
@@ -200,6 +200,7 @@ public class Enemy : BaseUnit
         {
             Destroy(wp.gameObject);
         }
+        Debug.Log("Clearing Waypoints at die");
         WayPoints.Clear();
 
         DisableColliders();     

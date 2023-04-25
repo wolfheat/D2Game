@@ -70,6 +70,7 @@ public class LevelCreator : MonoBehaviour
 
 	private void Start()
     {
+		Debug.Log("Level Creator START");
         GroundLayer = LayerMask.NameToLayer("Ground");
         ResourceLayer = LayerMask.NameToLayer("ResourceLayer");
 		Inputs.Instance.Controls.Land.X.performed += _ => PrintCurrentTilePosition();

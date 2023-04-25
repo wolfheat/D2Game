@@ -18,11 +18,6 @@ public class UIController : MonoBehaviour
     {
         levelClear.ActivatePanel();
     }
-    private void Awake()
-    {
-        Debug.Log("UIController awake");
-        Debug.Log("Toggle: " + toggle);
-    }
     private void Start()
     {
         Debug.Log("UIController start");

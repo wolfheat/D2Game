@@ -9,17 +9,16 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] GameObject enemyHolder;
 	private WayPointController wayPointController;
 
-    private const int MINSPAWN_WAYPOINTS = 2;
-    private const int MAXSPAWN_WAYPOINTS = 3;
+    private const int MinWayPoints = 2;
+    private const int MaxWayPoints = 3;
 
-    private const float MINSPAWNX = 1;
-    private const float MINSPAWNZ = 1;
-    private const float MAXSPAWNX = 8;
-    private const float MAXSPAWNZ = 19;
+    private const float MinSpawnX = 1;
+    private const float MaxSpawnZ = 1;
+    private const float MaxSpawnX = 8;
+    private const float MinSpawnZ = 19;
     
     private Vector2Int specialSpawnPoint = new Vector2Int(2,12);
-
-        
+           
 
 	private void Start()
     {
@@ -28,35 +27,35 @@ public class EnemySpawner : MonoBehaviour
         
 	}
 
-
-
     private void SpawnNewEnemyRandomWaypoints()
     {
-        int waypoints = Random.Range(MINSPAWN_WAYPOINTS,MAXSPAWN_WAYPOINTS+1);
+        int waypoints = Random.Range(MinWayPoints,MaxWayPoints+1);
         //Debug.Log("Creating "+waypoints+" Waypoints for the Enemy");
 		List<WaypointMarker> waypointList = new List<WaypointMarker>();
 		
         Enemy newEnemy = Instantiate(enemyPrefab, enemyHolder.transform);
-		newEnemy.transform.position = new Vector3(Random.Range(MINSPAWNX, MAXSPAWNX), 0f, Random.Range(MINSPAWNZ, MAXSPAWNZ));
+		newEnemy.transform.position = new Vector3(Random.Range(MinSpawnX, MaxSpawnX), 0f, Random.Range(MinSpawnZ, MinSpawnZ));
 
 		for (int i = 0; i < waypoints; i++)
         {
 			WaypointMarker wp = Instantiate(waypointPrefab, waypointHolder.transform);
-			wp.transform.position = i==0?newEnemy.transform.position:new Vector3(Random.Range(MINSPAWNX, MAXSPAWNX), 0f, Random.Range(MINSPAWNZ, MAXSPAWNZ));
+			wp.transform.position = i==0?newEnemy.transform.position:new Vector3(Random.Range(MinSpawnX, MaxSpawnX), 0f, Random.Range(MinSpawnZ, MinSpawnZ));
 
             waypointList.Add(wp);
 		}
-		newEnemy.enemyPatrol.SetWayPoints(waypointList);
+		newEnemy.WayPoints = waypointList;
 		wayPointController.UpdateWaypointMarkers();
+        Debug.Log("Spawning Enemy at: "+newEnemy.transform.position);
 	}
+
     private void SpawnNewEnemy()
     {
 
-		Vector3 spawnPosition = new Vector3(Random.Range(MINSPAWNX,MAXSPAWNX), 0f, Random.Range(MINSPAWNZ, MAXSPAWNZ));   
-        Vector3 firstWaypointPosition = new Vector3(Random.Range(MINSPAWNX,MAXSPAWNX), 0f, Random.Range(MINSPAWNZ, MAXSPAWNZ));   
+		Vector3 spawnPosition = new Vector3(Random.Range(MinSpawnX,MaxSpawnX), 0f, Random.Range(MinSpawnZ, MinSpawnZ));   
+        Vector3 firstWaypointPosition = new Vector3(Random.Range(MinSpawnX,MaxSpawnX), 0f, Random.Range(MinSpawnZ, MinSpawnZ));   
 
 
-        Debug.Log("Spawn Enemy");
+        Debug.Log("Spawning Enemy by SpawnNewEnemy.");
         if (Inputs.Instance.Shift == 1)
         {
             Debug.Log("With Shift pressed");
@@ -67,7 +66,6 @@ public class EnemySpawner : MonoBehaviour
             Debug.Log("With Shift NOT pressed");
 
         }
-
 
         //Debug.Log("Spawns New enemy at: "+spawnPosition);
         //Debug.Log("Second waypoint at: "+firstWaypointPosition);
@@ -82,14 +80,8 @@ public class EnemySpawner : MonoBehaviour
         //Debug.Log("Waypoints Created: ");
         
         List<WaypointMarker> waypointList = new List<WaypointMarker>() { wp1, wp2};
-        newEnemy.enemyPatrol.SetWayPoints(waypointList);
+        newEnemy.WayPoints = waypointList;
 
         wayPointController.UpdateWaypointMarkers();
 	}
-
-	private void Update()
-    {
-        
-    }
-
 }

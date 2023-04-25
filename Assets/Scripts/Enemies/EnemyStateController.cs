@@ -9,8 +9,8 @@ public class EnemyStateController : MonoBehaviour
 {
 	private Animator animator;
 	private UIController UIController;
-	public NavMeshAgent agent;
-	private float stateTimer = 0;
+    public NavMeshAgent Agent { get; set; }
+    private float stateTimer = 0;
 	private const float IdleTime = 5f;
 	private const float DECAY_TIME = 5f;
 	public EnemyState State { get; private set; }	
@@ -48,13 +48,13 @@ public class EnemyStateController : MonoBehaviour
 
 	public void SetState(EnemyState newState)
 	{
-		Debug.Log("Setting Enemy state to: "+newState);
 		//Debug.Log("Setting Enemy state to: "+newState);
-		if(agent.isActiveAndEnabled)agent.isStopped = false;
+		//Debug.Log("Setting Enemy state to: "+newState);
+		if(Agent.isActiveAndEnabled) Agent.isStopped = false;
 		switch (newState)
 		{
 			case EnemyState.Idle:
-				agent.isStopped = true;
+                Agent.isStopped = true;
 				animator.CrossFade("Idle", 0.1f);
 				stateTimer = 0;
 				break;
@@ -65,7 +65,6 @@ public class EnemyStateController : MonoBehaviour
 				animator.CrossFade("Walk", 0.1f);
 				break;
 			case EnemyState.Attack:
-				agent.isStopped = true;
 				animator.CrossFade("AttackGoblinShootArrow", 0.1f);
 				break;
 			case EnemyState.Death:

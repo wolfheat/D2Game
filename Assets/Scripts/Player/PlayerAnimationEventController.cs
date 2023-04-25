@@ -54,14 +54,10 @@ class PlayerAnimationEventController : MonoBehaviour
 	private IEnumerator AnimationShootArrowEvent()
 	{
 		yield return new WaitForSeconds(0.05f);
-		Debug.Log("Projectiles: "+projectiles);	
-		Debug.Log("shootpoint: "+shootPoint);
 		projectiles.ShootArrow(shootPoint.transform, Aim);
 
-		
-
-    // Play Sound
-    soundMaster.PlaySFX(SoundMaster.SFX.ShootArrow);
+		// Play Sound
+		soundMaster.PlaySFX(SoundMaster.SFX.ShootArrow);
 	}
 	
 	private IEnumerator AnimationSwordSwingEvent()

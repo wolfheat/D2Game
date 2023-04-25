@@ -5,21 +5,22 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.Playables;
 
 public class ClickInfo
 {
 	public ClickType type;
 	public PlayerActionType actionType;
 	public Vector3 pos = Vector3.zero;
-	
-
-	public ClickInfo(ClickType t, PlayerActionType pt, Vector3 p) { type = t; actionType = pt; pos = p;}	
+	public Vector3 aim = Vector3.zero;
+	public ClickInfo(ClickType t, PlayerActionType pt, Vector3 p, Vector3 a) { type = t; actionType = pt; pos = p; aim = a; }	
 }
 public enum ClickType {Left,Right}
 public enum WeaponType {Sword,Bow}
 public enum PlayerActionType {Attack, PowerAttack ,Move, Gather, Undefined}
 
-public class PlayerController : MonoBehaviour
+
+public class PlayerController : PlayerUnit
 {
 	[SerializeField] private Collider attackCollider;
 	[SerializeField] private LayerMask GroundLayers;
@@ -27,14 +28,11 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private LayerMask TerrainLayers;
 	[SerializeField] private LayerMask UI;
 	[SerializeField] private TextMeshProUGUI stateText;
-
 	[SerializeField] private GameObject[] weapons;
 
     private PlayerAnimationEventController playerAnimationEventController;
-    private PlayerStateControl playerState;
 	private Camera mainCamera;
 	private WayPointController WayPointController;
-	private NavMeshAgent navMeshAgent;
 	private SoundMaster soundmaster;
 
 	private ClickInfo clickInfo;
@@ -50,7 +48,7 @@ public class PlayerController : MonoBehaviour
 	private const float StopDistance = 0.1f;
 	private const float MinGatherDistance = 1.5f;
 	private const float HoldMouseDuration = 0.2f;
-	private const float rotationSpeed = 900f;
+	private const float RotationSpeed = 900f;
 
 
 	private float mouseClickTimer = 0f;
@@ -73,63 +71,47 @@ public class PlayerController : MonoBehaviour
 
 	private void SwapWeapon()
 	{
+		// Dont allow swapping if weapon is used
 		if (attackLock) return;
 
 		ChangeCurrentWeapon();		
-		SwapWeaponVisuals();
 	}
 
     private void ChangeCurrentWeapon()
     {
-        if (currentWeapon == WeaponType.Sword) currentWeapon = WeaponType.Bow;
-        else currentWeapon = WeaponType.Sword;
+        CurrentWeaponVisualsEnabled(false);
+        currentWeapon = currentWeapon == WeaponType.Sword ? WeaponType.Bow : WeaponType.Sword;
+        CurrentWeaponVisualsEnabled();
+
     }
 
-    private void SwapWeaponVisuals()
-    {
-		foreach (var weapon in weapons)
-		{
-			weapon.gameObject.SetActive(false);
-		}
-		weapons[(int)currentWeapon].gameObject.SetActive(true);
+    private void CurrentWeaponVisualsEnabled(bool enable = true)
+    {		
+		weapons[(int)currentWeapon].gameObject.SetActive(enable);
     }
 
     private void Start()
 	{
-		navMeshAgent = GetComponent<NavMeshAgent>();
-		playerState = GetComponent<PlayerStateControl>();
-		playerAnimationEventController = GetComponent<PlayerAnimationEventController>();
+        Debug.Log("PlayerController START");
+
+        playerAnimationEventController = GetComponent<PlayerAnimationEventController>();
 
 		WayPointController = FindObjectOfType<WayPointController>();
 		soundmaster = FindObjectOfType<SoundMaster>();
 		
     }
-	private void Update()
+	protected override void Update()
 	{
-		CheckIfReachedTarget();
-		GetPlayerInput();
-	}
+		MouseButtonHeldCheck();
 
-	private void CheckIfReachedTarget()
-	{
-		if(navMeshAgent.remainingDistance < 0.1f && playerState.State == PlayerState.MoveTo)
-		{
-			playerState.SetState(PlayerState.Idle);
-			// animator.Play("Idle"); Used to have this, needed for smooth transition or removable?
-			navMeshAgent.isStopped = true;
-		}
-	}
-	
-	public void SetToPosition(Vector3 pos)
-	{
-		transform.position = pos;
-	}
+		base.Update();
+	} 
 
 
-	private void GetPlayerInput()
+	private void MouseButtonHeldCheck()
 	{
 		mouseClickTimer += Time.deltaTime;
-		if (Inputs.Instance.LClick == 1f && mouseClickTimer > HoldMouseDuration)
+		if (Inputs.Instance.LClick == 1f && !attackLock && mouseClickTimer > HoldMouseDuration)
 		{
 			// Left button is held
 			MouseClick(ClickType.Left);
@@ -137,12 +119,6 @@ public class PlayerController : MonoBehaviour
 		}else if(Inputs.Instance.LClick != 1f) mouseClickTimer = 0;
     }
 	
-
-	public void EnableNavMesh(bool enable)
-	{
-		if (navMeshAgent) navMeshAgent.enabled = enable;
-		else Debug.LogError("No Nav Mesh available");
-	}
 
 	private void OnControllerColliderHit(ControllerColliderHit hit)
 	{
@@ -157,32 +133,20 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-	private void StopInPlace()
+    protected override void OnTriggerEnter(Collider collider)
+    {
+        if (collider.gameObject.layer == LayerMask.NameToLayer("Enemies"))
+        {
+            Enemy enemy = collider.gameObject.GetComponent<Enemy>();
+            enemy.Hit(CharacterStats.HitDamage);
+            playerAnimationEventController.AttackDidHit = true;
+        }
+    }
+    private void StopInPlace()
 	{
 		// get position X distance in front of player
 		navMeshAgent.SetDestination(transform.position+transform.forward*StopDistance);
 		if (gatherCoroutine != null) playerAnimationEventController.ForcedStopGatheringEvent();
-	}
-
-	private void OnCollisionEnter(Collision collision)
-	{
-		if (collision.gameObject.layer == LayerMask.NameToLayer("Arrows"))
-		{
-			//Debug.Log("DESTROY ARROW");
-			Arrow arrow = collision.gameObject.GetComponent<Arrow>();
-			//Debug.Log("Hit By Arrow");
-			arrow.transform.parent = transform;
-			//arrow.Destroy();
-		}	
-	}
-	private void OnTriggerEnter(Collider collider)
-	{
-		if (collider.gameObject.layer == LayerMask.NameToLayer("Enemies"))
-		{
-			Enemy enemy = collider.gameObject.GetComponent<Enemy>();
-			enemy.Hit(CharacterStats.HitDamage);
-			playerAnimationEventController.AttackDidHit = true;
-		}		
 	}
 
 	private bool GetClickInfo(ClickType type)
@@ -201,8 +165,6 @@ public class PlayerController : MonoBehaviour
         float lineScalarValue =  (aim.y - ray.origin.y) /ray.direction.y;
 		Vector3 aimPoint = ray.origin + ray.direction * lineScalarValue;
 
-        playerAnimationEventController.Aim = aimPoint;
-
         PlayerActionType playerActionType = DeterminePlayerActionType(ray, type, ref hit);
 
         if (!NavMesh.SamplePosition(clickPoint, out NavMeshHit navhit, 1f, NavMesh.AllAreas))
@@ -215,7 +177,7 @@ public class PlayerController : MonoBehaviour
 		Vector3 clickPosition = playerActionType == PlayerActionType.Gather ? hit.point : navhit.position;
 
 		// Set ClickInfo i.e (LeftMouse, MoveTo, Position)
-        clickInfo = new ClickInfo(type, playerActionType, clickPosition);
+        clickInfo = new ClickInfo(type, playerActionType, clickPosition, aimPoint);
 		return true;
 		
     }
@@ -268,8 +230,10 @@ public class PlayerController : MonoBehaviour
 	{
 		// Currently gathering but requesting anything else
 		if(gatherCoroutine!=null && clickInfo.actionType != PlayerActionType.Gather) playerAnimationEventController.ForcedStopGatheringEvent();
+        
+		playerAnimationEventController.Aim = clickInfo.aim;
 
-		switch (clickInfo.actionType)
+        switch (clickInfo.actionType)
 		{
 			case PlayerActionType.Attack:
 				StartCoroutine(AttackAt()); 
@@ -330,7 +294,7 @@ public class PlayerController : MonoBehaviour
         bool rotationComplete = false;
         while (!rotationComplete)
         {
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, RotationSpeed * Time.deltaTime);
             if (Quaternion.Angle(transform.rotation, targetRotation) < 10f) rotationComplete = true;
             yield return null;
         }
@@ -341,7 +305,6 @@ public class PlayerController : MonoBehaviour
 	{
 		// Depending on Current Weapon Implement correct attack
 
-		Debug.Log("Starting Attack");
 		attackLock = true;
 		// Workaround for going from attack to attack
 		if (playerState.State == PlayerState.AttackSwordSwing || playerState.State == PlayerState.ShootArrow)
@@ -368,8 +331,8 @@ public class PlayerController : MonoBehaviour
 	{
 		if (savedAction != null)
 		{
-			clickInfo = savedAction;
-			DoClickAction();
+			clickInfo = savedAction;            
+            DoClickAction();
 			savedAction = null;
 		}
 		else

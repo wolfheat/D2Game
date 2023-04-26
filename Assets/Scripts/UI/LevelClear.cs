@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LevelClear : MonoBehaviour
 {
@@ -12,9 +13,9 @@ public class LevelClear : MonoBehaviour
         panel.SetActive(true);
     }
     
-	public void OkPressed()
+	public void NewPressed()
     {
-        Debug.Log("Return To Town, OK pressed");
+        Debug.Log("New Level");
         levelCreator = FindObjectOfType<LevelCreator>();
         if (levelCreator != null)
         {
@@ -22,6 +23,13 @@ public class LevelClear : MonoBehaviour
             ClosePanel();
         }
 
+    }
+    
+	public void OkPressed()
+    {
+        Debug.Log("Return To Town");
+
+        SceneManager.LoadScene("TownScene");
     }
     
 	public void ClosePanel()

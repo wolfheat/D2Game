@@ -159,6 +159,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "BackSpace",
+                    "type": "Button",
+                    "id": "5ec26c65-9cd6-4999-a843-646c570586c3",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "ZoomIn",
                     "type": "Value",
                     "id": "aec21b3d-e5ca-4ea5-89cc-5525f647ba10",
@@ -364,6 +373,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "ESC",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2c1ed68b-a702-4fa3-ab1e-59ddaac09a80",
+                    "path": "<Keyboard>/backspace",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "BackSpace",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

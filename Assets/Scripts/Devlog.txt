@@ -112,8 +112,10 @@ Nov 2022
 
 		// Interfaces!!! 
 
+		// Make harvest face node. Add tools for harvesting.
+
 		// Change arrow shooting sound
-		// The remove all childre method for clearing doorways removes ground for cracked tile floor.
+		// The remove all children method for clearing doorways removes ground for cracked tile floor.
 		// Make bow animation better, change speed of animation?
 		// Make sure colliders work correctly, player should not take damage of its own arrows, enemies should etc
 		// Double shooting arrows, second arrow wont shoot, check and fix

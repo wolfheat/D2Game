@@ -107,7 +107,6 @@ public class PlayerController : PlayerUnit
 		base.Update();
 	} 
 
-
 	private void MouseButtonHeldCheck()
 	{
 		mouseClickTimer += Time.deltaTime;
@@ -118,7 +117,6 @@ public class PlayerController : PlayerUnit
 			mouseClickTimer = 0;
 		}else if(Inputs.Instance.LClick != 1f) mouseClickTimer = 0;
     }
-	
 
 	private void OnControllerColliderHit(ControllerColliderHit hit)
 	{

@@ -13,6 +13,10 @@ public class UIController : MonoBehaviour
     //Panels
     [SerializeField] public LevelClear levelClear;
 
+    private void Awake()
+    {
+        Inputs.Instance.Controls.Land.BackSpace.performed += _ => ActivateLevelClearPanel();
+    }
 
     public void ActivateLevelClearPanel()
     {

@@ -100,7 +100,7 @@ Nov 2022
 20/4	* Remade Terrain so it scales with size.
 		* Player Can now swap to Bow and arrow
 21/4	* Continious firing of arrows, Arrows hit correct aiming direction, + cleaned up a lot of code
-		* BUILD PC: 59s, 126Mb
+		* BUILD PC: 59s, 1510Mb (124Mb compressed)
 		* Added Demo Text, Exit Screen
 23/4	* Added Nodes that are harvestable. Load these with (item data) when creating new level.
 		* Shift now stops player if he moves towards a node
@@ -110,6 +110,7 @@ Nov 2022
 25/4	* Updated Units to inherit, Unit, PlayerUnit, PLayerController and  Unit, Enemy, EnemyController
 		* Added post processing
 26/4	* Town scene created
+		* BUILD PC: 47s, 550Mb (228Mb compressed)
 
 		// Interfaces!!! 
 

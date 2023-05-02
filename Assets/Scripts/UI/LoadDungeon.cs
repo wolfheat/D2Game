@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LoadDungeon : MonoBehaviour
 {
@@ -18,7 +19,9 @@ public class LoadDungeon : MonoBehaviour
     public void StartDungeon()
     {
         Debug.Log("StartDungeon");
-    }
+        HideMenu(true);
 
+        SceneManager.LoadScene("MainScene");
+    }
 
 }

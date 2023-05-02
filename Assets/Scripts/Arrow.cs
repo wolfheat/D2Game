@@ -23,7 +23,8 @@ public class Arrow : MonoBehaviour
 		Quaternion randomRotation = transform.rotation * Quaternion.Euler(Random.Range(-lambda, lambda), Random.Range(-lambda, lambda), 0);
 		transform.rotation = randomRotation;
         rb.transform.rotation = randomRotation;
-        rb.AddForce(transform.forward * velocity, ForceMode.VelocityChange);                
+        rb.AddForce(transform.forward * velocity, ForceMode.VelocityChange);       
+        
     }
 
 

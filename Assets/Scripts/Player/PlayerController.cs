@@ -156,9 +156,11 @@ public class PlayerController : PlayerUnit
         Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
         
         Physics.Raycast(ray.origin, ray.direction, out RaycastHit hit, 1000f);
-		
-		Vector3 clickPoint = new Vector3(hit.point.x, 0, hit.point.z);
-		Vector3 aim = playerAnimationEventController.ShootPoint;
+
+        // OLD CLICKPOINT Vector3 clickPoint = new Vector3(hit.point.x, 0, hit.point.z);
+        Vector3 clickPoint = hit.point;
+
+        Vector3 aim = playerAnimationEventController.ShootPoint;
 
         float lineScalarValue =  (aim.y - ray.origin.y) /ray.direction.y;
 		Vector3 aimPoint = ray.origin + ray.direction * lineScalarValue;

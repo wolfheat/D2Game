@@ -111,6 +111,9 @@ Nov 2022
 		* Added post processing
 26/4	* Town scene created
 		* BUILD PC: 47s, 550Mb (228Mb compressed)
+2/5		* DontDestroyOnLoad not working, reverted to new Objects for each scene.
+		
+
 
 		// Interfaces!!! 
 

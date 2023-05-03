@@ -8,15 +8,7 @@ public class Inputs : MonoBehaviour
 	public static Inputs Instance { get; private set; }
 
 	public PlayerControls Controls { get; private set; }
-
-	public float Shift { get; private set; }
-	public float F { get; private set; }
-	public float G { get; private set; }
-	public float X { get; private set; }
-	public float CTRL { get; private set; }
-	//public float LClick { get; private set; }	
-	public float Space { get; private set; }
-	public float Zooming { get; private set; }
+public float Zooming { get; private set; }
 	public bool PointerOverUI { get; private set; }
 
     private void Update()
@@ -51,18 +43,6 @@ public class Inputs : MonoBehaviour
 		// ARE these aven needed?
 		//Controls.Land.LeftClick.performed += _ => LClick = _.ReadValue<float>();
 		//Controls.Land.LeftClick.canceled+= _ => LClick = _.ReadValue<float>();
-		Controls.Land.CTRL.performed += _ => CTRL = _.ReadValue<float>();
-		Controls.Land.Shift.performed += _ => Shift = _.ReadValue<float>();
-		Controls.Land.Shift.canceled += _ => Shift = _.ReadValue<float>();
-		Controls.Land.Space.performed += _ => Space = _.ReadValue<float>();
-		Controls.Land.Space.canceled+= _ => Space = _.ReadValue<float>();
-		Controls.Land.CTRL.canceled+= _ => CTRL = _.ReadValue<float>();
-		Controls.Land.F.performed += _ => F = _.ReadValue<float>();
-		Controls.Land.F.canceled+= _ => F = _.ReadValue<float>();
-		Controls.Land.G.performed += _ => G = _.ReadValue<float>();
-		Controls.Land.G.canceled+= _ => G = _.ReadValue<float>();
-		Controls.Land.X.performed += _ => X = _.ReadValue<float>();
-		Controls.Land.X.canceled+= _ => X = _.ReadValue<float>();
 		Debug.Log("Inputs onEnable run");
 	}
 	private void OnDisable()
@@ -75,19 +55,6 @@ public class Inputs : MonoBehaviour
 
         //Controls.Land.LeftClick.performed -= _ => LClick = _.ReadValue<float>();
         //Controls.Land.LeftClick.canceled -= _ => LClick = _.ReadValue<float>();
-        Controls.Land.CTRL.performed -= _ => CTRL = _.ReadValue<float>();
-        Controls.Land.Shift.performed -= _ => Shift = _.ReadValue<float>();
-        Controls.Land.Shift.canceled -= _ => Shift = _.ReadValue<float>();
-        Controls.Land.Space.performed -= _ => Space = _.ReadValue<float>();
-        Controls.Land.Space.canceled -= _ => Space = _.ReadValue<float>();
-        Controls.Land.CTRL.canceled -= _ => CTRL = _.ReadValue<float>();
-        Controls.Land.F.performed -= _ => F = _.ReadValue<float>();
-        Controls.Land.F.canceled -= _ => F = _.ReadValue<float>();
-        Controls.Land.G.performed -= _ => G = _.ReadValue<float>();
-        Controls.Land.G.canceled -= _ => G = _.ReadValue<float>();
-        Controls.Land.X.performed -= _ => X = _.ReadValue<float>();
-        Controls.Land.X.canceled -= _ => X = _.ReadValue<float>();
-
 
         Controls.Disable();
 	}

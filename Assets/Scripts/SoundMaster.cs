@@ -96,6 +96,8 @@ public class SoundMaster : MonoBehaviour
 	{
         if (doPlayMusic)
         {
+            float percentagePlayed = musicSource.timeSamples / musicSource.clip.samples * 100f;
+
             musicSource.clip = music[0];
             musicSource.Play();
         }

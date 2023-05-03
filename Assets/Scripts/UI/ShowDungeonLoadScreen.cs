@@ -7,10 +7,10 @@ public class ShowDungeonLoadScreen : MonoBehaviour
     
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Load Dungeon");
-        loadDungeonScreen.HideMenu(false);
-        
+        if(other.gameObject.GetComponent<PlayerController>() != null)
+        {
+            Debug.Log("Load Dungeon");
+            loadDungeonScreen.HideMenu(false);
+        }        
     }
-
-
 }

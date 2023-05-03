@@ -180,7 +180,7 @@ public class LevelCreator : MonoBehaviour
 
 	public void PrintCurrentTilePosition()
 	{
-        if (Inputs.Instance.Shift == 1)
+        if (Inputs.Instance.Controls.Land.Shift.IsPressed())
         {
             Vector2Int newPos = new Vector2Int((int)((playerController.transform.position.x+0.75f) / Tilesize), (int)((playerController.transform.position.z + 0.75f) / Tilesize));
             Debug.Log("Player is at " + newPos);

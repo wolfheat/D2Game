@@ -58,19 +58,7 @@ public class EnemySpawner : MonoBehaviour
 
 
         Debug.Log("Spawning Enemy by SpawnNewEnemy.");
-        if (Inputs.Instance.Shift == 1)
-        {
-            Debug.Log("With Shift pressed");
-            spawnPosition = new Vector3 (specialSpawnPoint.x*LevelCreator.Tilesize,0, specialSpawnPoint.y * LevelCreator.Tilesize);
-        }
-        else
-        {
-            Debug.Log("With Shift NOT pressed");
-
-        }
-
-        //Debug.Log("Spawns New enemy at: "+spawnPosition);
-        //Debug.Log("Second waypoint at: "+firstWaypointPosition);
+        
         Enemy newEnemy = Instantiate(enemyPrefab, enemyHolder.transform);
 		newEnemy.transform.position = spawnPosition;
         //Debug.Log("Enemy Created: ");

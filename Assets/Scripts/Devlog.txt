@@ -115,6 +115,7 @@ Nov 2022
 3/5		* Some items now have DontDestroy and persist between scenes. UI and Input
 		* Fixed so delegates are no longer called after being destroyed.
 		* DontDestroyOnload corrupted references to objects, now the singleton destroys the old version instead
+		* Updated Trees and bushes to only be placed by terrain tool, still needs to figure out how to make navmesh for the trees
 
 		// Interfaces!!! 
 

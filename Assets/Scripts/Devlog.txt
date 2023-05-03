@@ -116,52 +116,44 @@ Nov 2022
 		* Fixed so delegates are no longer called after being destroyed.
 		* DontDestroyOnload corrupted references to objects, now the singleton destroys the old version instead
 		* Updated Trees and bushes to only be placed by terrain tool, still needs to figure out how to make navmesh for the trees
+		* Added basic inventory system
+
+
 
 		// Interfaces!!! 
 
+		// - Mechanics Stuff -
 		// Make harvest face node. Add tools for harvesting.
-
 		// Change arrow shooting sound
-		// The remove all children method for clearing doorways removes ground for cracked tile floor.
 		// Make bow animation better, change speed of animation?
-		// Make sure colliders work correctly, player should not take damage of its own arrows, enemies should etc
-		// Double shooting arrows, second arrow wont shoot, check and fix
-
-		// Make it so tiles dont have enemies, resources, obstacles only one on each
-
-		// TODO
-		// Player can get stuck sometimes fix, fixed?
+		// Can keep shooting arrows with left click but not rightclick
+		// Make Hitpoints text show when hitting enemy or getting hit yourself, over time damage etc
 		// Holding left button updates direction to slow, fix
+		// Arrows stop at the player collider, maybe should stick to the actual character instead
+		// Make so Enemy stops chase earlier if player is not visable.
 
+		// - Animation Stuff -
+		// Make variants in attack animation
+		// Fix gliding issue with animation while moving
+
+		// - Items Stuff -
+		// Make Objects scavangeble and droppable by enemies
+		// Make inventory for objects, and general UI
+
+		//  - LevelCreation Stuff -
+		// The remove all children method for clearing doorways removes ground for cracked tile floor.
+		// Make it so tiles dont have enemies, resources, obstacles only one on each
 		// Maybe have certain rooms spawn enemies and not the added corridor?
 		// Limit obstacles from spawning in front of doorways
 
-		// Make Hitpoints text show when hitting enemy or getting hit yourself, over time damage etc
+		// TODO
+		// Player can get stuck sometimes fix, fixed?
 
-		// Make Objects scavangeble and droppabe by enemies
-
-		// Make inventory for objects, and general UI
-
-		// PathWays working but are just angled straight lines between rooms
+		//  - Maybe dont do these Stuff - 
 		// Better to use A* alg to find shortest path with weights
 		// Preplaces Unused Rooms should be lower cost to move through
 
-		* Arrows stop at the player collider, maybe should stick to the actual character instead
-
-todo	
-		* Make so Enemy stops chase earlier if player is not visable.
-
-		* Make switching weapons for player (W)
-		* Make player Shooting Arrows work, fix arrow and sound
-
-		TODO MAYOR PARTS		
-		* MAKE NODES THAT CAN BE HARVESTED - 
-		* MAKE BOW ANIMATION WORK AND SHOOT ARROWS
-
-		TODO
-		* Make variants in attack animation
-		* Fix gliding issue with animation while moving
-		* Make simple leveldesign
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 		
 
 		CHECKLIST FOR BETTER PLAYER EXPERIENCE
 

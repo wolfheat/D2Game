@@ -1,11 +1,13 @@
 using System;
 using System.Collections;
+using System.Threading;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.Playables;
+using static UnityEditor.Timeline.TimelinePlaybackControls;
 
 public class ClickInfo
 {
@@ -58,35 +60,37 @@ public class PlayerController : PlayerUnit
 	private Coroutine gatherCoroutine;
 
 
-	private void OnEnable()
+
+
+
+    private void OnEnable()
     {
-		//TODO: Fix so the subscriptions are removed on Disabled. The old ones stay for some reason
-
-
 		Debug.Log("Player Controller Enable RUN" + GetInstanceID());
         mainCamera = Camera.main;
-		Inputs.Instance.Controls.Land.LeftClick.performed += _ => MouseClick(ClickType.Left);
-		Inputs.Instance.Controls.Land.LeftClick.canceled += _ => ShowWaypointIfAvailable();
-		Inputs.Instance.Controls.Land.RightClick.performed += _ => MouseClick(ClickType.Right);
-		Inputs.Instance.Controls.Land.RightClick.canceled += _ => ShowWaypointIfAvailable();
-		Inputs.Instance.Controls.Land.W.started += _ => SwapWeapon();
-		Inputs.Instance.Controls.Land.Shift.started += Shift;
-		Inputs.Instance.Controls.Land.Shift.canceled += Shift;
+		Inputs.Instance.Controls.Land.LeftClick.started += LeftClick;
+		Inputs.Instance.Controls.Land.LeftClick.canceled += LeftClick;
+		Inputs.Instance.Controls.Land.RightClick.started += RightClick;
+		Inputs.Instance.Controls.Land.RightClick.canceled += RightClick;
+
+        Inputs.Instance.Controls.Land.W.started += SwapWeapon;
+        Inputs.Instance.Controls.Land.Shift.started += Shift;
+        Inputs.Instance.Controls.Land.Shift.canceled += Shift;
 	}
 	private void OnDisable()
     {
 		Debug.Log("Player Controller Disable RUN, for instance: "+GetInstanceID());
-        Inputs.Instance.Controls.Land.LeftClick.performed -= _ => MouseClick(ClickType.Left);
-		Inputs.Instance.Controls.Land.LeftClick.canceled -= _ => ShowWaypointIfAvailable();
-		Inputs.Instance.Controls.Land.RightClick.performed -= _ => MouseClick(ClickType.Right);
-		Inputs.Instance.Controls.Land.RightClick.canceled -= _ => ShowWaypointIfAvailable();
-		Inputs.Instance.Controls.Land.W.started -= _ => SwapWeapon();
-		Inputs.Instance.Controls.Land.Shift.started -= Shift;
-		Inputs.Instance.Controls.Land.Shift.canceled -= Shift;
-		
-	}
+        Inputs.Instance.Controls.Land.LeftClick.started -= LeftClick;
+        Inputs.Instance.Controls.Land.LeftClick.canceled -= LeftClick;
+        Inputs.Instance.Controls.Land.RightClick.started -= RightClick;
+        Inputs.Instance.Controls.Land.RightClick.canceled -= RightClick;
 
-	private void SwapWeapon()
+        Inputs.Instance.Controls.Land.W.started -= SwapWeapon;
+        Inputs.Instance.Controls.Land.Shift.started -= Shift;
+        Inputs.Instance.Controls.Land.Shift.canceled -= Shift;
+
+    }
+
+	private void SwapWeapon(InputAction.CallbackContext ctx)
 	{
 		// Dont allow swapping if weapon is used
 		if (attackLock) return;
@@ -378,6 +382,29 @@ public class PlayerController : PlayerUnit
 		wayPointToShow = null;
 	}
 
+	private void RightClick(InputAction.CallbackContext context)
+	{
+        if (context.phase == InputActionPhase.Started)
+        {
+			MouseClick(ClickType.Right);
+        }
+        else if (context.phase == InputActionPhase.Canceled)
+        {
+            ShowWaypointIfAvailable();
+        }
+    }
+	private void LeftClick(InputAction.CallbackContext context)
+	{
+        if (context.phase == InputActionPhase.Started)
+        {
+			MouseClick(ClickType.Left);
+        }
+        else if (context.phase == InputActionPhase.Canceled)
+        {
+			ShowWaypointIfAvailable();
+        }
+    }
+	
 	private void MouseClick(ClickType type)
 	{
 		Debug.Log("Getting Mouseclick from Instance: " + GetInstanceID());

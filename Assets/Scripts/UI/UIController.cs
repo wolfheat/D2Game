@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
@@ -20,21 +21,30 @@ public class UIController : MonoBehaviour
         //Singelton
         if (Instance != null)
         {
-            foreach (Transform child in transform)
-            {
-                Destroy(child.gameObject);
-            }
-            Destroy(this);
-            return;
+            Instance.DestroySelf();
         }
         Instance = this;
         DontDestroyOnLoad(this);       
-        Inputs.Instance.Controls.Land.BackSpace.performed += _ => ActivateLevelClearPanel();
+        Inputs.Instance.Controls.Land.BackSpace.performed += ActivateLevelClearPanel;
+    }
+    
+    public void DestroySelf()
+    {
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
+        Inputs.Instance.Controls.Land.BackSpace.performed -= ActivateLevelClearPanel;
+        Destroy(gameObject);            
     }
 
     public void ActivateLevelClearPanel()
     {
         levelClear.ShowPanel();
+    }
+    public void ActivateLevelClearPanel(InputAction.CallbackContext context)
+    {
+        ActivateLevelClearPanel();
     }
     private void Start()
     {

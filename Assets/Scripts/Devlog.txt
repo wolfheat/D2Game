@@ -112,8 +112,9 @@ Nov 2022
 26/4	* Town scene created
 		* BUILD PC: 47s, 550Mb (228Mb compressed)
 2/5		* DontDestroyOnLoad not working, reverted to new Objects for each scene.
-		
-
+3/5		* Some items now have DontDestroy and persist between scenes. UI and Input
+		* Fixed so delegates are no longer called after being destroyed.
+		* DontDestroyOnload corrupted references to objects, now the singleton destroys the old version instead
 
 		// Interfaces!!! 
 

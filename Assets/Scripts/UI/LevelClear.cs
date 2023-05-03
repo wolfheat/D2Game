@@ -6,10 +6,10 @@ public class LevelClear : MonoBehaviour
     [SerializeField] GameObject panel;
     LevelCreator levelCreator;
 
-	public void ActivatePanel()
+	public void ShowPanel()
     {
         if (panel.activeSelf) return;
-        Debug.Log("Activate Panel");
+        Debug.Log("Show Panel");
         panel.SetActive(true);
     }
     
@@ -28,7 +28,7 @@ public class LevelClear : MonoBehaviour
 	public void OkPressed()
     {
         Debug.Log("Return To Town");
-
+        ClosePanel();
         SceneManager.LoadScene("TownScene");
     }
     

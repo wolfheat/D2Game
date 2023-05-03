@@ -57,8 +57,13 @@ public class PlayerController : PlayerUnit
 
 	private Coroutine gatherCoroutine;
 
+
 	private void OnEnable()
     {
+		//TODO: Fix so the subscriptions are removed on Disabled. The old ones stay for some reason
+
+
+		Debug.Log("Player Controller Enable RUN" + GetInstanceID());
         mainCamera = Camera.main;
 		Inputs.Instance.Controls.Land.LeftClick.performed += _ => MouseClick(ClickType.Left);
 		Inputs.Instance.Controls.Land.LeftClick.canceled += _ => ShowWaypointIfAvailable();
@@ -67,6 +72,18 @@ public class PlayerController : PlayerUnit
 		Inputs.Instance.Controls.Land.W.started += _ => SwapWeapon();
 		Inputs.Instance.Controls.Land.Shift.started += Shift;
 		Inputs.Instance.Controls.Land.Shift.canceled += Shift;
+	}
+	private void OnDisable()
+    {
+		Debug.Log("Player Controller Disable RUN, for instance: "+GetInstanceID());
+        Inputs.Instance.Controls.Land.LeftClick.performed -= _ => MouseClick(ClickType.Left);
+		Inputs.Instance.Controls.Land.LeftClick.canceled -= _ => ShowWaypointIfAvailable();
+		Inputs.Instance.Controls.Land.RightClick.performed -= _ => MouseClick(ClickType.Right);
+		Inputs.Instance.Controls.Land.RightClick.canceled -= _ => ShowWaypointIfAvailable();
+		Inputs.Instance.Controls.Land.W.started -= _ => SwapWeapon();
+		Inputs.Instance.Controls.Land.Shift.started -= Shift;
+		Inputs.Instance.Controls.Land.Shift.canceled -= Shift;
+		
 	}
 
 	private void SwapWeapon()
@@ -95,6 +112,7 @@ public class PlayerController : PlayerUnit
         Debug.Log("PlayerController START");
 
         playerAnimationEventController = GetComponent<PlayerAnimationEventController>();
+        Debug.Log("Check if playerAnimationEventController exists: " + playerAnimationEventController);
 
 		WayPointController = FindObjectOfType<WayPointController>();
 		soundmaster = FindObjectOfType<SoundMaster>();
@@ -110,12 +128,12 @@ public class PlayerController : PlayerUnit
 	private void MouseButtonHeldCheck()
 	{
 		mouseClickTimer += Time.deltaTime;
-		if (Inputs.Instance.LClick == 1f && !attackLock && mouseClickTimer > HoldMouseDuration)
+		if (Inputs.Instance.Controls.Land.LeftClick.inProgress && !attackLock && mouseClickTimer > HoldMouseDuration)
 		{
 			// Left button is held
 			MouseClick(ClickType.Left);
 			mouseClickTimer = 0;
-		}else if(Inputs.Instance.LClick != 1f) mouseClickTimer = 0;
+		}else if(!Inputs.Instance.Controls.Land.LeftClick.inProgress) mouseClickTimer = 0;
     }
 
 	private void OnControllerColliderHit(ControllerColliderHit hit)
@@ -153,14 +171,16 @@ public class PlayerController : PlayerUnit
 		if (Inputs.Instance.PointerOverUI){	return false;}
 
 		// Get Player ActionType = Gather, Move, Attack, Powerattack
-        Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
+        Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
         
         Physics.Raycast(ray.origin, ray.direction, out RaycastHit hit, 1000f);
 
         // OLD CLICKPOINT Vector3 clickPoint = new Vector3(hit.point.x, 0, hit.point.z);
         Vector3 clickPoint = hit.point;
 
-        Vector3 aim = playerAnimationEventController.ShootPoint;
+		Debug.Log("Get CLick Info PAEController: "+playerAnimationEventController);
+		//Debug.Log("Get CLick Info PAEController.ShootPoint: "+ playerAnimationEventController.ShootPoint);
+        Vector3 aim = playerAnimationEventController.ShootPoint;	
 
         float lineScalarValue =  (aim.y - ray.origin.y) /ray.direction.y;
 		Vector3 aimPoint = ray.origin + ray.direction * lineScalarValue;
@@ -360,6 +380,7 @@ public class PlayerController : PlayerUnit
 
 	private void MouseClick(ClickType type)
 	{
+		Debug.Log("Getting Mouseclick from Instance: " + GetInstanceID());
         bool validClick = GetClickInfo(type);
         if (validClick)
         {

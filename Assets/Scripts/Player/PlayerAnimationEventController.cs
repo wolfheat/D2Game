@@ -19,6 +19,7 @@ class PlayerAnimationEventController : MonoBehaviour
 
     public void Start()
 	{
+        Debug.Log("PlayerAnimationEventController START");
 		playerController = GetComponent<PlayerController>();
 		soundMaster = FindObjectOfType<SoundMaster>();
         projectiles = FindObjectOfType<ProjectilesSpawner>();

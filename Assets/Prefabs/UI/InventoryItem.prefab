@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 788888117133788974}
   - component: {fileID: 788888117133788973}
   - component: {fileID: 2151758937836247906}
-  - component: {fileID: 91036785079768440}
   m_Layer: 5
   m_Name: InventoryItem
   m_TagString: Untagged
@@ -90,14 +89,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 0}
---- !u!210 &91036785079768440
-SortingGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 788888117133788971}
-  m_Enabled: 1
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 1000

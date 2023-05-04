@@ -119,7 +119,9 @@ Nov 2022
 		* Added basic inventory system
 4/5		* Added graphics for the HealthbarUI, Energy, Quickbar and ItemBar backdrop
 		* Healthbar and Energy bar reacts to players health
-
+		* Items in inventory are draggable
+		* Font Added to UI
+		* Item can now be swapped and dropped from inventory
 
 
 		// Interfaces!!! 

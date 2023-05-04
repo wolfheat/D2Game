@@ -407,7 +407,6 @@ public class PlayerController : PlayerUnit
 	
 	private void MouseClick(ClickType type)
 	{
-		Debug.Log("Getting Mouseclick from Instance: " + GetInstanceID());
         bool validClick = GetClickInfo(type);
         if (validClick)
         {

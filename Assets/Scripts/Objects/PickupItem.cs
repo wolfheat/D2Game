@@ -27,7 +27,7 @@ public class PickupItem : MonoBehaviour
 		{
 			//UIController uIController = FindObjectOfType<UIController>();
 			bool didAdd = UIController.Instance.AddItemToInventory(itemData);
-			Destroy(gameObject);
+			if(didAdd) Destroy(gameObject);
 		}
 	}
 

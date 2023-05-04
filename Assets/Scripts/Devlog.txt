@@ -122,7 +122,7 @@ Nov 2022
 		* Items in inventory are draggable
 		* Font Added to UI
 		* Item can now be swapped and dropped from inventory
-
+		* Added XP bar to UI
 
 		// Interfaces!!! 
 

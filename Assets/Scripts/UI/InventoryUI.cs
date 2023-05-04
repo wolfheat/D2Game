@@ -15,6 +15,11 @@ public class InventoryUI : MonoBehaviour
     {
         Inputs.Instance.Controls.Land.G.performed += AddTestData;
     }
+    
+    private void OnDestroy()
+    {
+        Inputs.Instance.Controls.Land.G.performed -= AddTestData;
+    }
 
     public void UpdateSlots(List<ItemData> items)
     {
@@ -29,7 +34,7 @@ public class InventoryUI : MonoBehaviour
         int type = Random.Range(0, testData.Length);
         AddItem(testData[type]);
     }
-    public void AddItem(ItemData data)
+    public bool AddItem(ItemData data)
     {
         foreach (var slot in slots)
         {
@@ -37,16 +42,17 @@ public class InventoryUI : MonoBehaviour
             {
                 Debug.Log("Adding Item: "+data.name);
                 AddItemAt(slot, data);
-                return;
+                return true;
             }
         }
         Debug.Log("No Empty Slot To place item in");
+        return false;
     }
 
     private void AddItemAt(Slot slot, ItemData data)
     {
         InventoryItem inventoryItem = Instantiate(inventoryItemPrefab, slot.transform);
-        inventoryItem.DefineItem(data);
+        inventoryItem.DefineItem(data,slot);
         slot.PlaceItem(inventoryItem);
     }
 }

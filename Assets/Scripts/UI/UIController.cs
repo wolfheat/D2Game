@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
@@ -8,6 +9,7 @@ public class UIController : MonoBehaviour
 {
     public static UIController Instance { get; set; }
 
+    [SerializeField] private InventoryUI inventoryUI;
     [SerializeField] private TextMeshProUGUI infoText;
     [SerializeField] private TextMeshProUGUI stateText;
     [SerializeField] private TextMeshProUGUI state2Text;
@@ -22,6 +24,7 @@ public class UIController : MonoBehaviour
         if (Instance != null)
         {
             Instance.DestroySelf();
+
         }
         Instance = this;
         DontDestroyOnLoad(this);       
@@ -70,4 +73,8 @@ public class UIController : MonoBehaviour
         state2Text.text = text;
     }
 
+    internal bool AddItemToInventory(ItemData itemData)
+    {
+        return inventoryUI.AddItem(itemData);
+    }
 }

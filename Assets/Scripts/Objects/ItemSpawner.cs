@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class ItemSpawner : MonoBehaviour
 {
@@ -13,9 +14,18 @@ public class ItemSpawner : MonoBehaviour
 	private void Start()
     {
         playerController = FindObjectOfType<PlayerController>();
-        Inputs.Instance.Controls.Land.F.performed += _ => GenerateItem(itemDataPrefabs[Random.Range(0,itemDataPrefabs.Length)]);
+        Inputs.Instance.Controls.Land.F.performed += SpawnTestItem;
+    }
+    
+	private void OnDestroy()
+    {
+        Inputs.Instance.Controls.Land.F.performed -= SpawnTestItem;
     }
 
+    public void SpawnTestItem(InputAction.CallbackContext context)
+    {
+        GenerateItem(itemDataPrefabs[Random.Range(0, itemDataPrefabs.Length)]);
+    }
     public void GenerateItem(ItemData itemData)
     {
         Debug.Log("Spawned ITEM: "+itemData.Itemname);

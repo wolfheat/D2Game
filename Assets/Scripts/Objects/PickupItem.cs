@@ -25,6 +25,8 @@ public class PickupItem : MonoBehaviour
 
 		if (other.GetComponent<PlayerController>() != null)
 		{
+			//UIController uIController = FindObjectOfType<UIController>();
+			bool didAdd = UIController.Instance.AddItemToInventory(itemData);
 			Destroy(gameObject);
 		}
 	}

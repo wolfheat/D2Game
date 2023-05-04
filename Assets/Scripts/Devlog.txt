@@ -117,6 +117,8 @@ Nov 2022
 		* DontDestroyOnload corrupted references to objects, now the singleton destroys the old version instead
 		* Updated Trees and bushes to only be placed by terrain tool, still needs to figure out how to make navmesh for the trees
 		* Added basic inventory system
+4/5		* Added graphics for the HealthbarUI, Energy, Quickbar and ItemBar backdrop
+		* Healthbar and Energy bar reacts to players health
 
 
 

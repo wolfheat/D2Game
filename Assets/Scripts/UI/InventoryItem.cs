@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.Experimental.GraphView;
+using UnityEngine.InputSystem;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -50,7 +50,7 @@ public class InventoryItem : MonoBehaviour, IDragHandler, IEndDragHandler, IBegi
 
     public void OnDrag(PointerEventData eventData)
     {
-        rect.position = Input.mousePosition;
+        rect.position = Mouse.current.position.ReadValue();
     }
 
     public void OnEndDrag(PointerEventData eventData)

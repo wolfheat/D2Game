@@ -139,6 +139,8 @@ Nov 2022
 		// - Animation Stuff -
 		// Make variants in attack animation
 		// Fix gliding issue with animation while moving
+		// Screen jumps/flickers when animating attack.
+
 
 		// - Items Stuff -
 		// Make Objects scavangeble and droppable by enemies

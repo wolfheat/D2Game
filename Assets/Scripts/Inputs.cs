@@ -8,7 +8,7 @@ public class Inputs : MonoBehaviour
 	public static Inputs Instance { get; private set; }
 
 	public PlayerControls Controls { get; private set; }
-public float Zooming { get; private set; }
+	public float Zooming { get; private set; }
 	public bool PointerOverUI { get; private set; }
 
     private void Update()

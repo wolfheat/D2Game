@@ -9,4 +9,6 @@ public static class CharacterStats
     public static int HealthMax { get; set; } = 100;
     public static int Energy { get; set; } = 200;
     public static int EnergyMax { get; set; } = 400;
+    public static int XP { get; set; } = 200;
+    public static int XPMax { get; set; } = 400;
 }

@@ -36,7 +36,7 @@ class PlayerAnimationEventController : MonoBehaviour
         navMeshAgent.destination = transform.position;
         // Generate Item
 
-        playerState.SetState(PlayerState.Idle);
+        playerState.SetState(PlayerState.MoveTo);
 		soundMaster.StopSFX();
     }
 

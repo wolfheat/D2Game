@@ -19,7 +19,7 @@ public class ClickInfo
 }
 public enum ClickType {Left,Right}
 public enum WeaponType {Sword,Bow}
-public enum PlayerActionType {Attack, PowerAttack ,Move, Gather, Undefined}
+public enum PlayerActionType {Attack, PowerAttack ,Move, Interact, Gather, Stash, Undefined }
 
 
 public class PlayerController : PlayerUnit
@@ -57,7 +57,7 @@ public class PlayerController : PlayerUnit
 	private bool attackLock = false;
 	private bool holdPosition = false;
 
-	private Coroutine gatherCoroutine;
+	private Coroutine interactCoroutine;
 
 
 
@@ -166,13 +166,21 @@ public class PlayerController : PlayerUnit
 	{
 		// get position X distance in front of player
 		navMeshAgent.SetDestination(transform.position+transform.forward*StopDistance);
-		if (gatherCoroutine != null) playerAnimationEventController.ForcedStopGatheringEvent();
+		if (interactCoroutine != null) playerAnimationEventController.ForcedStopGatheringEvent();
 	}
 
 	private bool GetClickInfo(ClickType type)
 	{
 		// Clicking UI element, ignore gameplay clicks
 		if (Inputs.Instance.PointerOverUI){	return false;}
+
+		// Explain whats suppose to happen - 3 
+
+		// Clicking a position on NavMesh to walk to
+		// Clicking to attack in a direction
+		// Clicking on an INteractable to interact with
+
+
 
 		// Get Player ActionType = Gather, Move, Attack, Powerattack
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -223,6 +231,7 @@ public class PlayerController : PlayerUnit
             return PlayerActionType.Gather;
 		}
 
+
         // Return Default = Move
         return PlayerActionType.Move;
     }
@@ -253,7 +262,7 @@ public class PlayerController : PlayerUnit
     private void DoClickAction()
 	{
 		// Currently gathering but requesting anything else
-		if(gatherCoroutine!=null && clickInfo.actionType != PlayerActionType.Gather) playerAnimationEventController.ForcedStopGatheringEvent();
+		if(interactCoroutine!=null && clickInfo.actionType != PlayerActionType.Gather) playerAnimationEventController.ForcedStopGatheringEvent();
         
 		playerAnimationEventController.Aim = clickInfo.aim;
 
@@ -272,7 +281,10 @@ public class PlayerController : PlayerUnit
 				wayPointToShow = clickInfo;
 				break;
 			case PlayerActionType.Gather:
-				gatherCoroutine = StartCoroutine(GatherAt(activeNode));
+				interactCoroutine = StartCoroutine(GatherAt(activeNode));
+				break;
+			case PlayerActionType.Stash:
+				interactCoroutine = StartCoroutine(OpenStash());
 				break;
 			default:	
 			break;
@@ -285,6 +297,11 @@ public class PlayerController : PlayerUnit
 		navMeshAgent.SetDestination(clickInfo.pos);
 	}
 
+	private IEnumerator OpenStash()
+	{
+        yield return null;
+    }
+	
 	private IEnumerator GatherAt(ResourceNode node)
 	{
 		Vector3 pos = node.transform.position;	
@@ -439,8 +456,8 @@ public class PlayerController : PlayerUnit
 
     public void StopGathering()
     {
-        if (gatherCoroutine != null) StopCoroutine(gatherCoroutine);
-        gatherCoroutine = null;
+        if (interactCoroutine != null) StopCoroutine(interactCoroutine);
+        interactCoroutine = null;
     }
 
     internal void TakeHit(int damage)

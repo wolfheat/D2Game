@@ -3,14 +3,14 @@ using UnityEngine;
 
 public class Slot : MonoBehaviour
 {
-    private InventoryItem heldItem;
+    public InventoryItem HeldItem { get; private set; }
     public bool HasItem { get; private set; } = false;
 
     public InventoryItem PlaceItem(InventoryItem newItem)
     {
-        InventoryItem current = heldItem;
-        heldItem = newItem;
-        heldItem.SetParent(this);
+        InventoryItem current = HeldItem;
+        HeldItem = newItem;
+        HeldItem.SetParent(this);
         HasItem = true;
             
         return current;
@@ -18,7 +18,7 @@ public class Slot : MonoBehaviour
 
     internal void SwapItemWith(InventoryItem inventoryItem)
     {
-        Debug.Log("Swapping Item: "+heldItem?.Data.Itemname + " with "+inventoryItem.Data.Itemname);
+        Debug.Log("Swapping Item: "+HeldItem?.Data.Itemname + " with "+inventoryItem.Data.Itemname);
         Slot otherSlot = inventoryItem.ParentSlot;
         if (!HasItem)
         {
@@ -26,14 +26,14 @@ public class Slot : MonoBehaviour
             otherSlot.ClearSlot();
             return;
         }
-        InventoryItem currentlyHeld = heldItem;
+        InventoryItem currentlyHeld = HeldItem;
         PlaceItem(inventoryItem);
         otherSlot.PlaceItem(currentlyHeld);
     }
 
     public void ClearSlot()
     {
-        heldItem = null;
+        HeldItem = null;
         HasItem = false;
     }
 }

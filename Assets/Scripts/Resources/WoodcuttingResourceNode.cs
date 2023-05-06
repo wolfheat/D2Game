@@ -4,7 +4,7 @@ public class WoodcuttingResourceNode : ResourceNode
 {
     internal override void Start()
     {
-        type = ResourceType.Woodcutting;
+        type = ResourceType.WoodcuttingNode;
         base.Start();
     }
 

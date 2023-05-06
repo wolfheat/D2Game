@@ -29,7 +29,7 @@ public class InventoryItem : MonoBehaviour, IDragHandler, IEndDragHandler, IBegi
         rect = GetComponent<RectTransform>();
         dragParent = FindObjectOfType<ItemDragParent>();
 
-        placement = rect.localPosition;
+        //placement = rect.localPosition;
 
         ItemData current = Data;
         Data = newItemData;
@@ -78,7 +78,17 @@ public class InventoryItem : MonoBehaviour, IDragHandler, IEndDragHandler, IBegi
     public void ResetPlacement()
     {
         transform.SetParent(ParentSlot.transform);
-        rect.localPosition = placement;
+        //rect.localPosition = placement;
+
+        // Set anchors to stretch both horizontally and vertically
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+
+        // Reset offset values
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+
+
     }
 
     private void UpdateGraphics()

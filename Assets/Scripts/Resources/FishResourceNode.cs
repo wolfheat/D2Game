@@ -4,7 +4,7 @@ public class FishResourceNode : ResourceNode
 {
     internal override void Start()
     {
-        type = ResourceType.Fishing;
+        type = ResourceType.FishingNode;
         base.Start();
     }
 

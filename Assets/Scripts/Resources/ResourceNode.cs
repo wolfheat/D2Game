@@ -2,8 +2,8 @@ using System;
 using UnityEngine;
 
 
-public enum ResourceType{Mining, Fishing, Woodcutting, Scavenging}
-public abstract class ResourceNode : MonoBehaviour
+public enum ResourceType{MiningNode, FishingNode, WoodcuttingNode, ScavengingNode, Stash}
+public abstract class ResourceNode : MonoBehaviour, IInteractable
 {
     ItemSpawner itemSpawner;
     ItemData itemData;
@@ -36,5 +36,10 @@ public abstract class ResourceNode : MonoBehaviour
         // Play Sound
         // Destroy disable gameobject
         Destroy(gameObject);
+    }
+    public void Interract()
+    {
+        Debug.Log("Interact with: "+type);
+        Harvest();
     }
 }

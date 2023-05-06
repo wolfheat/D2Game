@@ -21,15 +21,12 @@ public class Inputs : MonoBehaviour
 	private void Awake()
 	{
 		//Singelton
-		if (Instance != null){			
-			destroyed = true;
-			Debug.Log("Inputs Copy deleted");
+		if (Instance != null){	
 			Destroy(this);
 			return;
 		}
 
 		Instance = this;
-		DontDestroyOnLoad(this);
         Controls = new PlayerControls();
 	}
 	public void OnLeftClick(InputValue value)

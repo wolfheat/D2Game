@@ -123,6 +123,17 @@ Nov 2022
 		* Font Added to UI
 		* Item can now be swapped and dropped from inventory
 		* Added XP bar to UI
+5/5		* Refactored code, added interface for interactables
+		* Worked on keeping gameobjects with dontdestroy but it made so much mess, 
+			decided to go with separate "prefab" objects for separate scenes and transfer data in between instead.
+		* Fixed issue with items not placed center in slot
+
+		// When refactoring got back few control issues
+		-	Clicking through UI registers when it should not
+		-	Holding shoot arrow shoots in wrong direction sometimes when mouse moves. Hickup when holding to long.
+		-	Holding mouse down to move staggers
+		-	Scavanging wont stop at resource correctly
+
 
 		// Interfaces!!! 
 

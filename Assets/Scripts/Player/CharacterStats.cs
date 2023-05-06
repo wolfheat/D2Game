@@ -1,4 +1,4 @@
-
+using System.Collections.Generic;
 public static class CharacterStats 
 {
     public static int HitDamage { get; } = 200;
@@ -11,4 +11,5 @@ public static class CharacterStats
     public static int EnergyMax { get; set; } = 400;
     public static int XP { get; set; } = 200;
     public static int XPMax { get; set; } = 400;
+    public static ItemData[] Items { get; set; }
 }

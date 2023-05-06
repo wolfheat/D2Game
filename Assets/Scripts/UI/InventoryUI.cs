@@ -14,6 +14,7 @@ public class InventoryUI : MonoBehaviour
     private void Start()
     {
         Inputs.Instance.Controls.Land.G.performed += AddTestData;
+        LoadItemDataArray();
     }
     
     private void OnDestroy()
@@ -21,12 +22,27 @@ public class InventoryUI : MonoBehaviour
         Inputs.Instance.Controls.Land.G.performed -= AddTestData;
     }
 
-    public void UpdateSlots(List<ItemData> items)
+    public void StoreItemDataArray()
     {
+        Debug.Log("Storing Items In DataSave");
+        ItemData[] itemData = new ItemData[slots.Count];
         for (int i = 0; i < slots.Count; i++)
         {
-
+            itemData[i] = slots[i].HasItem?slots[i].HeldItem.Data:null;
         }
+        CharacterStats.Items = itemData;
+    }
+    
+    public void LoadItemDataArray()
+    {
+        Debug.Log("Loading Items From DataSave");
+        ItemData[] itemData = CharacterStats.Items;
+
+        for (int i = 0; i < slots.Count; i++)
+        {
+            if (itemData[i] != null) AddItemAt(slots[i], itemData[i]);
+        }
+        CharacterStats.Items = itemData;
     }
 
     public void AddTestData(InputAction.CallbackContext context)

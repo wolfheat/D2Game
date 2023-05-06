@@ -4,7 +4,7 @@ public class ScavengeResourceNode : ResourceNode
 {
     internal override void Start()
     {
-        type = ResourceType.Scavenging;
+        type = ResourceType.ScavengingNode;
         base.Start();
     }
 

@@ -11,11 +11,11 @@ using static UnityEditor.Timeline.TimelinePlaybackControls;
 
 public class ClickInfo
 {
-	public ClickType type;
+	public IInteractable interactable;	
 	public PlayerActionType actionType;
 	public Vector3 pos = Vector3.zero;
 	public Vector3 aim = Vector3.zero;
-	public ClickInfo(ClickType t, PlayerActionType pt, Vector3 p, Vector3 a) { type = t; actionType = pt; pos = p; aim = a; }	
+	public ClickInfo(PlayerActionType pt, Vector3 p, Vector3 a, IInteractable i) { actionType = pt; pos = p; aim = a; i = interactable; }	
 }
 public enum ClickType {Left,Right}
 public enum WeaponType {Sword,Bow}
@@ -28,8 +28,8 @@ public class PlayerController : PlayerUnit
 	[SerializeField] private LayerMask GroundLayers;
 	[SerializeField] private LayerMask ResourceLayer;
 	[SerializeField] private LayerMask TerrainLayers;
+	[SerializeField] private LayerMask Interactable;
 	[SerializeField] private LayerMask UI;
-	[SerializeField] private TextMeshProUGUI stateText;
 	[SerializeField] private GameObject[] weapons;
 
     private PlayerAnimationEventController playerAnimationEventController;
@@ -43,8 +43,8 @@ public class PlayerController : PlayerUnit
 		
 	private WeaponType currentWeapon = WeaponType.Sword;
 
-	private ResourceNode activeNode;
-    public ResourceNode ActiveNode { get { return activeNode; }}
+	public IInteractable activeInteractable;
+    public IInteractable ActiveNodeActiveInteractable { get { return activeInteractable; }}
 
     // Settings - Constants
 	private const float StopDistance = 0.1f;
@@ -135,7 +135,7 @@ public class PlayerController : PlayerUnit
 		if (Inputs.Instance.Controls.Land.LeftClick.inProgress && !attackLock && mouseClickTimer > HoldMouseDuration)
 		{
 			// Left button is held
-			MouseClick(ClickType.Left);
+			SaveOrExecutePlayerAction();
 			mouseClickTimer = 0;
 		}else if(!Inputs.Instance.Controls.Land.LeftClick.inProgress) mouseClickTimer = 0;
     }
@@ -169,19 +169,58 @@ public class PlayerController : PlayerUnit
 		if (interactCoroutine != null) playerAnimationEventController.ForcedStopGatheringEvent();
 	}
 
-	private bool GetClickInfo(ClickType type)
+	private bool MousePowerClick()
+	{
+		return MouseClick(true);
+	}
+
+	private bool MouseClick(bool rightClick = false)
 	{
 		// Clicking UI element, ignore gameplay clicks
 		if (Inputs.Instance.PointerOverUI){	return false;}
 
 		// Explain whats suppose to happen - 3 
+		// Before all info of the click was stored, want to change this to specific action instead
 
 		// Clicking a position on NavMesh to walk to
 		// Clicking to attack in a direction
-		// Clicking on an INteractable to interact with
+		// Clicking to Aim arrows in a direction
+		// Clicking on an Interactable to interact with
+
+		IInteractable interactable = null;
+		PlayerActionType playerActionType = PlayerActionType.Move;
+        Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+
+        Physics.Raycast(ray.origin, ray.direction, out RaycastHit hit, 1000f);
+        Vector3 clickPoint = hit.point;
+        if (!NavMesh.SamplePosition(clickPoint, out NavMeshHit navhit, 1f, NavMesh.AllAreas))
+        {
+            // The clicked point is outside the NavMesh, Find the closest point on the NavMesh to the clicked point
+            clickPoint = GetClosestClickPointWhenClickingOutside(clickPoint);
+        }
+        Vector3 aimPoint = CalculateAimPoint(ray);
 
 
+		if (holdPosition) // Attack
+		{			
+			playerActionType = rightClick ? PlayerActionType.PowerAttack : PlayerActionType.Attack;
+		}
+		else if (Physics.Raycast(ray.origin, ray.direction, out RaycastHit interactableHit, 1000f, Interactable))
+        {
+            Debug.Log("Hit layer Interactable");
+            // Get clicked Node if available
+            if (interactableHit.collider.TryGetComponent(out interactable))
+            {
+				activeInteractable = interactable;
+                Debug.Log("Hit object is Interactable");
+            }
+			playerActionType = PlayerActionType.Interact;                
+        }
+		//Debug.Log("Setting ClickInfo interactable to: "+interactable);
+        clickInfo = new ClickInfo(playerActionType, clickPoint, aimPoint, interactable);
+        return true;
 
+		/*
 		// Get Player ActionType = Gather, Move, Attack, Powerattack
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
         
@@ -211,9 +250,17 @@ public class PlayerController : PlayerUnit
 		// Set ClickInfo i.e (LeftMouse, MoveTo, Position)
         clickInfo = new ClickInfo(type, playerActionType, clickPosition, aimPoint);
 		return true;
-		
+		*/
     }
 
+    private Vector3 CalculateAimPoint(Ray ray)
+    {
+        Vector3 aim = playerAnimationEventController.ShootPoint;
+        float lineScalarValue = (aim.y - ray.origin.y) / ray.direction.y;
+        return ray.origin + ray.direction * lineScalarValue;
+    }
+
+	/*
     private PlayerActionType DeterminePlayerActionType(Ray ray,ClickType type , ref RaycastHit hit)
     {
 		// Check if "Hold position" is down (Shift) and what type of click was made. 
@@ -234,7 +281,7 @@ public class PlayerController : PlayerUnit
 
         // Return Default = Move
         return PlayerActionType.Move;
-    }
+    }*/
 
     private Vector3 GetClosestClickPointWhenClickingOutside(Vector3 point)
     {
@@ -280,8 +327,8 @@ public class PlayerController : PlayerUnit
 				NavigateTo(); 
 				wayPointToShow = clickInfo;
 				break;
-			case PlayerActionType.Gather:
-				interactCoroutine = StartCoroutine(GatherAt(activeNode));
+			case PlayerActionType.Interact:
+				interactCoroutine = StartCoroutine(InteractAt());
 				break;
 			case PlayerActionType.Stash:
 				interactCoroutine = StartCoroutine(OpenStash());
@@ -302,25 +349,22 @@ public class PlayerController : PlayerUnit
         yield return null;
     }
 	
-	private IEnumerator GatherAt(ResourceNode node)
+	private IEnumerator InteractAt()
 	{
-		Vector3 pos = node.transform.position;	
 		//If to far move closer
-		if((transform.position-pos).magnitude > MinGatherDistance) 
+		if((transform.position- clickInfo.pos).magnitude > MinGatherDistance) 
 		{
-			playerState.SetState(PlayerState.MoveToGather);
+			playerState.SetState(PlayerState.MoveToInteract);
 			navMeshAgent.isStopped = false;
-			navMeshAgent.SetDestination(pos);
-			Debug.Log("Setting Move To Gatherpoint for navmesh");
+			navMeshAgent.SetDestination(clickInfo.pos);
 		}
-		while ((transform.position - pos).magnitude > MinGatherDistance)
+		while ((transform.position - clickInfo.pos).magnitude > MinGatherDistance)
 		{
-			Debug.Log("Distance to Resounce: "+ (transform.position - pos).magnitude);
+			//Debug.Log("Distance to Resounce: "+ (transform.position - clickInfo.pos).magnitude);
 			yield return null;		
 		}
-		navMeshAgent.SetDestination(transform.position);
-
-		playerState.SetState(PlayerState.Gather);
+		//navMeshAgent.SetDestination(transform.position);
+		playerState.SetState(PlayerState.Interact);
 		soundmaster.PlaySFX(SoundMaster.SFX.Gather);		
 	}
 
@@ -373,6 +417,8 @@ public class PlayerController : PlayerUnit
 		if (savedAction != null)
 		{
 			clickInfo = savedAction;            
+			Debug.Log("Click Info Set: "+clickInfo.interactable);
+            activeInteractable = clickInfo.interactable;
             DoClickAction();
 			savedAction = null;
 		}
@@ -403,7 +449,8 @@ public class PlayerController : PlayerUnit
 	{
         if (context.phase == InputActionPhase.Started)
         {
-			MouseClick(ClickType.Right);
+			MousePowerClick();
+			SaveOrExecutePlayerAction();
         }
         else if (context.phase == InputActionPhase.Canceled)
         {
@@ -414,7 +461,8 @@ public class PlayerController : PlayerUnit
 	{
         if (context.phase == InputActionPhase.Started)
         {
-			MouseClick(ClickType.Left);
+			MouseClick();
+			SaveOrExecutePlayerAction();
         }
         else if (context.phase == InputActionPhase.Canceled)
         {
@@ -422,15 +470,10 @@ public class PlayerController : PlayerUnit
         }
     }
 	
-	private void MouseClick(ClickType type)
+	private void SaveOrExecutePlayerAction()
 	{
-        bool validClick = GetClickInfo(type);
-        if (validClick)
-        {
-            if (attackLock) SaveAction();
-            else DoClickAction();
-        }
-		// Else not valid = Over UI etc
+        if (attackLock) SaveAction();
+        else DoClickAction();
     }
 
 	private void Shift(InputAction.CallbackContext context)
@@ -448,10 +491,10 @@ public class PlayerController : PlayerUnit
 
     // --------ANIMATION EVENTS--------------------------------------------------------
 
-    public void GatherNodeIfActive()
+    public void InteractWithIteractable()
     {
-        if (activeNode != null)
-            activeNode.Harvest();
+		Debug.Log("activeInteractable: " + activeInteractable);
+        activeInteractable?.Interract();
     }
 
     public void StopGathering()

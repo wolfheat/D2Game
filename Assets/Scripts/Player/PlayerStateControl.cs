@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum PlayerState { Idle, MoveTo, MoveToGather, AttackSwordSwing, ShootArrow, Chase, Death, Dead, Decay, Gather }
+public enum PlayerState { Idle, MoveTo, MoveToInteract, AttackSwordSwing, ShootArrow, Chase, Death, Dead, Decay, Interact }
 
 public class PlayerStateControl : MonoBehaviour
 {
@@ -32,26 +32,29 @@ public class PlayerStateControl : MonoBehaviour
 			case PlayerState.AttackSwordSwing:
 				animator.CrossFade("SwordSwing", 0.1f);
 				break;
-			case PlayerState.MoveToGather:
+			case PlayerState.MoveToInteract:
 				animator.CrossFade("Run", 0.1f);
 				break;
 			case PlayerState.ShootArrow:
 				animator.CrossFade("ShootArrow", 0.1f);
 				break;
-			case PlayerState.Gather:
-				switch (playerController.ActiveNode.Type)
+			case PlayerState.Interact:
+				switch (playerController.activeInteractable.Type)
 				{
-					case ResourceType.Mining:
+					case ResourceType.MiningNode:
 				animator.CrossFade("Mining", 0.1f);
 						return;
-					case ResourceType.Fishing:
+					case ResourceType.FishingNode:
 				animator.CrossFade("FishingCast", 0.1f);
 						return;
-					case ResourceType.Scavenging:
+					case ResourceType.ScavengingNode:
 				animator.CrossFade("Gather", 0.1f);
 						return;
-					case ResourceType.Woodcutting:
+					case ResourceType.WoodcuttingNode:
 				animator.CrossFade("Gather", 0.1f);
+						return;
+					case ResourceType.Stash:
+				animator.CrossFade("OpenStash", 0.1f);
 						return;
 					default:
 						break;

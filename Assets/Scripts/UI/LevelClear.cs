@@ -28,6 +28,10 @@ public class LevelClear : MonoBehaviour
 	public void OkPressed()
     {
         Debug.Log("Return To Town");
+
+        FindObjectOfType<InventoryUI>().StoreItemDataArray();
+
+
         ClosePanel();
         SceneManager.LoadScene("TownScene");
     }

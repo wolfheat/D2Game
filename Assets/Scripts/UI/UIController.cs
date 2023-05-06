@@ -17,30 +17,24 @@ public class UIController : MonoBehaviour
 
     //Panels
     [SerializeField] public LevelClear levelClear;
-
+    
     private void Awake()
     {
         //Singelton
         if (Instance != null)
         {
-            Instance.DestroySelf();
-
+           Destroy(this);
+            return;
         }
         Instance = this;
-        DontDestroyOnLoad(this);       
         Inputs.Instance.Controls.Land.BackSpace.performed += ActivateLevelClearPanel;
     }
     
-    public void DestroySelf()
+    public void OnDestroy()
     {
-        foreach (Transform child in transform)
-        {
-            Destroy(child.gameObject);
-        }
         Inputs.Instance.Controls.Land.BackSpace.performed -= ActivateLevelClearPanel;
-        Destroy(gameObject);            
     }
-
+    
     public void ActivateLevelClearPanel()
     {
         levelClear.ShowPanel();

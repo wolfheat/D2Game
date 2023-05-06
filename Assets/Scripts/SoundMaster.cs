@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class SoundMaster : MonoBehaviour
 {
@@ -21,14 +22,16 @@ public class SoundMaster : MonoBehaviour
 
     private float presetVolume = 0.8f;
     //private float presetSFXVolume = 0.1f;
-    private float presetSFXStepVolume = 0.5f;
+    private float presetSFXStepVolume = 0.1f;
 
     private float totalFadeOutTime = 3.5f;
     private float fadeOutMargin = 0.01f;
     private float currentFadeOutTime;
 
+
     private void Awake()
-    {
+    {   
+
         GameObject musicSourceHolder = new GameObject("Music");
         GameObject sfxSourceHolder = new GameObject("SFX");
         musicSourceHolder.transform.SetParent(this.transform);
@@ -40,19 +43,23 @@ public class SoundMaster : MonoBehaviour
         musicSource = musicSourceHolder.AddComponent<AudioSource>();
         sfxSource = sfxSourceHolder.AddComponent<AudioSource>();
     }
+    private void OnDestroy()
+    {
+        Inputs.Instance.Controls.Land.MusicToggle.performed -= MuteToggle;// = _.ReadValue<float>();
+    }
     private void Start()
     {
         musicSourceIntense.loop = true;
         musicSourceIntense.volume = 0.5f;
         musicSource.loop = true;
-        musicSource.volume = 0.5f;
+        musicSource.volume = presetVolume;
         sfxSource.volume = presetSFXStepVolume;
         PlayMusic();
 
-        Inputs.Instance.Controls.Land.MusicToggle.performed += _ => MuteToggle();// = _.ReadValue<float>();
+        Inputs.Instance.Controls.Land.MusicToggle.performed += MuteToggle;// = _.ReadValue<float>();
 	}
 
-    private void MuteToggle()
+    private void MuteToggle(InputAction.CallbackContext context)
     {
 		doPlayMusic = !doPlayMusic;
         Debug.Log("Music: "+doPlayMusic);

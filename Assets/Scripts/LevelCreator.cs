@@ -196,14 +196,21 @@ public class LevelCreator : MonoBehaviour
 		highLightSquare.SetActive(false);
 	}
 
+	private void GetPlayerReference()
+    {		
+        playerController = FindObjectOfType<PlayerController>();
+    }
+	
 	private void SetPlayerAtStart(Vector2Int pos)
     {
+		GetPlayerReference();
 		Debug.Log("Set player at: " + pos);
         playerController.SetToPosition(new Vector3(pos.x*Tilesize,0,pos.y*Tilesize));
     }
 
     private void RequestActivatePlayerNavmesh(bool activate)
     {
+		GetPlayerReference();
         playerController.EnableNavMesh(activate);
 	}
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class WayPointController : MonoBehaviour
@@ -15,6 +16,18 @@ public class WayPointController : MonoBehaviour
     private ParticleSystem wayPointPS;
     private int activeWayPointID=0;
     private bool waypointVisable;
+    
+    private void Awake()
+    {        
+        Inputs.Instance.Controls.Land.WayPointType.performed += ChangeWayPoint;
+        Toggle(FindObjectOfType<UIController>().toggle);
+    }
+    
+    private void OnDestroy()
+    {        
+        Inputs.Instance.Controls.Land.WayPointType.performed -= ChangeWayPoint;
+        Toggle(FindObjectOfType<UIController>().toggle);
+    }
 
     public void Toggle(Toggle toggle)
     {
@@ -41,13 +54,7 @@ public class WayPointController : MonoBehaviour
 		powerAttackWayPointPS = wayPoints[2].GetComponent<ParticleSystem>();
 
 	}
-    private void Start()
-    {
-		Inputs.Instance.Controls.Land.WayPointType.performed += _ => ChangeWayPoint();
-        Toggle(FindObjectOfType<UIController>().toggle);
-    }
-
-    private void ChangeWayPoint()
+    private void ChangeWayPoint(InputAction.CallbackContext context)
     {
         Debug.Log("Change TYPE");
         activeWayPointID++;
@@ -72,7 +79,6 @@ public class WayPointController : MonoBehaviour
                 break;
             case PlayerActionType.Move:
                 wayPoint.transform.position = savedAction.pos;
-
 				wayPointPS.Play();
                 break;
             case PlayerActionType.Gather:

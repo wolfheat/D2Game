@@ -19,22 +19,23 @@ class PlayerAnimationEventController : MonoBehaviour
 
     public void Start()
 	{
-        Debug.Log("PlayerAnimationEventController START");
 		playerController = GetComponent<PlayerController>();
-		soundMaster = FindObjectOfType<SoundMaster>();
-        projectiles = FindObjectOfType<ProjectilesSpawner>();
 		navMeshAgent = GetComponent<NavMeshAgent>();
 		playerState = GetComponent<PlayerStateControl>();
+        Debug.Log("PlayerAnimationEventController START");
+
+		soundMaster = FindObjectOfType<SoundMaster>();
+        projectiles = FindObjectOfType<ProjectilesSpawner>();
 	}
     public void ForcedStopGatheringEvent(bool completedEntireGathering = false)
     {
-        Debug.Log("Forced Stop Gathering");
+
+        Debug.Log("Stop Gathering!");
 
 		playerController.StopGathering();
-		if(completedEntireGathering) playerController.GatherNodeIfActive();
+		if(completedEntireGathering) playerController.InteractWithIteractable();
             
         navMeshAgent.destination = transform.position;
-        // Generate Item
 
         playerState.SetState(PlayerState.MoveTo);
 		soundMaster.StopSFX();

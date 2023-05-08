@@ -12,4 +12,5 @@ EditorBuildSettings:
     path: Assets/Scenes/TownScene.unity
     guid: 6aa166795f075114284499d4150c566e
   m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: 89773016fa945ec4c8788683b3812585, type: 2}
     com.unity.input.settings: {fileID: 11400000, guid: 9e7be553448fa2546aea5752021cbcf7, type: 2}

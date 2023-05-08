@@ -135,14 +135,30 @@ Nov 2022
 		* Clicking on player does no longer give navmesh position at players feet instead of behind.
 8/5		* Added new grass textures, got some artifact though
 		* Stash is now interactable and has a temp window
+		* Stash have a scrollable items list
+		* Can Now load in all itemdata from the items folder with addressables
+		* Added a Item Library that holds all itemdata
+		* CharacterStats now hold ID and amount of items the player possess
+		* Can transfer items from inventory to characterstats and update stash from that.
+		* Amount of items now show in stash, inventory is cleared when transfering
+		* 
 
+
+		// Need to update items and inventory if recieving items in town.
+		// Recreating entire stash when updating make more efficient.
+
+		// Need to save off the characterstats to playerprefs or similar so it persisist on load
+
+		// OBS Trying the solution of using Resources Load to load in all objects to itemlibrary, aid to not be a good solution change later?
 
 
 		// Position stored if exited game in dungeon, should only store in village
 
+		// Need some system that stores all items in game.	
+
 		// --- --- TODO --- ---
 
-		// FIx load/save system scriptabe object wont do it
+		// Fix load/save system scriptabe object wont do it
 
 		// Interfaces!!! One down
 

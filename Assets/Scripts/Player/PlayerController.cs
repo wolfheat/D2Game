@@ -178,7 +178,7 @@ public class PlayerController : PlayerUnit
 	{
 		// Clicking UI element, ignore gameplay clicks
 		if (Inputs.Instance.PointerOverUI){
-			Debug.Log("Click On UI dismiss	");
+			//Debug.Log("Click On UI dismiss	");
 			return false;
 		}
 

@@ -1,19 +1,47 @@
+using System;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class TownPositionsController : MonoBehaviour
 {
-    [SerializeField] PlayerSettingsSO playerSettingsSO;
+
+    [SerializeReference][SerializeField] PlayerSettingsSO playerSettingsSO;
 
     [SerializeField] GameObject[] TownPositionObjects;
 
     public void Populate()
     {
         Vector3[] positions = TownPositionObjects.Select(go => go.transform.position).ToArray();
-        playerSettingsSO.UpdateTownPositions(positions);        
+        ChangeToClosestPoint(FindObjectOfType<PlayerController>().transform.position);
+        playerSettingsSO.UpdateTownPositions(positions);
+        playerSettingsSO.EditorSet();
+        UpdateScriptableObject();
+
     }
+
+    private void UpdateScriptableObject()
+    {
+        
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("Scriptable Object created and saved: ");
+    }
+
     public void ChangeToClosestPoint(Vector3 pos)
     {
+        Debug.Log("Changing Stored Point");
         playerSettingsSO.SetToClosest(pos);
+        UpdateScriptableObject();
+    }
+
+    private void OnApplicationQuit()
+    {
+        Debug.Log("On Aplication quit set player position");
+        ChangeToClosestPoint(FindObjectOfType<PlayerController>().transform.position);
+
     }
 }
+
+

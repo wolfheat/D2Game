@@ -50,6 +50,7 @@ MonoBehaviour:
   - {fileID: 2095853270837685280}
   - {fileID: 6450580359410201668}
   - {fileID: 5624343692885628422}
+  blobPrefab: {fileID: 3396805108856342357, guid: 009fa3c462776074497f161fd76d0384, type: 3}
 --- !u!1001 &5734922122817412513
 PrefabInstance:
   m_ObjectHideFlags: 0

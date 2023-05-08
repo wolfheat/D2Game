@@ -10812,7 +10812,7 @@ MonoBehaviour:
   attackCollider: {fileID: 3389808922509095017}
   GroundLayers:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 16448
   ResourceLayer:
     serializedVersion: 2
     m_Bits: 4096

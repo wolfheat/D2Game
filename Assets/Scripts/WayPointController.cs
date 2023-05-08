@@ -8,6 +8,8 @@ public class WayPointController : MonoBehaviour
 {
     
     [SerializeField] private List<GameObject> wayPoints;
+    [SerializeField] private GameObject blobPrefab;
+    private GameObject blob;
     private GameObject attackWayPoint;
     private ParticleSystem attackWayPointPS;
 	private GameObject powerAttackWayPoint;
@@ -26,7 +28,7 @@ public class WayPointController : MonoBehaviour
     private void OnDestroy()
     {        
         Inputs.Instance.Controls.Land.WayPointType.performed -= ChangeWayPoint;
-        Toggle(FindObjectOfType<UIController>().toggle);
+        //Toggle(FindObjectOfType<UIController>().toggle);
     }
 
     public void Toggle(Toggle toggle)
@@ -34,6 +36,13 @@ public class WayPointController : MonoBehaviour
 		waypointVisable = toggle.isOn;
 		UpdateWaypointMarkers();
 	}
+	public void PlaceWaypointBlob(Vector3 p)
+	{
+        Debug.Log("Placing Blob");
+        if(blob == null) blob = Instantiate(blobPrefab,p,Quaternion.identity);
+        else blob.transform.position = p;
+	}
+    
 	public void UpdateWaypointMarkers()
 	{
         // Used for Enemy waypoints

@@ -37,12 +37,13 @@ public class InventoryUI : MonoBehaviour
     {
         Debug.Log("Loading Items From DataSave");
         ItemData[] itemData = CharacterStats.Items;
+        if (itemData == null) return;
 
-        for (int i = 0; i < slots.Count; i++)
+        for (int i = 0; i < itemData.Length; i++)
         {
             if (itemData[i] != null) AddItemAt(slots[i], itemData[i]);
+            CharacterStats.Items = itemData;
         }
-        CharacterStats.Items = itemData;
     }
 
     public void AddTestData(InputAction.CallbackContext context)

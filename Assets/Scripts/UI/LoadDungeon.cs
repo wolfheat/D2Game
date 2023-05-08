@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class LoadDungeon : MonoBehaviour
@@ -10,9 +11,14 @@ public class LoadDungeon : MonoBehaviour
     public void Start()
     {
         townPositionsController = FindObjectOfType<TownPositionsController>();
-        //Inputs.Instance.Controls.Land.ESC.started += _ => HideMenu(loadDungeonPanel.activeSelf);
+        Inputs.Instance.Controls.Land.ESC.started += ShowMenu;
         HideMenu(true);
     }
+    public void ShowMenu(InputAction.CallbackContext coontext)
+    {
+        loadDungeonPanel.SetActive(true);
+    }
+    
     public void HideMenu(bool action = true)
     {
         Debug.Log("ShowMenu From: "+GetInstanceID());

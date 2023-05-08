@@ -127,31 +127,49 @@ Nov 2022
 		* Worked on keeping gameobjects with dontdestroy but it made so much mess, 
 			decided to go with separate "prefab" objects for separate scenes and transfer data in between instead.
 		* Fixed issue with items not placed center in slot
+6/5		* Fixed Level creation failed (screenshot available), corner between two rooms where only one corridor tile is needed.
+		* Fixed Clicking through UI registers when it should not
+		* Player now stops away from and faces node when harvesting. Now always go to fixed distance from node and faces it to harvest.
+		* Enemy Arrows can now damage player.		
+7/5		* Fixed player spawn points in scriptable object correctly
+		* Clicking on player does no longer give navmesh position at players feet instead of behind.
+8/5		* Added new grass textures, got some artifact though
+		* Stash is now interactable and has a temp window
 
-		// When refactoring got back few control issues
-		-	Clicking through UI registers when it should not
-		-	Holding shoot arrow shoots in wrong direction sometimes when mouse moves. Hickup when holding to long.
-		-	Holding mouse down to move staggers
-		-	Scavanging wont stop at resource correctly
 
 
-		// Interfaces!!! 
+		// Position stored if exited game in dungeon, should only store in village
+
+		// --- --- TODO --- ---
+
+		// FIx load/save system scriptabe object wont do it
+
+		// Interfaces!!! One down
+
+		// - Content -
+		// Load Screen between scenes
+
 
 		// - Mechanics Stuff -
-		// Make harvest face node. Add tools for harvesting.
+		
+		// Add tools for harvesting.
 		// Change arrow shooting sound
 		// Make bow animation better, change speed of animation?
 		// Can keep shooting arrows with left click but not rightclick
 		// Make Hitpoints text show when hitting enemy or getting hit yourself, over time damage etc
-		// Holding left button updates direction to slow, fix
 		// Arrows stop at the player collider, maybe should stick to the actual character instead
 		// Make so Enemy stops chase earlier if player is not visable.
 
+		// - Data stuff -
+
 		// - Animation Stuff -
 		// Make variants in attack animation
-		// Fix gliding issue with animation while moving
+		// Fix gliding issue with animation while moving (fixed?)
 		// Screen jumps/flickers when animating attack.
 
+		// - Terrain -
+		// Terrain clips in dungeon level, something wrong with camera not rendering it correctly
+		// Redo Grass in Town
 
 		// - Items Stuff -
 		// Make Objects scavangeble and droppable by enemies
@@ -163,7 +181,6 @@ Nov 2022
 		// Maybe have certain rooms spawn enemies and not the added corridor?
 		// Limit obstacles from spawning in front of doorways
 
-		// TODO
 		// Player can get stuck sometimes fix, fixed?
 
 		//  - Maybe dont do these Stuff - 

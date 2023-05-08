@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0691670807a5b114a9e9da52ede76479, type: 3}
   m_Name: PlayerSettingsData
   m_EditorClassIdentifier: 
-  TownPosition: {x: 52, y: 0.17, z: 15}
-  TownSpotObjectsTransforms:
-  - {fileID: 0}
+  TownPosition: {x: 11.62, y: 0, z: 23.83}
+  TownSpotsPositions:
+  - {x: 52.45, y: 0, z: 14.16}
+  - {x: 52.53961, y: 0.13123512, z: 71.81511}
+  - {x: 140.3, y: 0, z: 25.6}
+  - {x: 41.318214, y: 0, z: 57.38363}
+  - {x: 11.62, y: 5.522, z: 23.83}

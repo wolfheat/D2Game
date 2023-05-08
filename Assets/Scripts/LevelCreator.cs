@@ -520,11 +520,12 @@ public class LevelCreator : MonoBehaviour
 		Vector2Int step = Vector2Int.RoundToInt(((Vector2)endID - (Vector2)startID).normalized);
 		Vector2Int currentID = startID;
 
-		for (int i = 0; i < steps; i++)
+		for (int i = 0; i <= steps; i++)
 		{
 			if (roomType[-roomTypeStart.x + currentID.x, -roomTypeStart.y + currentID.y] == 0 || roomType[-roomTypeStart.x + currentID.x, -roomTypeStart.y + currentID.y] == 3)
 			{
 				roomType[-roomTypeStart.x + currentID.x, -roomTypeStart.y + currentID.y] = 3;
+
 				// Check neighboring positions within sideSteps distance and set them to 3
 				for (int x = -roomTypeStart.x + currentID.x - sideSteps; x <= -roomTypeStart.x + currentID.x + sideSteps; x++)
 				{
@@ -543,16 +544,20 @@ public class LevelCreator : MonoBehaviour
 					}
 				}
 			}
-			int lastType = roomType[-roomTypeStart.x + currentID.x, -roomTypeStart.y + currentID.y];
-			Vector2Int lastID = currentID;
-			currentID += step;
-			int thisType = roomType[-roomTypeStart.x + currentID.x, -roomTypeStart.y + currentID.y];
 
-			//if (((thisType >= 100 && thisType <= 199)|| (lastType >= 100 && lastType <= 199)) && lastType != 0 && thisType != lastType)
-			if (lastType != 0 && thisType != lastType)
+			if (i < steps)
 			{
-				doorOpenings.Add(new DoorInfo(currentID, -step));
-				doorOpenings.Add(new DoorInfo(lastID, step));
+				int lastType = roomType[-roomTypeStart.x + currentID.x, -roomTypeStart.y + currentID.y];
+				Vector2Int lastID = currentID;
+				currentID += step;
+				int thisType = roomType[-roomTypeStart.x + currentID.x, -roomTypeStart.y + currentID.y];
+
+				//if (((thisType >= 100 && thisType <= 199)|| (lastType >= 100 && lastType <= 199)) && lastType != 0 && thisType != lastType)
+				if (lastType != 0 && thisType != lastType)
+				{
+					doorOpenings.Add(new DoorInfo(currentID, -step));
+					doorOpenings.Add(new DoorInfo(lastID, step));
+				}
 			}
 		}
 	}

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Slot : MonoBehaviour
@@ -12,7 +13,7 @@ public class Slot : MonoBehaviour
         HeldItem = newItem;
         HeldItem.SetParent(this);
         HasItem = true;
-            
+        
         return current;
     }
 

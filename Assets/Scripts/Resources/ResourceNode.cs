@@ -35,11 +35,12 @@ public abstract class ResourceNode : MonoBehaviour, IInteractable
         // Create Particle effects
         // Play Sound
         // Destroy disable gameobject
-        Destroy(gameObject);
+        Destroy(base.gameObject);
     }
     public void Interract()
     {
         Debug.Log("Interact with: "+type);
         Harvest();
     }
+
 }

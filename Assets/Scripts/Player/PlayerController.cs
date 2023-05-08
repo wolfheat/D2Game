@@ -49,7 +49,7 @@ public class PlayerController : PlayerUnit
     // Settings - Constants
 	private const float StopDistance = 0.1f;
 	private const float MinGatherDistance = 1.5f;
-	private const float HoldMouseDuration = 0.2f;
+	private const float HoldMouseDuration = 0.1f;
 	private const float RotationSpeed = 900f;
 
 
@@ -58,10 +58,7 @@ public class PlayerController : PlayerUnit
 	private bool holdPosition = false;
 
 	private Coroutine interactCoroutine;
-
-
-
-
+    private bool validClick;
 
     private void OnEnable()
     {
@@ -132,10 +129,12 @@ public class PlayerController : PlayerUnit
 	private void MouseButtonHeldCheck()
 	{
 		mouseClickTimer += Time.deltaTime;
-		if (Inputs.Instance.Controls.Land.LeftClick.inProgress && !attackLock && mouseClickTimer > HoldMouseDuration)
+		if (validClick && Inputs.Instance.Controls.Land.LeftClick.inProgress && !attackLock && mouseClickTimer > HoldMouseDuration)
 		{
 			// Left button is held
-			SaveOrExecutePlayerAction();
+			//Sample mouse again
+			if(MouseClick())
+				SaveOrExecutePlayerAction();
 			mouseClickTimer = 0;
 		}else if(!Inputs.Instance.Controls.Land.LeftClick.inProgress) mouseClickTimer = 0;
     }
@@ -162,6 +161,7 @@ public class PlayerController : PlayerUnit
             playerAnimationEventController.AttackDidHit = true;
         }
     }
+
     private void StopInPlace()
 	{
 		// get position X distance in front of player
@@ -177,21 +177,20 @@ public class PlayerController : PlayerUnit
 	private bool MouseClick(bool rightClick = false)
 	{
 		// Clicking UI element, ignore gameplay clicks
-		if (Inputs.Instance.PointerOverUI){	return false;}
-
-		// Explain whats suppose to happen - 3 
-		// Before all info of the click was stored, want to change this to specific action instead
-
-		// Clicking a position on NavMesh to walk to
-		// Clicking to attack in a direction
-		// Clicking to Aim arrows in a direction
-		// Clicking on an Interactable to interact with
+		if (Inputs.Instance.PointerOverUI){
+			Debug.Log("Click On UI dismiss	");
+			return false;
+		}
 
 		IInteractable interactable = null;
 		PlayerActionType playerActionType = PlayerActionType.Move;
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
 
-        Physics.Raycast(ray.origin, ray.direction, out RaycastHit hit, 1000f);
+		//If clicking anywhere on navmesh
+
+
+        //Physics.Raycast(ray.origin, ray.direction, out RaycastHit hit, 1000f);
+        Physics.Raycast(ray.origin, ray.direction, out RaycastHit hit, 1000f, GroundLayers);
         Vector3 clickPoint = hit.point;
         if (!NavMesh.SamplePosition(clickPoint, out NavMeshHit navhit, 1f, NavMesh.AllAreas))
         {
@@ -213,44 +212,15 @@ public class PlayerController : PlayerUnit
             {
 				activeInteractable = interactable;
                 Debug.Log("Hit object is Interactable");
+				clickPoint = interactableHit.transform.position + (transform.position-interactableHit.transform.position).normalized* MinGatherDistance;
+				FindObjectOfType<WayPointController>().PlaceWaypointBlob(clickPoint);
             }
 			playerActionType = PlayerActionType.Interact;                
         }
-		//Debug.Log("Setting ClickInfo interactable to: "+interactable);
+		//Debug.Log("Click: "+ playerActionType +" Interactable: "+interactable+"ClickPoint: "+clickPoint+" hitpoint:"+hit.point);
         clickInfo = new ClickInfo(playerActionType, clickPoint, aimPoint, interactable);
         return true;
 
-		/*
-		// Get Player ActionType = Gather, Move, Attack, Powerattack
-        Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        
-        Physics.Raycast(ray.origin, ray.direction, out RaycastHit hit, 1000f);
-
-        // OLD CLICKPOINT Vector3 clickPoint = new Vector3(hit.point.x, 0, hit.point.z);
-        Vector3 clickPoint = hit.point;
-
-		Debug.Log("Get CLick Info PAEController: "+playerAnimationEventController);
-		//Debug.Log("Get CLick Info PAEController.ShootPoint: "+ playerAnimationEventController.ShootPoint);
-        Vector3 aim = playerAnimationEventController.ShootPoint;	
-
-        float lineScalarValue =  (aim.y - ray.origin.y) /ray.direction.y;
-		Vector3 aimPoint = ray.origin + ray.direction * lineScalarValue;
-
-        PlayerActionType playerActionType = DeterminePlayerActionType(ray, type, ref hit);
-
-        if (!NavMesh.SamplePosition(clickPoint, out NavMeshHit navhit, 1f, NavMesh.AllAreas))
-        {
-            // The clicked point is outside the NavMesh, Find the closest point on the NavMesh to the clicked point
-            navhit.position = GetClosestClickPointWhenClickingOutside(clickPoint);            
-        }
-
-		// Determin what position was clicked
-		Vector3 clickPosition = playerActionType == PlayerActionType.Gather ? hit.point : navhit.position;
-
-		// Set ClickInfo i.e (LeftMouse, MoveTo, Position)
-        clickInfo = new ClickInfo(type, playerActionType, clickPosition, aimPoint);
-		return true;
-		*/
     }
 
     private Vector3 CalculateAimPoint(Ray ray)
@@ -259,29 +229,6 @@ public class PlayerController : PlayerUnit
         float lineScalarValue = (aim.y - ray.origin.y) / ray.direction.y;
         return ray.origin + ray.direction * lineScalarValue;
     }
-
-	/*
-    private PlayerActionType DeterminePlayerActionType(Ray ray,ClickType type , ref RaycastHit hit)
-    {
-		// Check if "Hold position" is down (Shift) and what type of click was made. 
-		if (holdPosition) return (type == ClickType.Right ? PlayerActionType.PowerAttack : PlayerActionType.Attack);
-
-		// Check if clicked on resource
-		if (Physics.Raycast(ray.origin, ray.direction, out hit, 1000f, layerMask: ResourceLayer))
-		{
-			// Get clicked Node if available
-			if (hit.collider.TryGetComponent(out activeNode))
-			{
-				Debug.Log("Hit a Resource");
-			}
-
-            return PlayerActionType.Gather;
-		}
-
-
-        // Return Default = Move
-        return PlayerActionType.Move;
-    }*/
 
     private Vector3 GetClosestClickPointWhenClickingOutside(Vector3 point)
     {
@@ -351,19 +298,23 @@ public class PlayerController : PlayerUnit
 	
 	private IEnumerator InteractAt()
 	{
+		Debug.Log("Interact At "+ clickInfo.pos);
 		//If to far move closer
-		if((transform.position- clickInfo.pos).magnitude > MinGatherDistance) 
+		if((transform.position- clickInfo.pos).magnitude > StopDistance) 
 		{
 			playerState.SetState(PlayerState.MoveToInteract);
 			navMeshAgent.isStopped = false;
 			navMeshAgent.SetDestination(clickInfo.pos);
 		}
-		while ((transform.position - clickInfo.pos).magnitude > MinGatherDistance)
+		while ((transform.position - clickInfo.pos).magnitude > StopDistance)
 		{
 			//Debug.Log("Distance to Resounce: "+ (transform.position - clickInfo.pos).magnitude);
 			yield return null;		
 		}
-		//navMeshAgent.SetDestination(transform.position);
+
+		transform.rotation = Quaternion.LookRotation(activeInteractable.gameObject.transform.position - transform.position, Vector3.up);
+
+		Debug.Log("Now Iteract, at pos: "+transform.position);
 		playerState.SetState(PlayerState.Interact);
 		soundmaster.PlaySFX(SoundMaster.SFX.Gather);		
 	}
@@ -449,8 +400,8 @@ public class PlayerController : PlayerUnit
 	{
         if (context.phase == InputActionPhase.Started)
         {
-			MousePowerClick();
-			SaveOrExecutePlayerAction();
+			if(MousePowerClick())
+				SaveOrExecutePlayerAction();
         }
         else if (context.phase == InputActionPhase.Canceled)
         {
@@ -461,8 +412,8 @@ public class PlayerController : PlayerUnit
 	{
         if (context.phase == InputActionPhase.Started)
         {
-			MouseClick();
-			SaveOrExecutePlayerAction();
+			validClick = MouseClick();
+			if(validClick) SaveOrExecutePlayerAction();
         }
         else if (context.phase == InputActionPhase.Canceled)
         {
@@ -505,6 +456,12 @@ public class PlayerController : PlayerUnit
 
     internal void TakeHit(int damage)
     {
-		Debug.Log("Player Take Hit: "+damage);
+		FindObjectOfType<HitInfoText>().CreateHitInfo(transform.position, damage);
+
+        Debug.Log("Player Take Hit: "+damage);        
+        if(CharacterStats.Health>0) CharacterStats.Health -= damage;
+
+        if (CharacterStats.Health <= 0)
+            Debug.Log("Player Died");
     }
 }

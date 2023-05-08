@@ -14,18 +14,21 @@ class PlayerAnimationEventController : MonoBehaviour
 	ProjectilesSpawner projectiles;
 
     [SerializeField] private GameObject shootPoint;
+    private StashUI stash;
     public Vector3 ShootPoint { get { return shootPoint.transform.position; }}
     public Vector3 Aim { get; set; }
 
     public void Start()
 	{
+		soundMaster = FindObjectOfType<SoundMaster>();
+        projectiles = FindObjectOfType<ProjectilesSpawner>();
+		stash = FindObjectOfType<StashUI>();
+
 		playerController = GetComponent<PlayerController>();
 		navMeshAgent = GetComponent<NavMeshAgent>();
 		playerState = GetComponent<PlayerStateControl>();
         Debug.Log("PlayerAnimationEventController START");
 
-		soundMaster = FindObjectOfType<SoundMaster>();
-        projectiles = FindObjectOfType<ProjectilesSpawner>();
 	}
     public void ForcedStopGatheringEvent(bool completedEntireGathering = false)
     {
@@ -41,6 +44,12 @@ class PlayerAnimationEventController : MonoBehaviour
 		soundMaster.StopSFX();
     }
 
+    private void AnimationOpenStashEvent()
+	{
+		Debug.Log("Open Stash!");
+        stash.ShowPanel();
+    }
+	
     private void AnimationStopGatheringEvent()
 	{
 		ForcedStopGatheringEvent(true);

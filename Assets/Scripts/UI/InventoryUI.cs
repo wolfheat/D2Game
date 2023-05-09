@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class InventoryUI : MonoBehaviour
 {
@@ -44,8 +45,10 @@ public class InventoryUI : MonoBehaviour
 
     public void AddTestData(InputAction.CallbackContext context)
     {
+        // Check what scene? Depending on town or not save this to characterStats?
         int type = Random.Range(0, testData.Length);
         AddItem(testData[type]);
+        
     }
     public bool AddItem(ItemData data)
     {
@@ -67,7 +70,20 @@ public class InventoryUI : MonoBehaviour
         InventoryItem inventoryItem = Instantiate(inventoryItemPrefab, slot.transform);
         inventoryItem.DefineItem(data,slot);
         slot.PlaceItem(inventoryItem);
+
+        StoreItemsIfInTown();
+        
     }
+
+    private void StoreItemsIfInTown()
+    {
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "TownScene")
+        {
+            //Debug.Log("In Town, Store Inventory when adding to it");
+            StoreItemDataArray();
+        }else Debug.Log("Not In Town, Inventory not stored when adding this item");
+    }
+
     public void UpdateItems()
     {
 

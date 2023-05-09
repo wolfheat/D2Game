@@ -39,8 +39,11 @@ public class TownPositionsController : MonoBehaviour
     private void OnApplicationQuit()
     {
         Debug.Log("On Aplication quit set player position");
-        ChangeToClosestPoint(FindObjectOfType<PlayerController>().transform.position);
-
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "TownScene")
+        {
+            ChangeToClosestPoint(FindObjectOfType<PlayerController>().transform.position);            
+        }
+        else Debug.Log("Not In Town, Player position not stored");
     }
 }
 

@@ -1169,7 +1169,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9b8e44002b21f64b81e3438cd2b8eea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  quitPanel: {fileID: 1152494014040302456}
+  panel: {fileID: 1152494014040302456}
   preReleaseInfoController: {fileID: 1152494014171804187}
   text: {fileID: 1152494014481818501}
 --- !u!1 &1152494014362195901
@@ -2771,7 +2771,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 888551c9175949248b2abba1c249befc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loadDungeonPanel: {fileID: 1152494015448964561}
+  panel: {fileID: 1152494015448964561}
 --- !u!1 &1152494014827341813
 GameObject:
   m_ObjectHideFlags: 0
@@ -7367,8 +7367,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1152494014807043514}
         m_TargetAssemblyTypeName: LoadDungeon, Assembly-CSharp
-        m_MethodName: HideMenu
-        m_Mode: 6
+        m_MethodName: CloseMenu
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -8696,8 +8696,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1152494014297843171}
         m_TargetAssemblyTypeName: ExitGame, Assembly-CSharp
-        m_MethodName: HideMenu
-        m_Mode: 6
+        m_MethodName: CloseMenu
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -9455,6 +9455,14 @@ PrefabInstance:
     - target: {fileID: 4812522672525029660, guid: f6ee2d18a9bee3744a6da58613acc462, type: 3}
       propertyPath: m_Size
       value: 0.96132666
+      objectReference: {fileID: 0}
+    - target: {fileID: 7438892291351507601, guid: f6ee2d18a9bee3744a6da58613acc462, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7438892291351507601, guid: f6ee2d18a9bee3744a6da58613acc462, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: CloseMenu
       objectReference: {fileID: 0}
     - target: {fileID: 7612947646233607829, guid: f6ee2d18a9bee3744a6da58613acc462, type: 3}
       propertyPath: m_AnchorMax.x

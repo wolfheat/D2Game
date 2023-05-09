@@ -2,33 +2,28 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class ExitGame : MonoBehaviour
+public interface IOpenCloseMenu
 {
-    [SerializeField] GameObject quitPanel;
+    public bool PanelEnabled { get;}
+    public void OpenMenu();
+    public void CloseMenu();
+}
+
+public class ExitGame : MonoBehaviour, IOpenCloseMenu
+{
+    [SerializeField] GameObject panel;
     [SerializeField] PreReleaseInfoController preReleaseInfoController;
     [SerializeField] TextMeshProUGUI text;
+
+    public bool PanelEnabled => panel.activeSelf;
+    public void OpenMenu() => panel.SetActive(true);
+    public void CloseMenu() => panel.SetActive(false);
+    
 
     public void Start()
     {
         text.text = preReleaseInfoController.infoText.text;
-        HideMenu(true);
-    }
-    public void OnEnable()
-    {
-        Inputs.Instance.Controls.Land.ESC.started += ESCPressed;
-    }
-    public void OnDisable()
-    {
-        Inputs.Instance.Controls.Land.ESC.started -= ESCPressed;
-    }
-    public void ESCPressed(InputAction.CallbackContext context)
-    {
-        HideMenu(quitPanel.activeSelf);
-    }
-    
-    public void HideMenu(bool action = true)
-    {
-        quitPanel.SetActive(!action);
+        CloseMenu();
     }
     
 	public void Quit()

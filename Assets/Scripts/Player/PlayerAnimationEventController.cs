@@ -33,7 +33,7 @@ class PlayerAnimationEventController : MonoBehaviour
     public void ForcedStopGatheringEvent(bool completedEntireGathering = false)
     {
 
-        Debug.Log("Stop Gathering!");
+        //Debug.Log("Stop Gathering!");
 
 		playerController.StopGathering();
 		if(completedEntireGathering) playerController.InteractWithIteractable();
@@ -47,9 +47,10 @@ class PlayerAnimationEventController : MonoBehaviour
     private void AnimationOpenStashEvent()
 	{
 		Debug.Log("Open Stash!");
-        stash.ShowPanel();
+        stash.OpenMenu();
+        playerState.SetState(PlayerState.Idle);
     }
-	
+
     private void AnimationStopGatheringEvent()
 	{
 		ForcedStopGatheringEvent(true);

@@ -22,6 +22,10 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - Items
+  - m_GUID: cb6a72f4ff764d143bffab8e05ce6684
+    m_Address: Assets/Scripts/ScriptableObjects/Player/PlayerSettingsData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 1ce26723591695e44bc7e1d6abd74340, type: 2}
   m_SchemaSet:

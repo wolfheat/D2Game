@@ -32,15 +32,9 @@ public class InventoryItem : UIItem, IDragHandler, IEndDragHandler, IBeginDragHa
 
     public void SetParent(Slot p)
     {
-        Debug.Log("Setting item " + Data.Itemname + " to parent " + p.gameObject.GetInstanceID());
+        //Debug.Log("Setting item " + Data.Itemname + " to parent " + p.gameObject.GetInstanceID());
         ParentSlot = p;
         ResetPlacement();
-    }
-
-    public void DefineItem(ItemData newItemData)
-    {
-        Data = newItemData;
-        UpdateGraphics();
     }
 
     public ItemData DefineItem(ItemData newItemData, Slot p)

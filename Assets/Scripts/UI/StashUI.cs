@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StashUI : MonoBehaviour
+public class StashUI : MonoBehaviour, IOpenCloseMenu
 {
     [SerializeField] GameObject panel;
     [SerializeField] GameObject itemParent;
@@ -12,25 +12,15 @@ public class StashUI : MonoBehaviour
 
     private List<StashItem> stashItems = new List<StashItem>();
 
+    public bool PanelEnabled => panel.activeSelf;
+    public void OpenMenu(){panel.SetActive(true); UpdateStashItems();}
+    public void CloseMenu() => panel.SetActive(false);
+
     private void Start()
     {
         library = FindObjectOfType<ItemLibrary>();
         inventoryUI = FindObjectOfType<InventoryUI>();
-    }
-
-
-    public void ShowPanel()
-    {
-        if (panel.activeSelf) return;
-        Debug.Log("Show Panel");
-        panel.SetActive(true);
-        UpdateInventoryItems();
-    }
-
-    public void ClosePanel()
-    {
-        Debug.Log("Return To Town, Close pressed");
-        panel.SetActive(false);
+        CloseMenu();
     }
 
     public void MoveAllButton()
@@ -41,15 +31,17 @@ public class StashUI : MonoBehaviour
         UpdateInventoryItems();
     }
 
-    private void UpdateInventoryItems()
+    private void UpdateStashItems()
     {
+        Debug.Log("Updating Stash Items");
         ClearStash();
+        if (CharacterStats.Stash.Count == 0) return;
         foreach (int ID in CharacterStats.Stash.Keys) 
         {
             StashItem newStashItem = Instantiate(stashItemPrefab, itemParent.transform);
             ItemData data = library.GetItemByID(ID);
             newStashItem.DefineItem(data);
-            Debug.Log("Adding "+data.Itemname+" amount: "+ CharacterStats.Stash[ID]);
+            //Debug.Log("Adding "+data.Itemname+" amount: "+ CharacterStats.Stash[ID]);
             newStashItem.SetAmount(CharacterStats.Stash[ID]);
             stashItems.Add(newStashItem);
         }
@@ -64,7 +56,7 @@ public class StashUI : MonoBehaviour
         stashItems.Clear();
     }
 
-    private void UpdateStashItems()
+    private void UpdateInventoryItems()
     {
         inventoryUI.LoadItemDataArray();
     }

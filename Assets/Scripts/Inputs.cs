@@ -15,9 +15,6 @@ public class Inputs : MonoBehaviour
 	{
 		PointerOverUI = EventSystem.current.IsPointerOverGameObject();
 	}
-
-	private bool? destroyed;
-
 	private void Awake()
 	{
 		//Singelton
@@ -35,24 +32,10 @@ public class Inputs : MonoBehaviour
 	}
 	private void OnEnable()
 	{
-		Debug.Log("Inputs onEnable run, Destroyed: "+destroyed);
-		Controls.Enable();
-		// ARE these aven needed?
-		//Controls.Land.LeftClick.performed += _ => LClick = _.ReadValue<float>();
-		//Controls.Land.LeftClick.canceled+= _ => LClick = _.ReadValue<float>();
-		Debug.Log("Inputs onEnable run");
+		Controls.Enable();		
 	}
 	private void OnDisable()
 	{
-		if (destroyed == true)
-		{
-			Debug.Log("Inputs onDisable run for destroyed item");
-			return;
-		}
-
-        //Controls.Land.LeftClick.performed -= _ => LClick = _.ReadValue<float>();
-        //Controls.Land.LeftClick.canceled -= _ => LClick = _.ReadValue<float>();
-
         Controls.Disable();
 	}
 }

@@ -141,33 +141,32 @@ Nov 2022
 		* CharacterStats now hold ID and amount of items the player possess
 		* Can transfer items from inventory to characterstats and update stash from that.
 		* Amount of items now show in stash, inventory is cleared when transfering
-		* 
+9/5		* Interaction point for stash can now be reach without fail.
+		* Player is set to Idle when interacting with stash, so when closing stash it can be opened again by clicking.
+		* Items recieved in town is now added to the inventory (items from dungeon need to be brought to town to save)
+		* Reworked the opening closing of windows. ESC now hides menus in order.
+		* Player Position is only stored if exiting game in village.
+		* Made the collider for clicking stash larger so the edges are not counted as missed.
+		* Got saving to File working with JasonConvert and adding Newtonsoft.Json
 
-
-		// Need to update items and inventory if recieving items in town.
+		// Need to fix up saving system. Store save file in SO during gameplay and store to file from that?
+							
 		// Recreating entire stash when updating make more efficient.
 
-		// Need to save off the characterstats to playerprefs or similar so it persisist on load
-
-		// OBS Trying the solution of using Resources Load to load in all objects to itemlibrary, aid to not be a good solution change later?
-
-
-		// Position stored if exited game in dungeon, should only store in village
-
-		// Need some system that stores all items in game.	
+		// Need some system that stores all items in game.	(Semi started, Item Library added)
 
 		// --- --- TODO --- ---
 
-		// Fix load/save system scriptabe object wont do it
+		// Fix load/save system scriptabe object wont do it (PlayerPrefs later external database)
 
-		// Interfaces!!! One down
+		// Add more Interfaces
 
 		// - Content -
 		// Load Screen between scenes
 
-
 		// - Mechanics Stuff -
 		
+		// Player can get stuck sometimes fix, fixed?
 		// Add tools for harvesting.
 		// Change arrow shooting sound
 		// Make bow animation better, change speed of animation?
@@ -179,25 +178,23 @@ Nov 2022
 		// - Data stuff -
 
 		// - Animation Stuff -
-		// Make variants in attack animation
+		// Make variants in attack animation (Power attack hit harder and larger with other animation/time to complete?)
 		// Fix gliding issue with animation while moving (fixed?)
 		// Screen jumps/flickers when animating attack.
 
 		// - Terrain -
 		// Terrain clips in dungeon level, something wrong with camera not rendering it correctly
-		// Redo Grass in Town
+		// Redo Grass in Town, Grass texture has artifacs
 
 		// - Items Stuff -
-		// Make Objects scavangeble and droppable by enemies
-		// Make inventory for objects, and general UI
-
+		// Make Objects droppable by enemies
+		
 		//  - LevelCreation Stuff -
 		// The remove all children method for clearing doorways removes ground for cracked tile floor.
 		// Make it so tiles dont have enemies, resources, obstacles only one on each
 		// Maybe have certain rooms spawn enemies and not the added corridor?
 		// Limit obstacles from spawning in front of doorways
 
-		// Player can get stuck sometimes fix, fixed?
 
 		//  - Maybe dont do these Stuff - 
 		// Better to use A* alg to find shortest path with weights

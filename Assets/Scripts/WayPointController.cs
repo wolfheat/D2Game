@@ -38,7 +38,7 @@ public class WayPointController : MonoBehaviour
 	}
 	public void PlaceWaypointBlob(Vector3 p)
 	{
-        Debug.Log("Placing Blob");
+        //Debug.Log("Placing Blob");
         if(blob == null) blob = Instantiate(blobPrefab,p,Quaternion.identity);
         else blob.transform.position = p;
 	}

@@ -15,11 +15,17 @@ public class StashItem : UIItem, IPointerClickHandler
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            Debug.Log("Left Click STash Item");
+            if (Inputs.Instance.Controls.Land.Shift.inProgress)
+                Debug.Log("Left Click (Shift) Stash Item");
+            else
+                Debug.Log("Left Click Stash Item");
         }
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            Debug.Log("Right Click STash Item");
+            if(Inputs.Instance.Controls.Land.Shift.inProgress)
+                Debug.Log("Right Click (Shift) Stash Item");
+            else
+                Debug.Log("Right Click Stash Item");
         }
     }
 }

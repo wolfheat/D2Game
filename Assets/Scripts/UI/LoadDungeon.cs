@@ -3,32 +3,29 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
-public class LoadDungeon : MonoBehaviour
+public class LoadDungeon : MonoBehaviour, IOpenCloseMenu
 {
-    [SerializeField] GameObject loadDungeonPanel;
+    [SerializeField] GameObject panel;
     TownPositionsController townPositionsController;
+
+    public bool PanelEnabled => panel.activeSelf;
+    public void OpenMenu() => panel.SetActive(true);
+    public void CloseMenu() => panel.SetActive(false);
 
     public void Start()
     {
         townPositionsController = FindObjectOfType<TownPositionsController>();
-        Inputs.Instance.Controls.Land.ESC.started += ShowMenu;
-        HideMenu(true);
+        CloseMenu();
     }
     public void ShowMenu(InputAction.CallbackContext coontext)
     {
-        loadDungeonPanel.SetActive(true);
+        OpenMenu();
     }
     
-    public void HideMenu(bool action = true)
-    {
-        Debug.Log("ShowMenu From: "+GetInstanceID());
-        loadDungeonPanel.SetActive(!action);
-    }
-
     public void StartDungeon()
     {
         Debug.Log("StartDungeon");
-        HideMenu(true);
+        CloseMenu();
 
         townPositionsController.ChangeToClosestPoint(FindObjectOfType<PlayerController>().transform.position);
 

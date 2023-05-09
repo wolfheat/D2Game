@@ -28,11 +28,13 @@ public class UIController : MonoBehaviour
         }
         Instance = this;
         Inputs.Instance.Controls.Land.BackSpace.performed += ActivateLevelClearPanel;
+        Inputs.Instance.Controls.Land.ESC.performed += HideOpenMenu;
     }
     
     public void OnDestroy()
     {
         Inputs.Instance.Controls.Land.BackSpace.performed -= ActivateLevelClearPanel;
+        Inputs.Instance.Controls.Land.ESC.performed -= HideOpenMenu;
     }
     
     public void ActivateLevelClearPanel()
@@ -42,7 +44,24 @@ public class UIController : MonoBehaviour
     public void ActivateLevelClearPanel(InputAction.CallbackContext context)
     {
         ActivateLevelClearPanel();
+    } 
+    
+    public void HideOpenMenu(InputAction.CallbackContext context)
+    {
+        //Get all active closables
+        IOpenCloseMenu[] closables = GetComponentsInChildren<IOpenCloseMenu>();
+
+        for (int i = closables.Length-1; i >= 0 ; i--)
+        {
+            if (closables[i].PanelEnabled)
+            {
+                closables[i].CloseMenu();
+                Debug.Log("Closed Menu");
+                return;
+            }
+        }
     }
+
     private void Start()
     {
         Debug.Log("UIController start");

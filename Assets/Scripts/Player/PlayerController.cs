@@ -59,6 +59,7 @@ public class PlayerController : PlayerUnit
 
 	private Coroutine interactCoroutine;
     private bool validClick;
+    [SerializeField] private float distance;
 
     private void OnEnable()
     {
@@ -206,12 +207,12 @@ public class PlayerController : PlayerUnit
 		}
 		else if (Physics.Raycast(ray.origin, ray.direction, out RaycastHit interactableHit, 1000f, Interactable))
         {
-            Debug.Log("Hit layer Interactable");
+            //Debug.Log("Hit layer Interactable");
             // Get clicked Node if available
             if (interactableHit.collider.TryGetComponent(out interactable))
             {
 				activeInteractable = interactable;
-                Debug.Log("Hit object is Interactable");
+                //Debug.Log("Hit object is Interactable");
 				clickPoint = interactableHit.transform.position + (transform.position-interactableHit.transform.position).normalized* MinGatherDistance;
 				FindObjectOfType<WayPointController>().PlaceWaypointBlob(clickPoint);
             }
@@ -300,17 +301,27 @@ public class PlayerController : PlayerUnit
 	{
 		Debug.Log("Interact At "+ clickInfo.pos);
 		//If to far move closer
-		if((transform.position- clickInfo.pos).magnitude > StopDistance) 
+		if(Vector2.Distance(transform.position, clickInfo.pos) > StopDistance) 
 		{
 			playerState.SetState(PlayerState.MoveToInteract);
 			navMeshAgent.isStopped = false;
 			navMeshAgent.SetDestination(clickInfo.pos);
 		}
-		while ((transform.position - clickInfo.pos).magnitude > StopDistance)
-		{
-			//Debug.Log("Distance to Resounce: "+ (transform.position - clickInfo.pos).magnitude);
-			yield return null;		
-		}
+        // Try just checking navmashagents state
+        while (navMeshAgent.remainingDistance > StopDistance)//  (transform.position - clickInfo.pos).magnitude > StopDistance)
+        {
+            distance = Vector2.Distance(transform.position, clickInfo.pos);
+
+            yield return null;
+        }
+
+        /*
+		while (Vector2.Distance(transform.position, clickInfo.pos) > StopDistance)//  (transform.position - clickInfo.pos).magnitude > StopDistance)
+        {
+			distance = Vector2.Distance(transform.position, clickInfo.pos);
+
+            yield return null;		
+		}*/
 
 		transform.rotation = Quaternion.LookRotation(activeInteractable.gameObject.transform.position - transform.position, Vector3.up);
 

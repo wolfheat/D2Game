@@ -6,15 +6,13 @@ public class Slot : MonoBehaviour
 {
     public InventoryItem HeldItem { get; private set; }
     public bool HasItem { get; private set; } = false;
+    public int Index { get; set; } = 0;
 
-    public InventoryItem PlaceItem(InventoryItem newItem)
+    public void PlaceItem(InventoryItem newItem)
     {
-        InventoryItem current = HeldItem;
         HeldItem = newItem;
         HeldItem.SetParent(this);
-        HasItem = true;
-        
-        return current;
+        HasItem = true;        
     }
 
     internal void SwapItemWith(InventoryItem inventoryItem)
@@ -23,6 +21,7 @@ public class Slot : MonoBehaviour
         Slot otherSlot = inventoryItem.ParentSlot;
         if (!HasItem)
         {
+            Debug.Log("Just place Item, this slot was empty");
             PlaceItem(inventoryItem);
             otherSlot.ClearSlot();
             return;
@@ -32,10 +31,16 @@ public class Slot : MonoBehaviour
         otherSlot.PlaceItem(currentlyHeld);
     }
 
-    public void ClearSlot()
+    public void ClearSlotEntirely()
     {
-        if (HeldItem != null) { Destroy(HeldItem.gameObject); }
-        HeldItem = null;
+        if (HeldItem != null) Destroy(HeldItem.gameObject);
+        HeldItem = null;        
+        HasItem = false;
+    }
+    
+    public void ClearSlot(bool destroy=false)
+    {
+        HeldItem = null;        
         HasItem = false;
     }
 

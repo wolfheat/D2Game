@@ -27,9 +27,15 @@ public class UIItem : MonoBehaviour
 
 public class InventoryItem : UIItem, IDragHandler, IEndDragHandler, IBeginDragHandler, IPointerClickHandler
 {
+
+    private InventoryUI inventoryUI;
     private ItemDragParent dragParent;
     public Slot ParentSlot { get; private set; }
 
+    private void Awake()
+    {
+        inventoryUI = FindObjectOfType<InventoryUI>();
+    }
     public void SetParent(Slot p)
     {
         //Debug.Log("Setting item " + Data.Itemname + " to parent " + p.gameObject.GetInstanceID());
@@ -81,12 +87,20 @@ public class InventoryItem : UIItem, IDragHandler, IEndDragHandler, IBeginDragHa
             if (results[0].gameObject.TryGetComponent(out Slot hitSlot))
             {
                 hitSlot.SwapItemWith(this);
+                SavePlayerInventory();
+                
             }
         }
         else
         {
             ResetPlacement();
         }
+    }
+
+    private void SavePlayerInventory()
+    {
+        Debug.Log("Save Player inventory");
+        inventoryUI.StoreItemDataArray();
     }
 
     public void ResetPlacement()
@@ -115,9 +129,30 @@ public class InventoryItem : UIItem, IDragHandler, IEndDragHandler, IBeginDragHa
     {
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            FindObjectOfType<ItemSpawner>().GenerateItem(Data);
-            ParentSlot.ClearSlot();
-            Destroy(gameObject);
+
+            if (FindObjectOfType<StashUI>().PanelEnabled)
+            {
+                FindObjectOfType<SavingUtility>().MoveAllItemsOfThisTypeToStash(Data.ID);
+                FindObjectOfType<StashUI>().UpdateStashItems();
+                FindObjectOfType<StashUI>().UpdateInventoryItems();
+            }
+            else
+            {
+                FindObjectOfType<ItemSpawner>().GenerateItem(Data);
+                ParentSlot.ClearSlot();
+                SavingUtility.Instance.RemoveFromInventory(ParentSlot.Index);
+                Destroy(gameObject);
+            }
+        }
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+
+            if (FindObjectOfType<StashUI>().PanelEnabled && Inputs.Instance.Controls.Land.Shift.IsPressed())
+            {
+                FindObjectOfType<SavingUtility>().MoveItemToStash(ParentSlot.Index);
+                FindObjectOfType<StashUI>().UpdateStashItems();
+                FindObjectOfType<StashUI>().UpdateInventoryItems();
+            }            
         }
     }
 }

@@ -16,7 +16,12 @@ public class StashItem : UIItem, IPointerClickHandler
         if (eventData.button == PointerEventData.InputButton.Left)
         {
             if (Inputs.Instance.Controls.Land.Shift.inProgress)
+            {
                 Debug.Log("Left Click (Shift) Stash Item");
+                SavingUtility.Instance.MoveItemToInventory(Data.ID);
+                FindObjectOfType<InventoryUI>().ReloadFromPlayerInventory();
+                FindObjectOfType<StashUI>().UpdateStashItems();
+            }
             else
                 Debug.Log("Left Click Stash Item");
         }
@@ -25,7 +30,12 @@ public class StashItem : UIItem, IPointerClickHandler
             if(Inputs.Instance.Controls.Land.Shift.inProgress)
                 Debug.Log("Right Click (Shift) Stash Item");
             else
+            {
                 Debug.Log("Right Click Stash Item");
+                SavingUtility.Instance.MoveAsManyItemsToInventoryAsPossible(Data.ID);
+                FindObjectOfType<InventoryUI>().ReloadFromPlayerInventory();
+                FindObjectOfType<StashUI>().UpdateStashItems();
+            }
         }
     }
 }

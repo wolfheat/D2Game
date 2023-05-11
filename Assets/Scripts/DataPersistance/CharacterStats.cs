@@ -9,7 +9,6 @@ using Newtonsoft.Json;
 public static class CharacterStats 
 {
     public static int HitDamage { get; } = 200;
-    //public int Speed { get; } = ;
     public static float AttackTime { get; } = 1.22f;
     public static float AttackSpeedMultiplyer { get; } = 1.8f;
     public static int Health { get; set; } = 50;
@@ -18,74 +17,4 @@ public static class CharacterStats
     public static int EnergyMax { get; set; } = 400;
     public static int XP { get; set; } = 200;
     public static int XPMax { get; set; } = 400;
-    public static ItemData[] Items { get; set; } = new ItemData[20];
-
-    // <ID,amount>
-    public static Dictionary<int, int> Stash { get; set; } = new Dictionary<int, int>();
-
-    public static void AddItemsToStash()
-    {
-        // Copy Items to Stash
-        for (int i = 0; i < Items.Length; i++)
-        {
-            if (Items[i] == null) continue;
-
-            if(!Stash.ContainsKey(Items[i].ID)) Stash.Add(Items[i].ID, 0);
-            int currentValue = Stash[Items[i].ID];
-            Stash[Items[i].ID] = currentValue+1;
-            // remove the Items from inventory
-            Items[i] = null;
-        }
-    }
-       
-    public static int RemoveSingleItemFromStash(int ID)
-    {
-        //Debug.Log("Trying to remove item that dont exist");
-        if (Stash.ContainsKey(ID))
-        {
-            Stash[ID] = Stash[ID]--;
-            if (Stash[ID] == 0)
-            {
-                Stash.Remove(ID);
-            }
-            return ID;
-        }            
-        return -1;
-    }
-
-    public static void SaveToFile()
-    {
-        Debug.Log(" -- SaveToPlayerPrefs -- ");
-        Debug.Log("Saving Amount to stash: " + Stash.Count);
-
-        IDataService dataService = new JsonDataService();
-        //long startime = DateTime.Now.Ticks;
-        if (dataService.SaveData("/player-stats.json",Stash,false))
-        {
-            //Debug.Log("Saved data in: "+(DateTime.Now.Ticks-startime)/10000+"ms");            
-            Debug.Log("Supposed to save now to : /player-stats.json");
-        }
-        else
-        {
-            Debug.LogError("Could not load file.");
-        }
-
-        PlayerPrefs.SetString("Stash", JsonUtility.ToJson(Stash));        
-    }
-    public static void LoadFromFile()
-    {
-        /*Debug.Log(" -- LoadFromPlayerPrefs --");
-        Stash = JsonConvert.DeserializeObject<Dictionary<int, int>> (PlayerPrefs.GetString("Stash"));
-        Debug.Log("Loading Amount to stash: " + Stash.Count);*/
-        IDataService dataService = new JsonDataService();
-        try
-        {
-            Stash = dataService.LoadData<Dictionary<int, int>>("/player-stats.json", false);
-        }
-        catch(Exception e) 
-        {
-            Debug.LogError("Esception: " + e.Message);
-        }     
-    }
-
 }

@@ -16,8 +16,19 @@ public class ItemLibrary : MonoBehaviour
 
     [SerializeField] AssetLabelReference assetLabelReference;
 
-	private void Start()
+    public static ItemLibrary Instance { get; set; }
+
+    private void Start()
     {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        else
+        {
+            Instance = this;
+        }
         Debug.Log("Load all items into library");
 
         LoadAllItems();
@@ -27,13 +38,25 @@ public class ItemLibrary : MonoBehaviour
     {
         Addressables.LoadAssetsAsync<ItemData>(assetLabelReference, (itemData) =>
         {
-            Debug.Log("Loaded:" + itemData.Itemname);
             libraryItemList.Add(itemData.ID,itemData);
-        });                        
+            Debug.Log("Loaded item to Library: "+itemData.Itemname);
+        });
     }
 
     public ItemData GetItemByID(int id)
     {
         return libraryItemList[id];
+    }
+
+    internal ItemData[] ItemsAsData(int[] items)
+    {
+        ItemData[] itemDatas = new ItemData[items.Length];
+        for (int i = 0; i < items.Length; i++)
+        {
+            Debug.Log("Retrieving From Library ID: " + items[i]);
+            if (items[i] > 0) itemDatas[i] = libraryItemList[items[i]];
+            else itemDatas[i] = null;
+        }
+        return itemDatas;
     }
 }

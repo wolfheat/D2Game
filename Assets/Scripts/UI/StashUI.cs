@@ -26,23 +26,24 @@ public class StashUI : MonoBehaviour, IOpenCloseMenu
     public void MoveAllButton()
     {
         Debug.Log("Click On Move All button");
-        CharacterStats.AddItemsToStash();
+        SavingUtility.Instance.MoveAllItemsToStash();
         UpdateStashItems();
         UpdateInventoryItems();
     }
 
-    private void UpdateStashItems()
+    public void UpdateStashItems()
     {
-        Debug.Log("Updating Stash Items");
+        Debug.Log("Updating Stash Items. Currently clearing it and remaking it change later.");
         ClearStash();
-        if (CharacterStats.Stash.Count == 0) return;
-        foreach (int ID in CharacterStats.Stash.Keys) 
+        Debug.Log("Stash Itemcount: "+ SavingUtility.Instance.playerInventory.Stash.Count);
+        if (SavingUtility.Instance.playerInventory.Stash.Count == 0) return;
+        foreach (int ID in SavingUtility.Instance.playerInventory.Stash.Keys) 
         {
             StashItem newStashItem = Instantiate(stashItemPrefab, itemParent.transform);
             ItemData data = library.GetItemByID(ID);
             newStashItem.DefineItem(data);
             //Debug.Log("Adding "+data.Itemname+" amount: "+ CharacterStats.Stash[ID]);
-            newStashItem.SetAmount(CharacterStats.Stash[ID]);
+            newStashItem.SetAmount(SavingUtility.Instance.playerInventory.Stash[ID]);
             stashItems.Add(newStashItem);
         }
     }
@@ -56,8 +57,8 @@ public class StashUI : MonoBehaviour, IOpenCloseMenu
         stashItems.Clear();
     }
 
-    private void UpdateInventoryItems()
+    public void UpdateInventoryItems()
     {
-        inventoryUI.LoadItemDataArray();
+        inventoryUI.ReloadFromPlayerInventory();
     }
 }

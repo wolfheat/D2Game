@@ -148,17 +148,23 @@ Nov 2022
 		* Player Position is only stored if exiting game in village.
 		* Made the collider for clicking stash larger so the edges are not counted as missed.
 		* Got saving to File working with JasonConvert and adding Newtonsoft.Json
+11/5	* Now saving an entire class	
+		* Saving now when exiting dungeon, reloading in town also saving before entering dungeon so items follow player
+		* Stash now has some options to manage items. Right click move all of a type. Shift + Left click move one.
+
+
+
+		// Tried to update save functionality so save to file saves the entire playerInventory(Stash + Items) but got problems
+		// When loading the object the reference in save class get lost.
 
 		// Need to fix up saving system. Store save file in SO during gameplay and store to file from that?
+		// Need some system that stores all items in game.	(Semi started, Item Library added)
 							
 		// Recreating entire stash when updating make more efficient.
 
-		// Need some system that stores all items in game.	(Semi started, Item Library added)
 
 		// --- --- TODO --- ---
-
-		// Fix load/save system scriptabe object wont do it (PlayerPrefs later external database)
-
+				
 		// Add more Interfaces
 
 		// - Content -
@@ -185,6 +191,7 @@ Nov 2022
 		// - Terrain -
 		// Terrain clips in dungeon level, something wrong with camera not rendering it correctly
 		// Redo Grass in Town, Grass texture has artifacs
+		// Check for to high resolution in all assets, lower them down for performance
 
 		// - Items Stuff -
 		// Make Objects droppable by enemies

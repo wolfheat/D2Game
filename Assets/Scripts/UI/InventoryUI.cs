@@ -5,9 +5,10 @@ using UnityEngine.SceneManagement;
 
 public class InventoryUI : MonoBehaviour
 {
+    SavingUtility savingUtility;
+
     [SerializeField] InventoryItem inventoryItemPrefab;
     [SerializeField] ItemData[] testData;
-
     [SerializeField] List<Slot> slots;
     
     private const int slotAmount = 20;
@@ -15,8 +16,8 @@ public class InventoryUI : MonoBehaviour
 
     private void Start()
     {
+        savingUtility = FindObjectOfType<SavingUtility>();
         Inputs.Instance.Controls.Land.G.performed += AddTestData;
-        LoadItemDataArray();
     }
     
     private void OnDestroy()
@@ -26,21 +27,40 @@ public class InventoryUI : MonoBehaviour
 
     public void StoreItemDataArray()
     {
-        Debug.Log("Storing Items In DataSave");
-        ItemData[] itemData = new ItemData[slots.Count];
+        Debug.Log("Update Stored Items");
+        int[] itemIDs = new int[slots.Count];
         for (int i = 0; i < slots.Count; i++)
-            itemData[i] = slots[i].HasItem?slots[i].HeldItem.Data:null;
-        CharacterStats.Items = itemData;
+            itemIDs[i] = slots[i].HasItem?slots[i].HeldItem.Data.ID:-1;
+        //savingUtility.playerData.Items = itemData;
+        Debug.Log("savingUtility.playerInventory.Items = "+ savingUtility.playerInventory.Items);
+        savingUtility.playerInventory.Items = itemIDs;
     }
     
-    public void LoadItemDataArray()
+    public void ReloadFromPlayerInventory()
     {
-        Debug.Log("Loading Items From DataSave");
-        ItemData[] itemData = CharacterStats.Items;
+        ItemData[] itemDatas = ItemLibrary.Instance.ItemsAsData(savingUtility.playerInventory.Items);
+        LoadItemDataArray(itemDatas);
+    }
+
+    public void LoadItemDataArray(ItemData[] itemData)
+    {
+        Debug.Log("Load Items into Inventory UI");
+        Debug.Log("Itemdata: "+itemData);
         if (itemData == null) return;
+        ClearAllSlots();
         for (int i = 0; i < itemData.Length; i++)
+        {
             if (itemData[i] != null) AddItemAt(slots[i], itemData[i]);
-            else slots[i].ClearSlot();
+        }
+    }
+
+    private void ClearAllSlots()
+    {
+        for (int i = 0; i < slots.Count; i++)
+        {
+            slots[i].ClearSlotEntirely();
+            slots[i].Index = i;
+        }
     }
 
     public void AddTestData(InputAction.CallbackContext context)
@@ -82,11 +102,6 @@ public class InventoryUI : MonoBehaviour
             //Debug.Log("In Town, Store Inventory when adding to it");
             StoreItemDataArray();
         }else Debug.Log("Not In Town, Inventory not stored when adding this item");
-    }
-
-    public void UpdateItems()
-    {
-
     }
 
 }

@@ -32,9 +32,9 @@ public class LevelClear : MonoBehaviour, IOpenCloseMenu
 	public void OkPressed()
     {
         Debug.Log("Return To Town");
-
+        Debug.Log("Store Collected Items in Inventory");
         FindObjectOfType<InventoryUI>().StoreItemDataArray();
-
+        SavingUtility.Instance.SaveToFile();
 
         ClosePanel();
         SceneManager.LoadScene("TownScene");

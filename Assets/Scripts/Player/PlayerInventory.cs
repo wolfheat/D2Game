@@ -9,4 +9,14 @@ public class PlayerInventory
     // Players Inventory
     public int[] Items { get; set; }= new int[20];
 
+    public int Health { get; set; } = 100;
+    public int MaxHealth { get; set; } = 100;
+    public int Energy { get; set; } = 100;
+    public int MaxEnergy { get; set; } = 100;
+    public int XP { get; set; } = 0;
+    public int MaxXP { get; set; } = 10000;
+    public float AttackSpeedMultiplyer { get; set; } = 1.8f;
+    public int HitDamage { get; set; } = 200;
+    public float AttackTime { get; set; } = 1.22f;
+
 }

@@ -138,8 +138,8 @@ Nov 2022
 		* Stash have a scrollable items list
 		* Can Now load in all itemdata from the items folder with addressables
 		* Added a Item Library that holds all itemdata
-		* CharacterStats now hold ID and amount of items the player possess
-		* Can transfer items from inventory to characterstats and update stash from that.
+		* SavingUtility.Instance.playerInventory now hold ID and amount of items the player possess
+		* Can transfer items from inventory to SavingUtility.Instance.playerInventory and update stash from that.
 		* Amount of items now show in stash, inventory is cleared when transfering
 9/5		* Interaction point for stash can now be reach without fail.
 		* Player is set to Idle when interacting with stash, so when closing stash it can be opened again by clicking.
@@ -151,11 +151,8 @@ Nov 2022
 11/5	* Now saving an entire class	
 		* Saving now when exiting dungeon, reloading in town also saving before entering dungeon so items follow player
 		* Stash now has some options to manage items. Right click move all of a type. Shift + Left click move one.
+		* XP now adds and stores along with many settings for player like speed
 
-
-
-		// Tried to update save functionality so save to file saves the entire playerInventory(Stash + Items) but got problems
-		// When loading the object the reference in save class get lost.
 
 		// Need to fix up saving system. Store save file in SO during gameplay and store to file from that?
 		// Need some system that stores all items in game.	(Semi started, Item Library added)

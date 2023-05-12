@@ -158,7 +158,7 @@ public class PlayerController : PlayerUnit
         if (collider.gameObject.layer == LayerMask.NameToLayer("Enemies"))
         {
             Enemy enemy = collider.gameObject.GetComponent<Enemy>();
-            enemy.Hit(CharacterStats.HitDamage);
+            enemy.Hit(SavingUtility.Instance.playerInventory.HitDamage);
             playerAnimationEventController.AttackDidHit = true;
         }
     }
@@ -366,7 +366,7 @@ public class PlayerController : PlayerUnit
 		else playerState.SetState(PlayerState.ShootArrow);
 
         // Wait For Attack to finish
-        yield return new WaitForSeconds(CharacterStats.AttackTime / CharacterStats.AttackSpeedMultiplyer);
+        yield return new WaitForSeconds(SavingUtility.Instance.playerInventory.AttackTime / SavingUtility.Instance.playerInventory.AttackSpeedMultiplyer);
 
 		attackLock = false;
 		
@@ -467,12 +467,12 @@ public class PlayerController : PlayerUnit
 
     internal void TakeHit(int damage)
     {
-		FindObjectOfType<HitInfoText>().CreateHitInfo(transform.position, damage);
+		FindObjectOfType<HitInfoText>().CreateHitInfo(transform.position, damage,HitInfoType.Damage);
 
         Debug.Log("Player Take Hit: "+damage);        
-        if(CharacterStats.Health>0) CharacterStats.Health -= damage;
+        if(SavingUtility.Instance.playerInventory.Health>0) SavingUtility.Instance.playerInventory.Health -= damage;
 
-        if (CharacterStats.Health <= 0)
+        if (SavingUtility.Instance.playerInventory.Health <= 0)
             Debug.Log("Player Died");
     }
 }

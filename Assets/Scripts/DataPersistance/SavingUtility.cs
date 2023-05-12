@@ -25,6 +25,8 @@ public class SavingUtility : MonoBehaviour
             Instance = this;    
         }
         StartCoroutine(LoadFromFile());
+
+
     }
 
     private void OnApplicationQuit()
@@ -43,7 +45,8 @@ public class SavingUtility : MonoBehaviour
     public IEnumerator LoadFromFile()
     {
         // Hold the load for 1 second so Library has time to load
-        yield return new WaitForSeconds(0.4f);  
+        yield return new WaitForSeconds(0.4f);
+
 
         IDataService dataService = new JsonDataService();
         try
@@ -156,6 +159,10 @@ public class SavingUtility : MonoBehaviour
         if (!playerInventory.Stash.ContainsKey(ID)) playerInventory.Stash.Add(ID, 0);
 
         playerInventory.Stash[ID]++;
+    }
+    public void AddXP(int xp)
+    {
+        playerInventory.XP += xp;        
     }
 
     internal void MoveAsManyItemsToInventoryAsPossible(int ID)

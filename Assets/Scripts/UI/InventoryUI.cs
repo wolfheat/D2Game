@@ -65,7 +65,7 @@ public class InventoryUI : MonoBehaviour
 
     public void AddTestData(InputAction.CallbackContext context)
     {
-        // Check what scene? Depending on town or not save this to characterStats?
+        // Check what scene? Depending on town or not save this to SavingUtility.Instance.playerInventory?
         int type = Random.Range(0, testData.Length);
         AddItem(testData[type]);
         

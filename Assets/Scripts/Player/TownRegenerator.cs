@@ -6,8 +6,8 @@ public class TownRegenerator : MonoBehaviour
 
     private float regenerationTimer = 0f;
     private float regenerationTime = 1f;
-    private int healthRegen = 8;
-    private int energyRegen = 10;    
+    private int healthRegen = 5;
+    private int energyRegen = 5;    
 
 	private void Update()
     {
@@ -21,9 +21,9 @@ public class TownRegenerator : MonoBehaviour
 
     private void Regenerate()
     {
-        if (CharacterStats.Health != CharacterStats.HealthMax)
-            CharacterStats.Health = Mathf.Clamp(CharacterStats.Health+healthRegen,0, CharacterStats.HealthMax);
-        if (CharacterStats.Energy != CharacterStats.EnergyMax)
-            CharacterStats.Energy = Mathf.Clamp(CharacterStats.Energy+energyRegen,0, CharacterStats.EnergyMax);
+        if (SavingUtility.Instance.playerInventory.Health != SavingUtility.Instance.playerInventory.MaxHealth)
+            SavingUtility.Instance.playerInventory.Health = Mathf.Clamp(SavingUtility.Instance.playerInventory.Health + healthRegen, 0, SavingUtility.Instance.playerInventory.MaxHealth);
+        if (SavingUtility.Instance.playerInventory.Energy != SavingUtility.Instance.playerInventory.MaxEnergy)
+            SavingUtility.Instance.playerInventory.Energy = Mathf.Clamp(SavingUtility.Instance.playerInventory.Energy+energyRegen,0, SavingUtility.Instance.playerInventory.MaxEnergy);
     }
 }

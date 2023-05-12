@@ -42,7 +42,7 @@ public class StashUI : MonoBehaviour, IOpenCloseMenu
             StashItem newStashItem = Instantiate(stashItemPrefab, itemParent.transform);
             ItemData data = library.GetItemByID(ID);
             newStashItem.DefineItem(data);
-            //Debug.Log("Adding "+data.Itemname+" amount: "+ CharacterStats.Stash[ID]);
+            //Debug.Log("Adding "+data.Itemname+" amount: "+ SavingUtility.Instance.playerInventory.Stash[ID]);
             newStashItem.SetAmount(SavingUtility.Instance.playerInventory.Stash[ID]);
             stashItems.Add(newStashItem);
         }

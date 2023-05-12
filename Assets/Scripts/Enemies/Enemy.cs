@@ -12,6 +12,7 @@ public class Enemy : BaseUnit
     private Animator animator;
 
 
+    private int XPValue = 10;
     private int health = 100;
     private float waitTimer = 0;
 
@@ -202,6 +203,9 @@ public class Enemy : BaseUnit
         }
         Debug.Log("Clearing Waypoints at die");
         WayPoints.Clear();
+
+        SavingUtility.Instance.AddXP(XPValue);
+        HitInfoText.Instance.CreateHitInfo(transform.position,XPValue,HitInfoType.XP);
 
         DisableColliders();     
 	}

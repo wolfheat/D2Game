@@ -9,9 +9,10 @@ public class HealthBarUIController : MonoBehaviour
 
     private void Update()
     {
-        SetHealthBar(CharacterStats.Health/ (float)CharacterStats.HealthMax);
-        SetEnergyBar(CharacterStats.Energy/ (float)CharacterStats.EnergyMax);   
-        SetXPBar(CharacterStats.XP/ (float)CharacterStats.XPMax);   
+        SetHealthBar(SavingUtility.Instance.playerInventory.Health/ (float)SavingUtility.Instance.playerInventory.MaxHealth);
+        SetEnergyBar(SavingUtility.Instance.playerInventory.Energy / (float)SavingUtility.Instance.playerInventory.MaxEnergy);
+        //Debug.Log("Setting XP "+ SavingUtility.Instance.playerInventory.XP+" of "+ SavingUtility.Instance.playerInventory.MaxXP);
+        SetXPBar(SavingUtility.Instance.playerInventory.XP / (float)SavingUtility.Instance.playerInventory.MaxXP);
     }
 
     public void SetXPBar(float percent)

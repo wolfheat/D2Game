@@ -6,7 +6,7 @@ using System;
 using static UnityEditor.PlayerSettings;
 using Newtonsoft.Json;
 
-public static class CharacterStats 
+public static class CharacterStats
 {
     public static int HitDamage { get; } = 200;
     public static float AttackTime { get; } = 1.22f;

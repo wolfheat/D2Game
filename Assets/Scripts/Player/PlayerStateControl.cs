@@ -19,7 +19,7 @@ public class PlayerStateControl : MonoBehaviour
 	public void SetState(PlayerState newState)
 	{
 		//Set speed of animation
-		animator.speed = CharacterStats.AttackSpeedMultiplyer;
+		animator.speed = SavingUtility.Instance.playerInventory.AttackSpeedMultiplyer;
 
 		switch (newState)
 		{

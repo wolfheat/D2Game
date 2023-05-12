@@ -212,7 +212,7 @@ public class PlayerController : PlayerUnit
             if (interactableHit.collider.TryGetComponent(out interactable))
             {
 				activeInteractable = interactable;
-                //Debug.Log("Hit object is Interactable");
+                Debug.Log("Hit object is Interactable");
 				clickPoint = interactableHit.transform.position + (transform.position-interactableHit.transform.position).normalized* MinGatherDistance;
 				FindObjectOfType<WayPointController>().PlaceWaypointBlob(clickPoint);
             }
@@ -467,7 +467,7 @@ public class PlayerController : PlayerUnit
 
     internal void TakeHit(int damage)
     {
-		FindObjectOfType<HitInfoText>().CreateHitInfo(transform.position, damage,HitInfoType.Damage);
+		FindObjectOfType<HitInfoText>().CreateHitInfo(transform.position, damage, InfoTextType.Damage);
 
         Debug.Log("Player Take Hit: "+damage);        
         if(SavingUtility.Instance.playerInventory.Health>0) SavingUtility.Instance.playerInventory.Health -= damage;

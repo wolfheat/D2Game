@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using Random = UnityEngine.Random;
 
 public class AssetReferenceItemData : AssetReferenceT<ItemData> {
     public AssetReferenceItemData(string guid) : base(guid) { }
@@ -43,6 +45,15 @@ public class ItemLibrary : MonoBehaviour
         });
     }
 
+    public ItemData GetRandomItem()
+    {
+        if(libraryItemList.Count < 1) return null;
+
+        List<int> keys = libraryItemList.Keys.ToList();
+        int randomID = keys[Random.Range(0, keys.Count)];
+        return libraryItemList[randomID];
+    }
+    
     public ItemData GetItemByID(int id)
     {
         return libraryItemList[id];

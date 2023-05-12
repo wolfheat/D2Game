@@ -205,7 +205,7 @@ public class Enemy : BaseUnit
         WayPoints.Clear();
 
         SavingUtility.Instance.AddXP(XPValue);
-        HitInfoText.Instance.CreateHitInfo(transform.position,XPValue,HitInfoType.XP);
+        HitInfoText.Instance.CreateHitInfo(transform.position,XPValue, InfoTextType.XP);
 
         DisableColliders();     
 	}

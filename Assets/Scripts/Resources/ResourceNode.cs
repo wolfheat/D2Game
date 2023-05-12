@@ -2,12 +2,14 @@ using System;
 using UnityEngine;
 
 
-public enum ResourceType{MiningNode, FishingNode, WoodcuttingNode, ScavengingNode, Stash}
+public enum ResourceType{MiningNode, FishingNode, WoodcuttingNode, ScavengingNode, WellResourceNode, CookingResourceNode, Stash }
 public abstract class ResourceNode : MonoBehaviour, IInteractable
 {
     ItemSpawner itemSpawner;
     ItemData itemData;
     protected ResourceType type;
+    protected bool destroyable = true;
+    protected bool spawnItem = true;
     public ResourceType Type{ get {return type;} protected set{} }
 
     internal virtual void Start()
@@ -24,9 +26,12 @@ public abstract class ResourceNode : MonoBehaviour, IInteractable
     {
         if (itemData != null)
         {
-            itemSpawner.GenerateItemAt(itemData, transform.position);
-        }        
-        RemoveAnimation();
+            if(spawnItem) itemSpawner.GenerateItemAt(itemData, transform.position);
+            else UIController.Instance.AddItemToInventory(itemData);
+        }
+        else Debug.LogWarning("Itemdata not set for this interactable");        
+
+        if (destroyable) RemoveAnimation();
     }
 
     private void RemoveAnimation()

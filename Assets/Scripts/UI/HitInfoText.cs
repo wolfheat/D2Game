@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum InfoTextType{Damage,Health,XP}
+public enum InfoTextType{Damage,Health,XP,Info}
 public class HitInfoText : MonoBehaviour
 {
 
@@ -20,15 +20,19 @@ public class HitInfoText : MonoBehaviour
             Instance = this;
         }
     }
-        public void CreateHitInfo(Vector3 pos, int val, HitInfoType type)
+    public void CreateHitInfo(Vector3 pos, int val, InfoTextType type)
     {
-        Debug.Log("Creating hit Info: "+val);
+        CreateHitInfo(pos, val.ToString(), type);
+    }
+    public void CreateHitInfo(Vector3 pos, string text, InfoTextType type)
+    {
+        Debug.Log("Creating hit Info: "+ text);
         // Get screen position
         pos = Camera.main.WorldToScreenPoint(pos);
 
         HitInfo hitInfo = Instantiate(hitInfoPrefab,transform);
         hitInfo.transform.position = pos;
-        hitInfo.SetInfoText(val.ToString(),type);
+        hitInfo.SetInfoText(text,type);
     }
 
 }

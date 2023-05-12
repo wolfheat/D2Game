@@ -81,7 +81,7 @@ public class InventoryUI : MonoBehaviour
                 return true;
             }
         }
-        Debug.Log("No Empty Slot To place item in");
+        HitInfoText.Instance.CreateHitInfo(FindObjectOfType<PlayerController>().transform.position,"Inventory Full!", InfoTextType.Info);
         return false;
     }
 

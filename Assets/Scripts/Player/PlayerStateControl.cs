@@ -56,8 +56,11 @@ public class PlayerStateControl : MonoBehaviour
 					case ResourceType.Stash:
 				animator.CrossFade("OpenStash", 0.1f);
 						return;
-					default:
-						break;
+                    case ResourceType.WellResourceNode:
+                animator.CrossFade("Gather", 0.1f);
+                        return;
+                    default:
+                        break;
 				}
 				break;
 			case PlayerState.Death:

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class StashUI : MonoBehaviour, IOpenCloseMenu
@@ -33,19 +34,42 @@ public class StashUI : MonoBehaviour, IOpenCloseMenu
 
     public void UpdateStashItems()
     {
-        Debug.Log("Updating Stash Items. Currently clearing it and remaking it change later.");
+        Debug.Log("Updating Stash Items.");
         ClearStash();
-        Debug.Log("Stash Itemcount: "+ SavingUtility.Instance.playerInventory.Stash.Count);
+
+        int ItemTypesInStash = SavingUtility.Instance.playerInventory.Stash.Count;
+        int ItemTypesInUI = stashItems.Count;
+        if (ItemTypesInUI > ItemTypesInStash) DeleteAmountFromStash(ItemTypesInUI-ItemTypesInStash);
+        int index = 0;
         if (SavingUtility.Instance.playerInventory.Stash.Count == 0) return;
         foreach (int ID in SavingUtility.Instance.playerInventory.Stash.Keys) 
         {
-            StashItem newStashItem = Instantiate(stashItemPrefab, itemParent.transform);
             ItemData data = library.GetItemByID(ID);
-            newStashItem.DefineItem(data);
-            //Debug.Log("Adding "+data.Itemname+" amount: "+ SavingUtility.Instance.playerInventory.Stash[ID]);
+
+            StashItem newStashItem;
+
+            if (index > stashItems.Count - 1)
+            {
+                newStashItem = Instantiate(stashItemPrefab, itemParent.transform);
+                stashItems.Add(newStashItem);
+            }
+            else
+                newStashItem = stashItems[index];
+
+            newStashItem.DefineItem(data);            
             newStashItem.SetAmount(SavingUtility.Instance.playerInventory.Stash[ID]);
-            stashItems.Add(newStashItem);
+            index++;
         }
+    }
+
+    private void DeleteAmountFromStash(int v)
+    {
+        for (int i = stashItems.Count-1; i > stashItems.Count - 1 - v; i++)
+        {
+            Destroy(stashItems[i].gameObject);
+            stashItems.RemoveAt(i);
+        }
+
     }
 
     private void ClearStash()

@@ -24,7 +24,10 @@ public class ItemSpawner : MonoBehaviour
 
     public void SpawnTestItem(InputAction.CallbackContext context)
     {
-        GenerateItem(itemDataPrefabs[Random.Range(0, itemDataPrefabs.Length)]);
+        ItemData randomData = FindObjectOfType<ItemLibrary>().GetRandomItem();
+        // Currently using list for items, use itemlibrary instead?
+        if(randomData != null) GenerateItem(randomData);
+        //GenerateItem(itemDataPrefabs[Random.Range(0, itemDataPrefabs.Length)]);
     }
     public void GenerateItem(ItemData itemData)
     {

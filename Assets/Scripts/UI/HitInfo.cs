@@ -1,34 +1,40 @@
 using System;
 using System.Collections;
 using TMPro;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 
-public enum HitInfoType{Damage,Healing,XP}
+//public enum HitInfoType{Damage,Healing,XP}
 
 public class HitInfo : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI textField;
 
     private const float FadeRate = 0.02f;
-    public void SetInfoText(string infoString, HitInfoType info = HitInfoType.Damage)
+    private bool isInfo = false;
+    public void SetInfoText(string infoString, InfoTextType info = InfoTextType.Damage)
     {
         textField.text = infoString;
         SetColor(info);
     }
 
-    private void SetColor(HitInfoType info)
+    private void SetColor(InfoTextType info)
     {
         switch (info)
         {
-            case HitInfoType.Damage:
+            case InfoTextType.Damage:
                 textField.color = Color.red;
                 break;
-            case HitInfoType.Healing:
+            case InfoTextType.Health:
                 textField.color = Color.green;
                 break;
-            case HitInfoType.XP:
+            case InfoTextType.XP:
                 textField.color = Color.yellow;
+                break;
+           case InfoTextType.Info:
+                isInfo = true;
+                textField.color = Color.white;
                 break;
             default:
                 break;
@@ -46,7 +52,7 @@ public class HitInfo : MonoBehaviour
         textField.alpha = 1.0f;
         while (textField.alpha > 0f) 
         {
-            textField.alpha -= FadeRate;
+            textField.alpha -= isInfo? FadeRate/3: FadeRate;
             transform.position += Vector3.up*0.1f; 
             yield return null;
         }

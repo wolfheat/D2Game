@@ -175,6 +175,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "S",
+                    "type": "Button",
+                    "id": "41973d00-0a11-4d27-8738-1c6322822725",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -384,6 +393,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "BackSpace",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3fa43b50-efcb-4c9f-b593-a4a5cd9c718b",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "S",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

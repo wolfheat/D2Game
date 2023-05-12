@@ -154,13 +154,13 @@ Nov 2022
 		* XP now adds and stores along with many settings for player like speed
 12/5	* Well can now be harvested for water, water is placed in inventory directly if it has space.
 		* No longer recreating Stash when reloading it, seems to work, check for bugs
-
+		* In Editor - Shift + S saves the game in town, in build it saves on quit.
+		* Made attack variation for normal attack
 
 		// Need to fix up saving system. Store save file in SO during gameplay and store to file from that?
 		// Need some system that stores all items in game.	(Semi started, Item Library added)
 							
-		// Check for bugs in stash reloading after making it more efficient
-
+		
 		// Make Cooking work, maybe UI for it? Maybe do cook animation and entire cook transfer at the end if available?
 
 		// Make Cooked meat work as consumable
@@ -186,12 +186,13 @@ Nov 2022
 		// Make so Enemy stops chase earlier if player is not visable.
 
 		// - Data stuff -
-		// Saving and Loading works but when changing stuff in code while playing save file is corrupt when applicationStop. Fix.
+		// Check for bugs in stash reloading after making it more efficient
 
 		// - Animation Stuff -
 		// Make variants in attack animation (Power attack hit harder and larger with other animation/time to complete?)
 		// Fix gliding issue with animation while moving (fixed?)
 		// Screen jumps/flickers when animating attack.
+		// Attack animation has strange foot movements
 
 		// - Terrain -
 		// Tried a lot of grass variants, remove the ones not needed, clean up project

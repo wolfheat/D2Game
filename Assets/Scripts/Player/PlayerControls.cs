@@ -197,6 +197,15 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""S"",
+                    ""type"": ""Button"",
+                    ""id"": ""41973d00-0a11-4d27-8738-1c6322822725"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -408,6 +417,17 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""action"": ""BackSpace"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3fa43b50-efcb-4c9f-b593-a4a5cd9c718b"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""S"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -435,6 +455,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_Land_ESC = m_Land.FindAction("ESC", throwIfNotFound: true);
         m_Land_BackSpace = m_Land.FindAction("BackSpace", throwIfNotFound: true);
         m_Land_ZoomIn = m_Land.FindAction("ZoomIn", throwIfNotFound: true);
+        m_Land_S = m_Land.FindAction("S", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -513,6 +534,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_Land_ESC;
     private readonly InputAction m_Land_BackSpace;
     private readonly InputAction m_Land_ZoomIn;
+    private readonly InputAction m_Land_S;
     public struct LandActions
     {
         private @PlayerControls m_Wrapper;
@@ -536,6 +558,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @ESC => m_Wrapper.m_Land_ESC;
         public InputAction @BackSpace => m_Wrapper.m_Land_BackSpace;
         public InputAction @ZoomIn => m_Wrapper.m_Land_ZoomIn;
+        public InputAction @S => m_Wrapper.m_Land_S;
         public InputActionMap Get() { return m_Wrapper.m_Land; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -602,6 +625,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @ZoomIn.started -= m_Wrapper.m_LandActionsCallbackInterface.OnZoomIn;
                 @ZoomIn.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnZoomIn;
                 @ZoomIn.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnZoomIn;
+                @S.started -= m_Wrapper.m_LandActionsCallbackInterface.OnS;
+                @S.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnS;
+                @S.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnS;
             }
             m_Wrapper.m_LandActionsCallbackInterface = instance;
             if (instance != null)
@@ -663,6 +689,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @ZoomIn.started += instance.OnZoomIn;
                 @ZoomIn.performed += instance.OnZoomIn;
                 @ZoomIn.canceled += instance.OnZoomIn;
+                @S.started += instance.OnS;
+                @S.performed += instance.OnS;
+                @S.canceled += instance.OnS;
             }
         }
     }
@@ -688,5 +717,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnESC(InputAction.CallbackContext context);
         void OnBackSpace(InputAction.CallbackContext context);
         void OnZoomIn(InputAction.CallbackContext context);
+        void OnS(InputAction.CallbackContext context);
     }
 }

@@ -30,8 +30,11 @@ public class PlayerStateControl : MonoBehaviour
 				animator.CrossFade("Run", 0.1f);
 				break;
 			case PlayerState.AttackSwordSwing:
-				animator.CrossFade("SwordSwing", 0.1f);
-				break;
+				if(Random.Range(0,10)>6)
+					animator.CrossFade("SwordSwing", 0.1f);
+				else
+					animator.CrossFade("SwordSwing2", 0.1f);
+                break;
 			case PlayerState.MoveToInteract:
 				animator.CrossFade("Run", 0.1f);
 				break;

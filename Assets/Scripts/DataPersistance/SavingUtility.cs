@@ -31,7 +31,13 @@ public class SavingUtility : MonoBehaviour
 
     private void OnApplicationQuit()
     {
+        Debug.Log("Shift held: "+ Inputs.Instance.Controls.Land.Shift.IsPressed());
+        Debug.Log("Ctrl held: "+ Inputs.Instance.Controls.Land.CTRL.IsPressed());
+#if UNITY_EDITOR
+        Debug.Log("Exiting in Unity Editor = Do not Save to file");
+#else
         SaveToFile();
+#endif
     }
 
     public void SaveToFile()

@@ -86,5 +86,14 @@ class PlayerAnimationEventController : MonoBehaviour
 
 	}
 
+    internal void EnableAgent()
+    {
+		navMeshAgent.enabled = true;
+    }
+    internal void DisableAgent()
+    {
+		navMeshAgent.enabled = false;
+    }
+
     public bool AttackDidHit { get; set; }    
 }

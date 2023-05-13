@@ -121,6 +121,15 @@ public class Enemy : BaseUnit
 
     private void CheckForChangeOfAction()
     {
+        if (player.IsDead) 
+        { 
+            if (enemyState.State == EnemyState.Attack)
+            {
+                enemyState.SetState(EnemyState.Patrol);
+                GetStoredPatrolWayPoint();
+            }
+            return;
+        }
 
         if (playerDistance <= AttackDistance)
         {

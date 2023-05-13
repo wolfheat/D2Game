@@ -16,6 +16,8 @@ public class ForceSave : MonoBehaviour
 #if UNITY_EDITOR
             Debug.Log("IN EDITOR - Force Save to File");
             GetComponent<SavingUtility>().SaveToFile();
+            Vector3 pos = FindObjectOfType<PlayerController>().transform.position;
+            HitInfoText.Instance.CreateHitInfo(pos, "Game Saved To File", InfoTextType.Info);
 #endif
         }
     }

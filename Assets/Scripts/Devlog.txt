@@ -156,6 +156,9 @@ Nov 2022
 		* No longer recreating Stash when reloading it, seems to work, check for bugs
 		* In Editor - Shift + S saves the game in town, in build it saves on quit.
 		* Made attack variation for normal attack
+13/5	* Fixed Animation error for attack 2 (baked Root)
+		* Made player death animation work, player can now die.
+
 
 		// Need to fix up saving system. Store save file in SO during gameplay and store to file from that?
 		// Need some system that stores all items in game.	(Semi started, Item Library added)
@@ -192,7 +195,7 @@ Nov 2022
 		// Make variants in attack animation (Power attack hit harder and larger with other animation/time to complete?)
 		// Fix gliding issue with animation while moving (fixed?)
 		// Screen jumps/flickers when animating attack.
-		// Attack animation has strange foot movements
+		// Attack animation has strange foot movements - Might be solved by bake root animation on animation
 
 		// - Terrain -
 		// Tried a lot of grass variants, remove the ones not needed, clean up project

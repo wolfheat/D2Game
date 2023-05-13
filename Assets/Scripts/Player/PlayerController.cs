@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.XR;
 using UnityEngine.Playables;
 using static UnityEditor.Timeline.TimelinePlaybackControls;
 
@@ -45,6 +46,7 @@ public class PlayerController : PlayerUnit
 
 	public IInteractable activeInteractable;
     public IInteractable ActiveNodeActiveInteractable { get { return activeInteractable; }}
+    public bool IsDead { get; private set;}
 
     // Settings - Constants
 	private const float StopDistance = 0.1f;
@@ -459,20 +461,37 @@ public class PlayerController : PlayerUnit
         activeInteractable?.Interract();
     }
 
+    public void DeathAnimationComplete()
+    {
+		Debug.Log("Death animation complete");
+        playerState.SetState(PlayerState.Dead);
+        UIController.Instance.ActivateLevelClearPanel();
+    }
+	
     public void StopGathering()
     {
         if (interactCoroutine != null) StopCoroutine(interactCoroutine);
         interactCoroutine = null;
     }
 
-    internal void TakeHit(int damage)
+    internal bool TakeHit(int damage)
     {
+		if (SavingUtility.Instance.playerInventory.Health <= 0) return false;
 		FindObjectOfType<HitInfoText>().CreateHitInfo(transform.position, damage, InfoTextType.Damage);
 
         Debug.Log("Player Take Hit: "+damage);        
         if(SavingUtility.Instance.playerInventory.Health>0) SavingUtility.Instance.playerInventory.Health -= damage;
 
         if (SavingUtility.Instance.playerInventory.Health <= 0)
-            Debug.Log("Player Died");
+		{
+			Debug.Log("Player Died");
+            playerState.SetState(PlayerState.Death);
+			// Do not make player take inputs
+			playerAnimationEventController.DisableAgent();
+			clickInfo = null;
+			attackLock = true;
+            IsDead = true;
+        }
+		return true;
     }
 }

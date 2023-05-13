@@ -9256,11 +9256,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1607921285775978487, guid: 0bff004dc2023a648aa0d6cb9c4e53b1, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 200
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 1607921285775978487, guid: 0bff004dc2023a648aa0d6cb9c4e53b1, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 50
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 1607921285775978487, guid: 0bff004dc2023a648aa0d6cb9c4e53b1, type: 3}
       propertyPath: m_LocalPosition.x
@@ -9314,14 +9314,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: HitInfo
       objectReference: {fileID: 0}
-    - target: {fileID: 6594139696539397173, guid: 0bff004dc2023a648aa0d6cb9c4e53b1, type: 3}
-      propertyPath: m_fontAsset
-      value: 
-      objectReference: {fileID: 11400000, guid: 58f32939ce5438f44af43808cb124d86, type: 2}
-    - target: {fileID: 6594139696539397173, guid: 0bff004dc2023a648aa0d6cb9c4e53b1, type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: -4668197483491402546, guid: 58f32939ce5438f44af43808cb124d86, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0bff004dc2023a648aa0d6cb9c4e53b1, type: 3}
 --- !u!224 &838012707151644621 stripped

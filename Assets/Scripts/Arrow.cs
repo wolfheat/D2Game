@@ -40,7 +40,6 @@ public class Arrow : MonoBehaviour
         {
             player.TakeHit(DMG);
             transform.parent = player.transform;
-            // Player take damage
         }        
         StopArrow();
     }

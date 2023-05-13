@@ -67,7 +67,8 @@ public class PlayerStateControl : MonoBehaviour
 				}
 				break;
 			case PlayerState.Death:
-				break;
+                animator.CrossFade("Death4", 0.1f);
+                break;
 			case PlayerState.Dead:
 				break;
 			case PlayerState.Decay:

@@ -31,21 +31,20 @@ public class ItemSpawner : MonoBehaviour
     }
     public void GenerateItem(ItemData itemData)
     {
-        Debug.Log("Spawned ITEM: "+itemData.Itemname);
-        
-        Vector3 pos = playerController.transform.position+playerController.transform.forward*3f+Vector3.up*0.2f;
-        PickupItem newItem = Instantiate(pickupItemPrefab,pos,Quaternion.identity);
-        newItem.Init(itemData);
-        
+        // Get position in front of player
+        //Vector3 pos = playerController.transform.position+playerController.transform.forward*3f+Vector3.up*0.2f;
+        Vector3 pos = playerController.transform.position+playerController.transform.forward*0.5f+Vector3.up*0.2f;
+        Vector3 dir = playerController.transform.forward;
 
+        GenerateItemAt(itemData, pos, dir);
     }
     
-    public void GenerateItemAt(ItemData itemData, Vector3 pos)
+    public void GenerateItemAt(ItemData itemData, Vector3 pos, Vector3 dir)
     {
         Debug.Log("Spawned ITEM: "+itemData.Itemname);
 
         PickupItem newItem = Instantiate(pickupItemPrefab,pos,Quaternion.identity,itemHolder);
-        newItem.Init(itemData);
+        newItem.Init(itemData, dir);
         
 
     }

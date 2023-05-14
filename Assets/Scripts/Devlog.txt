@@ -158,7 +158,8 @@ Nov 2022
 		* Made attack variation for normal attack
 13/5	* Fixed Animation error for attack 2 (baked Root)
 		* Made player death animation work, player can now die.
-
+14/5	* Made objects move when dropped and harvested. Cant be picked up while moving.
+		
 
 		// Need to fix up saving system. Store save file in SO during gameplay and store to file from that?
 		// Need some system that stores all items in game.	(Semi started, Item Library added)
@@ -200,10 +201,11 @@ Nov 2022
 		// - Terrain -
 		// Tried a lot of grass variants, remove the ones not needed, clean up project
 		// Terrain clips in dungeon level, something wrong with camera not rendering it correctly
-		// Redo Grass in Town, Grass texture has artifacs
+		// Redo Grass in Town, Grass texture has artifacs (changed grass still few artifacts)
 		// Check for to high resolution in all assets, lower them down for performance
 
 		// - Items Stuff -
+		// Items drop with some randomization?
 		// Make Objects droppable by enemies
 		// Items sprite are scaled to square size so long items wont scale correctly.
 		

@@ -1,4 +1,4 @@
-using System;
+
 using UnityEngine;
 
 
@@ -10,11 +10,15 @@ public abstract class ResourceNode : MonoBehaviour, IInteractable
     protected ResourceType type;
     protected bool destroyable = true;
     protected bool spawnItem = true;
+    Vector3 mineDirection;
     public ResourceType Type{ get {return type;} protected set{} }
 
     internal virtual void Start()
     {
         itemSpawner = FindObjectOfType<ItemSpawner>();
+        mineDirection = Random.onUnitSphere;
+        mineDirection.y = 0;
+        mineDirection.Normalize();
     }
 
     internal void LoadWithItem(ItemData itemDataIn)
@@ -26,7 +30,7 @@ public abstract class ResourceNode : MonoBehaviour, IInteractable
     {
         if (itemData != null)
         {
-            if(spawnItem) itemSpawner.GenerateItemAt(itemData, transform.position);
+            if(spawnItem) itemSpawner.GenerateItemAt(itemData, transform.position,mineDirection);
             else UIController.Instance.AddItemToInventory(itemData);
         }
         else Debug.LogWarning("Itemdata not set for this interactable");        

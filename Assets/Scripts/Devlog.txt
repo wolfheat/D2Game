@@ -159,6 +159,7 @@ Nov 2022
 13/5	* Fixed Animation error for attack 2 (baked Root)
 		* Made player death animation work, player can now die.
 14/5	* Made objects move when dropped and harvested. Cant be picked up while moving.
+15/5	* Scenes are now added aditative. Main scene loads from init scene, then town or dungeons scene is loaded on top
 		
 
 		// Need to fix up saving system. Store save file in SO during gameplay and store to file from that?
@@ -172,13 +173,19 @@ Nov 2022
 
 		// --- --- TODO --- ---
 				
+
+		// GOAL Add Initialization scene and have a Main sene with Audio, ItemSpawner, etc then load any environment scene additively.
+		
+
+
+
+
 		// Add more Interfaces
 
 		// - Content -
 		// Load Screen between scenes
 
-		// - Mechanics Stuff -
-		
+		// - Mechanics Stuff -		
 		// Sometimes if player dont fully reach stash or target he keeps using moving animation without moving
 		// Player can get stuck sometimes fix, fixed?
 		// Add tools for harvesting.

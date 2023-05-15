@@ -30,8 +30,10 @@ public class LoadDungeon : MonoBehaviour, IOpenCloseMenu
         townPositionsController.ChangeToClosestPoint(FindObjectOfType<PlayerController>().transform.position);
 
         SavingUtility.Instance.SaveToFile();
+        FindObjectOfType<SetPlayerStartPosition>().StorePlayerPosition();
 
-        SceneManager.LoadScene("MainScene");
+        SceneManager.LoadScene("DungeonSceneA", LoadSceneMode.Additive);
+        SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
     }
 
 }

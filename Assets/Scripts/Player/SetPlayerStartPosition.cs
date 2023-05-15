@@ -6,15 +6,16 @@ public class SetPlayerStartPosition : MonoBehaviour
     [SerializeField] PlayerSettingsSO playerSettingsData;
     NavMeshAgent agent;
 
-
-	private void Start()
+	public void StorePlayerPosition()
+    {
+        playerSettingsData.SetTownPosition(agent.transform.position);
+    }
+	public void PlacePlayerOnStoredPosition()
     {
         Debug.Log("SetPlayerStartPosition Start");
 
-        agent = GetComponent<NavMeshAgent>();
-        Debug.Log("Setting Player position to Townposition: " + playerSettingsData.TownPosition);
-        //GetComponent<Rigidbody>().position = playerSettingsData.TownPosition;
-        //agent.transform.position = playerSettingsData.TownPosition;        
+        agent = FindObjectOfType<PlayerController>().GetComponent<NavMeshAgent>();
+
         agent.Warp(playerSettingsData.TownPosition);
     }
 }

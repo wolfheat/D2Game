@@ -37,7 +37,8 @@ public class LevelClear : MonoBehaviour, IOpenCloseMenu
         SavingUtility.Instance.SaveToFile();
 
         ClosePanel();
-        SceneManager.LoadScene("TownScene");
+        SceneManager.LoadScene("TownScene", LoadSceneMode.Additive);
+        SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
     }
     
 	public void ClosePanel()

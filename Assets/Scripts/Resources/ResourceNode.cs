@@ -30,7 +30,7 @@ public abstract class ResourceNode : MonoBehaviour, IInteractable
     {
         if (itemData != null)
         {
-            if(spawnItem) itemSpawner.GenerateItemAt(itemData, transform.position,mineDirection);
+            if(spawnItem) itemSpawner.GenerateItemAt(itemData, transform.position+Vector3.up*0.2f,mineDirection);
             else UIController.Instance.AddItemToInventory(itemData);
         }
         else Debug.LogWarning("Itemdata not set for this interactable");        

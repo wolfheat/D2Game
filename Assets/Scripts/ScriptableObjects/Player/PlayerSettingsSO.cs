@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerSettingsSO : ScriptableObject
 {
     public Vector3 TownPosition;
+    public Vector3 TownPortalPosition = new Vector3(51.5f,0.13f,71.8f);
 
     public enum TownSpots {TownEntrance, PortalEntrance}
 
@@ -12,7 +13,7 @@ public class PlayerSettingsSO : ScriptableObject
 
     public void SetTownPosition(Vector3 pos)
     {
-        TownPosition = pos;
+        SetToClosest(pos);;
     }
     
     public void UpdateTownPositions(Vector3[] positions)

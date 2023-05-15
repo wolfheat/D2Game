@@ -1217,6 +1217,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 746584caff27fb24f99a8b26deb39e62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canvas: {fileID: 1152494014784444879}
   inventoryUI: {fileID: 1152494014409150458}
   infoText: {fileID: 1152494015049033076}
   stateText: {fileID: 1152494015557357132}

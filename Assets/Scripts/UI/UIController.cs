@@ -9,6 +9,7 @@ public class UIController : MonoBehaviour
 {
     public static UIController Instance { get; set; }
 
+    [SerializeField] private GameObject canvas;
     [SerializeField] private InventoryUI inventoryUI;
     [SerializeField] private TextMeshProUGUI infoText;
     [SerializeField] private TextMeshProUGUI stateText;
@@ -29,8 +30,14 @@ public class UIController : MonoBehaviour
         Instance = this;
         Inputs.Instance.Controls.Land.BackSpace.performed += ActivateLevelClearPanel;
         Inputs.Instance.Controls.Land.ESC.performed += HideOpenMenu;
+        //canvas.SetActive(false);
     }
     
+    public void ActivateCanvas()
+    {
+        canvas.SetActive(true);
+    }
+
     public void OnDestroy()
     {
         Inputs.Instance.Controls.Land.BackSpace.performed -= ActivateLevelClearPanel;

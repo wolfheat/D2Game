@@ -5,6 +5,7 @@ public class CallPlayerSetPosition : MonoBehaviour
 	private void Start()
     {
         FindObjectOfType<SetPlayerStartPosition>().PlacePlayerOnStoredPosition();
+        FindObjectOfType<UIController>().ActivateCanvas();
     }
 
 }

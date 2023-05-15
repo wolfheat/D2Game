@@ -10,5 +10,6 @@ public class SetSceneActive : MonoBehaviour
 	private void Start()
     {
         SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneToSet.ToString()));
+        if (!SceneManager.GetSceneByName("MainScene").IsValid()) SceneManager.LoadSceneAsync("MainScene", LoadSceneMode.Additive);
     }
 }

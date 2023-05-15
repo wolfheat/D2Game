@@ -160,7 +160,10 @@ Nov 2022
 		* Made player death animation work, player can now die.
 14/5	* Made objects move when dropped and harvested. Cant be picked up while moving.
 15/5	* Scenes are now added aditative. Main scene loads from init scene, then town or dungeons scene is loaded on top
-		
+		* UI is hidden on init/loading screen
+
+		// MainScene is loaded automatically if not present when running townscene and dungeon. Dungeon gets errors fix.
+
 
 		// Need to fix up saving system. Store save file in SO during gameplay and store to file from that?
 		// Need some system that stores all items in game.	(Semi started, Item Library added)

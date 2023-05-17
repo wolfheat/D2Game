@@ -39,6 +39,7 @@ public class LevelClear : MonoBehaviour, IOpenCloseMenu
         ClosePanel();
         SceneManager.LoadScene("TownScene", LoadSceneMode.Additive);
         SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
+        FindObjectOfType<PlayerController>()?.SetToPosition(FindObjectOfType<SavingUtility>().GetPlayerTownPosition());
     }
     
 	public void ClosePanel()

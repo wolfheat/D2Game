@@ -28,7 +28,7 @@ public class PlayerSettingsSO : ScriptableObject
 
     internal void SetToClosest(Vector3 pos)
     {
-        Debug.Log("Setting To closest");
+        Debug.Log("Calculating which position the player is closest to, setting data to that position.");
         float distance = 1000f;
         int bestIndex = 0;
         for (int i = 0; i < TownSpotsPositions.Length; i++)

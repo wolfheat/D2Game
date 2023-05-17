@@ -18,6 +18,7 @@ public class PlayerStateControl : MonoBehaviour
 	}
 	public void SetState(PlayerState newState)
 	{
+		Debug.Log("Setting new state: "+newState);
 		//Set speed of animation
 		animator.speed = SavingUtility.Instance.playerInventory.AttackSpeedMultiplyer;
 
@@ -31,9 +32,9 @@ public class PlayerStateControl : MonoBehaviour
 				break;
 			case PlayerState.AttackSwordSwing:
 				if(Random.Range(0,10)>6)
-					animator.CrossFade("SwordSwing", 0.1f);
+					animator.CrossFade("SwordSwing", 0.3f);
 				else
-					animator.CrossFade("SwordSwing2", 0.1f);
+					animator.CrossFade("SwordSwing2", 0.3f);
                 break;
 			case PlayerState.MoveToInteract:
 				animator.CrossFade("Run", 0.1f);
@@ -78,7 +79,6 @@ public class PlayerStateControl : MonoBehaviour
 		}
 
 		State = newState;
-		UIController.SetStateText("" + State);
 	}
 
 }

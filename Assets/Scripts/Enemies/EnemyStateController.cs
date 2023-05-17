@@ -81,7 +81,6 @@ public class EnemyStateController : MonoBehaviour
 				break;
 		}
 		State = newState;
-		UIController.SetState2Text("" + State);
 	}
 
 }

@@ -1,5 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class EnemySpawner : MonoBehaviour
 {
@@ -22,12 +25,26 @@ public class EnemySpawner : MonoBehaviour
 
 	private void Start()
     {
-        wayPointController = FindObjectOfType<WayPointController>();
-		Inputs.Instance.Controls.Land.Space.performed += _ => SpawnNewEnemyRandomWaypoints();
-        
-	}
+        StartCoroutine(WaitForMainScene());
+    }
 
-    private void SpawnNewEnemyRandomWaypoints()
+    private IEnumerator WaitForMainScene()
+    {
+        while (!SceneManager.GetSceneByName("MainScene").isLoaded)
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
+
+        wayPointController = FindObjectOfType<WayPointController>();
+		Inputs.Instance.Controls.Land.Space.performed += SpawnNewEnemyRandomWaypoints;
+    }
+
+    private void OnDestroy()
+    {
+		Inputs.Instance.Controls.Land.Space.performed -= SpawnNewEnemyRandomWaypoints;                
+    }
+
+    private void SpawnNewEnemyRandomWaypoints(InputAction.CallbackContext context)
     {
         int waypoints = Random.Range(MinWayPoints,MaxWayPoints+1);
         //Debug.Log("Creating "+waypoints+" Waypoints for the Enemy");

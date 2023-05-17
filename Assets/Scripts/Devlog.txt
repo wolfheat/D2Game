@@ -161,41 +161,35 @@ Nov 2022
 14/5	* Made objects move when dropped and harvested. Cant be picked up while moving.
 15/5	* Scenes are now added aditative. Main scene loads from init scene, then town or dungeons scene is loaded on top
 		* UI is hidden on init/loading screen
-
-		// MainScene is loaded automatically if not present when running townscene and dungeon. Dungeon gets errors fix.
-
+16/5	* Fine tuned sotring of player positions, now its not using the SO data characterstats at all
+		* Items now activates collider when they can be picked up 		
+17/5	* Item scaling in Inventory and stash is now correct, fixed additional issue with this text not distorted
+		* Player Action Input is disregarded when Menu is open.
+		* MainScene loads automatically if not present when running townscene and dungeon. Dungeon errors fixed with coroutines.
+		* Fixed the issue with inventory items not swapping correctly
+		* Cleaned up and removed random walk generator and old UI
 
 		// Need to fix up saving system. Store save file in SO during gameplay and store to file from that?
 		// Need some system that stores all items in game.	(Semi started, Item Library added)
-							
-		
-		// Make Cooking work, maybe UI for it? Maybe do cook animation and entire cook transfer at the end if available?
-
-		// Make Cooked meat work as consumable
-
-
-		// --- --- TODO --- ---
-				
-
-		// GOAL Add Initialization scene and have a Main sene with Audio, ItemSpawner, etc then load any environment scene additively.
 		
 
+		// Check if menus are scaling correctly when changing resolution
 
-
-
+		// GOAL 
+		
 		// Add more Interfaces
 
 		// - Content -
 		// Load Screen between scenes
 
 		// - Mechanics Stuff -		
-		// Sometimes if player dont fully reach stash or target he keeps using moving animation without moving
+		// Make move and attack click not trigger when stash or other (closable )menu is open.
+		// Sometimes if player dont fully reach stash or target he keeps using moving animation without moving (fixed?)
 		// Player can get stuck sometimes fix, fixed?
 		// Add tools for harvesting.
 		// Change arrow shooting sound
 		// Make bow animation better, change speed of animation?
 		// Can keep shooting arrows with left click but not rightclick
-		// Make Hitpoints text show when hitting enemy or getting hit yourself, over time damage etc
 		// Arrows stop at the player collider, maybe should stick to the actual character instead
 		// Make so Enemy stops chase earlier if player is not visable.
 
@@ -205,8 +199,8 @@ Nov 2022
 		// - Animation Stuff -
 		// Make variants in attack animation (Power attack hit harder and larger with other animation/time to complete?)
 		// Fix gliding issue with animation while moving (fixed?)
-		// Screen jumps/flickers when animating attack.
-		// Attack animation has strange foot movements - Might be solved by bake root animation on animation
+		// Screen jumps/flickers when animating attack. (Hard to fix by animation, tried longer transition time semi works)
+		// Player still moves sometimes when clicking and using stash
 
 		// - Terrain -
 		// Tried a lot of grass variants, remove the ones not needed, clean up project
@@ -214,17 +208,19 @@ Nov 2022
 		// Redo Grass in Town, Grass texture has artifacs (changed grass still few artifacts)
 		// Check for to high resolution in all assets, lower them down for performance
 
+		// - Crafting  Stuff -
+		// Make Cooking work, maybe UI for it? Maybe do cook animation and entire cook transfer at the end if available?
+
 		// - Items Stuff -
 		// Items drop with some randomization?
 		// Make Objects droppable by enemies
-		// Items sprite are scaled to square size so long items wont scale correctly.
+		// Make Cooked meat work as consumable
 		
 		//  - LevelCreation Stuff -
 		// The remove all children method for clearing doorways removes ground for cracked tile floor.
 		// Make it so tiles dont have enemies, resources, obstacles only one on each
 		// Maybe have certain rooms spawn enemies and not the added corridor?
 		// Limit obstacles from spawning in front of doorways
-
 
 		//  - Maybe dont do these Stuff - 
 		// Better to use A* alg to find shortest path with weights

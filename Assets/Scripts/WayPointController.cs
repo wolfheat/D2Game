@@ -22,7 +22,6 @@ public class WayPointController : MonoBehaviour
     private void Awake()
     {        
         Inputs.Instance.Controls.Land.WayPointType.performed += ChangeWayPoint;
-        Toggle(FindObjectOfType<UIController>().toggle);
     }
     
     private void OnDestroy()

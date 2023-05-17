@@ -1,12 +1,21 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Slot : MonoBehaviour
 {
     public InventoryItem HeldItem { get; private set; }
     public bool HasItem { get; private set; } = false;
     public int Index { get; set; } = 0;
+    public float Size { get; private set; }
+
+
+    private void Start()
+    {
+        Size = GetComponent<RectTransform>().sizeDelta.y;
+        Debug.Log("Setting Slot size to: "+Size);
+    }
 
     public void PlaceItem(InventoryItem newItem)
     {

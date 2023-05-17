@@ -32,12 +32,12 @@ public class Inputs : MonoBehaviour
 	}
 	private void OnEnable()
 	{
-		Debug.Log("Enable: "+gameObject.GetInstanceID());
+		//Debug.Log("Enable: "+gameObject.GetInstanceID());
 		Controls.Enable();		
 	}
 	private void OnDisable()
 	{
-		Debug.Log("Disable: "+gameObject.GetInstanceID());
+		//Debug.Log("Disable: "+gameObject.GetInstanceID());
         Controls.Disable();
 	}
 }

@@ -65,7 +65,7 @@ public class PlayerController : PlayerUnit
 
     private void OnEnable()
     {
-		Debug.Log("Player Controller Enable RUN" + GetInstanceID());
+		//Debug.Log("Player Controller Enable RUN" + GetInstanceID());
         mainCamera = Camera.main;
 		Inputs.Instance.Controls.Land.LeftClick.started += LeftClick;
 		Inputs.Instance.Controls.Land.LeftClick.canceled += LeftClick;
@@ -78,7 +78,7 @@ public class PlayerController : PlayerUnit
 	}
 	private void OnDisable()
     {
-		Debug.Log("Player Controller Disable RUN, for instance: "+GetInstanceID());
+		//Debug.Log("Player Controller Disable RUN, for instance: "+GetInstanceID());
         Inputs.Instance.Controls.Land.LeftClick.started -= LeftClick;
         Inputs.Instance.Controls.Land.LeftClick.canceled -= LeftClick;
         Inputs.Instance.Controls.Land.RightClick.started -= RightClick;
@@ -113,10 +113,10 @@ public class PlayerController : PlayerUnit
 
     private void Start()
 	{
-        Debug.Log("PlayerController START");
+        //Debug.Log("PlayerController START");
 
         playerAnimationEventController = GetComponent<PlayerAnimationEventController>();
-        Debug.Log("Check if playerAnimationEventController exists: " + playerAnimationEventController);
+        //Debug.Log("Check if playerAnimationEventController exists: " + playerAnimationEventController);
 
 		WayPointController = FindObjectOfType<WayPointController>();
 		soundmaster = FindObjectOfType<SoundMaster>();
@@ -180,8 +180,9 @@ public class PlayerController : PlayerUnit
 	private bool MouseClick(bool rightClick = false)
 	{
 		// Clicking UI element, ignore gameplay clicks
-		if (Inputs.Instance.PointerOverUI){
+		if (Inputs.Instance.PointerOverUI || UIController.Instance.IsMenuOpen()){
 			//Debug.Log("Click On UI dismiss	");
+			if (UIController.Instance.IsMenuOpen()) Debug.Log("Menu is OPEN!");
 			return false;
 		}
 

@@ -8,6 +8,7 @@ public class BaseUnit : MonoBehaviour
 
     protected bool NavMeshAtTarget()
 	{
+        if(!navMeshAgent.enabled) return true;
 		return navMeshAgent.remainingDistance < 0.1f;
     }
 	
@@ -19,7 +20,9 @@ public class BaseUnit : MonoBehaviour
 
     public void SetToPosition(Vector3 pos)
     {
-        transform.position = pos;
+        Debug.Log("Setting Unit to positon: "+pos);
+        if(navMeshAgent != null) navMeshAgent.Warp(pos);
+        else transform.position = pos;
     }
 
     public void EnableNavMesh(bool enable)

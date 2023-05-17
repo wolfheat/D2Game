@@ -27,12 +27,12 @@ public class InventoryUI : MonoBehaviour
 
     public void StoreItemDataArray()
     {
-        Debug.Log("Update Stored Items");
+        Debug.Log("StoreItemData");
         int[] itemIDs = new int[slots.Count];
         for (int i = 0; i < slots.Count; i++)
             itemIDs[i] = slots[i].HasItem?slots[i].HeldItem.Data.ID:-1;
         //savingUtility.playerData.Items = itemData;
-        Debug.Log("savingUtility.playerInventory.Items = "+ savingUtility.playerInventory.Items);
+        //Debug.Log("savingUtility.playerInventory.Items = "+ savingUtility.playerInventory.Items);
         savingUtility.playerInventory.Items = itemIDs;
     }
     
@@ -45,7 +45,7 @@ public class InventoryUI : MonoBehaviour
     public void LoadItemDataArray(ItemData[] itemData)
     {
         Debug.Log("Load Items into Inventory UI");
-        Debug.Log("Itemdata: "+itemData);
+        //Debug.Log("Itemdata: "+itemData);
         if (itemData == null) return;
         ClearAllSlots();
         for (int i = 0; i < itemData.Length; i++)

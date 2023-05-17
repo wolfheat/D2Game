@@ -27,7 +27,7 @@ class PlayerAnimationEventController : MonoBehaviour
 		playerController = GetComponent<PlayerController>();
 		navMeshAgent = GetComponent<NavMeshAgent>();
 		playerState = GetComponent<PlayerStateControl>();
-        Debug.Log("PlayerAnimationEventController START");
+       //	 Debug.Log("PlayerAnimationEventController START");
 
 	}
     public void ForcedStopGatheringEvent(bool completedEntireGathering = false)
@@ -49,6 +49,7 @@ class PlayerAnimationEventController : MonoBehaviour
 		Debug.Log("Open Stash!");
         stash.OpenMenu();
         playerState.SetState(PlayerState.Idle);
+		FindObjectOfType<SavingUtility>()?.SetPlayerTownPosition();
     }
 
     private void AnimationStopGatheringEvent()

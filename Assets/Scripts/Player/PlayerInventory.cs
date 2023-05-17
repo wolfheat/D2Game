@@ -8,7 +8,7 @@ public class PlayerInventory
 
     // Players Inventory
     public int[] Items { get; set; }= new int[20];
-
+    public float[] TownPos { get; set; }
     public int Health { get; set; } = 100;
     public int MaxHealth { get; set; } = 1000;
     public int Energy { get; set; } = 100;

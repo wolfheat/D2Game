@@ -3,6 +3,7 @@ using System;
 using UnityEngine;
 using System.Collections;
 using static UnityEditor.Progress;
+using UnityEngine.SceneManagement;
 
 public class SavingUtility : MonoBehaviour
 {
@@ -42,6 +43,7 @@ public class SavingUtility : MonoBehaviour
 
     public void SaveToFile()
     {
+        //Debug.Log("Saving to file: position is: "+playerInventory.TownPos);
         IDataService dataService = new JsonDataService();
         if (dataService.SaveData(LocalSaveLovation, playerInventory, false))
             Debug.Log("Saved in: "+LocalSaveLovation);
@@ -58,7 +60,7 @@ public class SavingUtility : MonoBehaviour
         try
         {
             playerInventory = dataService.LoadData<PlayerInventory>(LocalSaveLovation, false);
-            Debug.Log("Loading items from file: "); 
+            Debug.Log(" - Loading items from file! - "); 
         }
         catch (Exception e)
         {
@@ -66,10 +68,13 @@ public class SavingUtility : MonoBehaviour
         }
         finally
         {
-            ItemData[] itemDatas = FindObjectOfType<ItemLibrary>().ItemsAsData(playerInventory.Items);
+            Debug.Log("Items loaded from file: FINALLY"); 
+            ItemData[] itemDatas = FindObjectOfType<ItemLibrary>().ItemsAsData(playerInventory.Items);  
             FindObjectOfType<InventoryUI>().LoadItemDataArray(itemDatas);
-
-            //FindObjectOfType<StashUI>()
+            // Check if in town if the townposition is to be set
+            if(SceneManager.GetActiveScene().name == "TownScene")
+                FindObjectOfType<PlayerController>()?.SetToPosition(FindObjectOfType<SavingUtility>().GetPlayerTownPosition());
+            else Debug.Log("Not Town Scene");
         }
     }
 
@@ -166,6 +171,26 @@ public class SavingUtility : MonoBehaviour
 
         playerInventory.Stash[ID]++;
     }
+
+    public Vector3 GetPlayerTownPosition()
+    {
+        Vector3 pos = new Vector3(playerInventory.TownPos[0], playerInventory.TownPos[1], playerInventory.TownPos[2]);
+        Debug.Log("Reading player position from file location: "+pos);
+        return pos;
+    }
+
+    public void SetPlayerTownPosition()
+    {
+        Vector3 fixedPosition = FindObjectOfType<TownPositions>().GetClosestPosition(FindObjectOfType<PlayerController>().transform.position);
+        SetPlayerTownPositionFixed(fixedPosition);
+        //SetPlayerTownPositionFixed(FindObjectOfType<PlayerController>().transform.position);
+    }
+    public void SetPlayerTownPositionFixed(Vector3 pos)
+    {
+        Debug.Log("Store new player town position in file location "+pos);
+        playerInventory.TownPos = new float[] {pos.x,pos.y,pos.z };
+    }
+    
     public void AddXP(int xp)
     {
         playerInventory.XP += xp;        

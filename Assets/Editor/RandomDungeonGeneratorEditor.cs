@@ -18,11 +18,7 @@ public class RandomDungeonGeneratorEditor : Editor
         // Draw the default inspector
 		DrawDefaultInspector();
 
-		if (GUILayout.Button("Create Dungeon"))
-        {
-			generator.CreateGeneratedLevel();
-		}
-        if(GUILayout.Button("Clear"))
+		if(GUILayout.Button("Clear"))
         {
             generator.ClearLevel();
 		}

@@ -4,8 +4,16 @@ public class CallPlayerSetPosition : MonoBehaviour
 {
 	private void Start()
     {
-        FindObjectOfType<SetPlayerStartPosition>().PlacePlayerOnStoredPosition();
-        FindObjectOfType<UIController>().ActivateCanvas();
+        Debug.Log("CallPlayerSetPosition - START");
+        Init(); 
+    }
+
+    public void Init()
+    {
+        Debug.Log("CallPlayerSetPosition");
+        FindObjectOfType<PlayerController>()?.SetToPosition(FindObjectOfType<SavingUtility>().GetPlayerTownPosition());
+        FindObjectOfType<UIController>()?.ActivateCanvas();
+
     }
 
 }

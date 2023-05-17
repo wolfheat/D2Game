@@ -12,29 +12,45 @@ public class UIItem : MonoBehaviour
     public ItemData Data { get; protected set; }
     [SerializeField] protected Image image;
     protected RectTransform rect;
+    protected RectTransform itemRect;
+
+
+    protected virtual void Awake()
+    {
+        Debug.Log("Awake UIItem");  
+        rect = image.GetComponent<RectTransform>();
+        itemRect = GetComponent<RectTransform>();
+    }
+
     public void DefineItem(ItemData newItemData)
     {
         Data = newItemData;
         UpdateGraphics();
     }
 
-    private void UpdateGraphics()
+    protected void UpdateGraphics()
     {
-        image = GetComponent<Image>();
         image.sprite = Data.Sprite;
+        ScaleItem();
+    }
+    private void ScaleItem()
+    {
+        var scale = image.sprite.bounds.size.x / image.sprite.bounds.size.y;
+        if(scale<=1) rect.localScale = new Vector3(scale, 1f, 1f);
+        else rect.localScale = new Vector3(1f, 1/scale, 1f);
     }
 }
 
 public class InventoryItem : UIItem, IDragHandler, IEndDragHandler, IBeginDragHandler, IPointerClickHandler
 {
-
     private InventoryUI inventoryUI;
     private ItemDragParent dragParent;
     public Slot ParentSlot { get; private set; }
 
-    private void Awake()
+    protected override void Awake()
     {
         inventoryUI = FindObjectOfType<InventoryUI>();
+        base.Awake();
     }
     public void SetParent(Slot p)
     {
@@ -46,10 +62,9 @@ public class InventoryItem : UIItem, IDragHandler, IEndDragHandler, IBeginDragHa
     public ItemData DefineItem(ItemData newItemData, Slot p)
     {
         ParentSlot = p;
-        rect = GetComponent<RectTransform>();
+        rect = image.GetComponent<RectTransform>();
         dragParent = FindObjectOfType<ItemDragParent>();
-
-        //placement = rect.localPosition;
+//placement = rect.localPosition;
 
         ItemData current = Data;
         Data = newItemData;
@@ -64,13 +79,13 @@ public class InventoryItem : UIItem, IDragHandler, IEndDragHandler, IBeginDragHa
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        rect.SetAsFirstSibling();
+        itemRect.SetAsFirstSibling();
         transform.SetParent(dragParent.transform);
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        rect.position = Mouse.current.position.ReadValue();
+        itemRect.position = Mouse.current.position.ReadValue();
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -106,23 +121,18 @@ public class InventoryItem : UIItem, IDragHandler, IEndDragHandler, IBeginDragHa
     public void ResetPlacement()
     {
         transform.SetParent(ParentSlot.transform);
+        transform.localPosition = Vector3.zero;
         //rect.localPosition = placement;
 
         // Set anchors to stretch both horizontally and vertically
-        rect.anchorMin = Vector2.zero;
-        rect.anchorMax = Vector2.one;
+        //rect.anchorMin = Vector2.zero;
+        //rect.anchorMax = Vector2.one;
 
         // Reset offset values
-        rect.offsetMin = Vector2.zero;
-        rect.offsetMax = Vector2.zero;
+        itemRect.offsetMin = Vector2.zero;
+        itemRect.offsetMax = Vector2.zero;
 
 
-    }
-
-    private void UpdateGraphics()
-    {
-        image = GetComponent<Image>();
-        image.sprite = Data.Sprite;
     }
 
     public void OnPointerClick(PointerEventData eventData)

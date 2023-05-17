@@ -31,7 +31,7 @@ public class ItemLibrary : MonoBehaviour
         {
             Instance = this;
         }
-        Debug.Log("Load all items into library");
+        //Debug.Log("Load all items into library");
 
         LoadAllItems();
     }
@@ -41,7 +41,7 @@ public class ItemLibrary : MonoBehaviour
         Addressables.LoadAssetsAsync<ItemData>(assetLabelReference, (itemData) =>
         {
             libraryItemList.Add(itemData.ID,itemData);
-            Debug.Log("Loaded item to Library: "+itemData.Itemname);
+            //Debug.Log("Loaded item to Library: "+itemData.Itemname);
         });
     }
 
@@ -64,7 +64,7 @@ public class ItemLibrary : MonoBehaviour
         ItemData[] itemDatas = new ItemData[items.Length];
         for (int i = 0; i < items.Length; i++)
         {
-            Debug.Log("Retrieving From Library ID: " + items[i]);
+            //Debug.Log("Retrieving From Library ID: " + items[i]);
             if (items[i] > 0) itemDatas[i] = libraryItemList[items[i]];
             else itemDatas[i] = null;
         }

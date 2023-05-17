@@ -26,7 +26,7 @@ public class TownPositionsController : MonoBehaviour
         
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        Debug.Log("Scriptable Object created and saved: ");
+        //Debug.Log("Scriptable Object created and saved: ");
     }
 
     public void ChangeToClosestPoint(Vector3 pos)
@@ -39,11 +39,12 @@ public class TownPositionsController : MonoBehaviour
     private void OnApplicationQuit()
     {
         Debug.Log("On Aplication quit set player position");
-        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "TownScene")
+        /*if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "TownScene")
         {
             ChangeToClosestPoint(FindObjectOfType<PlayerController>().transform.position);            
         }
         else Debug.Log("Not In Town, Player position not stored");
+        */
     }
 }
 

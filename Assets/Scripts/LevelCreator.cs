@@ -7,6 +7,9 @@ using Random = UnityEngine.Random;
 using DelaunayVoronoi;
 using UnityEditor;
 using Math = System.Math;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+
 public enum Direction {left,down,right,up}
 
 public class LevelCreator : MonoBehaviour
@@ -34,10 +37,6 @@ public class LevelCreator : MonoBehaviour
     [SerializeField] private GameObject resourceHolder;
     [SerializeField] private GameObject itemHolder;
     [SerializeField] private GameObject projectilesHolder;
-
-	[Space(10, order = 0)]
-	[Header ("Random Walk Dungeon Creator")]
-	[SerializeField] private RandomWalkGeneratorPresetSO walkGeneratorPreset;
 
 	IEnumerable<Triangle> delaunayTriangles;
 	List<PathPoint> delaunayPathPoints;
@@ -70,51 +69,35 @@ public class LevelCreator : MonoBehaviour
 
 	private void Start()
     {
-		Debug.Log("Level Creator START");
+		
+		StartCoroutine(WaitForMainScene());
+	}
+
+	private IEnumerator WaitForMainScene()
+	{
+		while (!SceneManager.GetSceneByName("MainScene").isLoaded)
+		{
+			yield return new WaitForSeconds(0.5f);
+		}
+
+        Debug.Log("Level Creator START in Coroutine");
         GroundLayer = LayerMask.NameToLayer("Ground");
         ResourceLayer = LayerMask.NameToLayer("ResourceLayer");
-		Inputs.Instance.Controls.Land.X.performed += _ => PrintCurrentTilePosition();
 
-		terrainGenerator = FindObjectOfType<TerrainGenerator>();
+        terrainGenerator = FindObjectOfType<TerrainGenerator>();
         navMeshSurface = tileHolder.GetComponent<NavMeshSurface>();
-
 
         CreateNewLevel();
 
-	}
+    }
 
-	public void CreateNewLevel()
+    public void CreateNewLevel()
 	{
 		RequestActivatePlayerNavmesh(false);
 		CreateRoomDispersionDungeon();
 		BakeLevelNavMesh();
 		RequestActivatePlayerNavmesh(true);
 		
-	}
-
-	public void CreateGeneratedLevel()
-    {
-
-		//Clear The level
-		ClearLevel();
-        //Generate the level
-		HashSet<Vector2Int> floorPositions = new HashSet<Vector2Int>();
-
-		Vector2Int startPos = walkGeneratorPreset.playerStartPosition;
-
-		for (int k = 0; k < walkGeneratorPreset.iterations; k++)
-		{
-			floorPositions.UnionWith(RandomWalkGenerator.RandomWalk(startPos, walkGeneratorPreset.walkLength));
-			if(walkGeneratorPreset.startRandom) startPos = floorPositions.ElementAt(floorPositions.Count-1);
-		}
-
-		foreach (var floor in floorPositions)
-		{
-			GenerateFloorTileAt(floor);
-			//GenerateFloorTileAt(new Vector2Int(floor.x,floor.y));
-		}
-
-		SetPlayerAtStart(walkGeneratorPreset.playerStartPosition);
 	}
 
 	public void ClearLevel()
@@ -176,24 +159,6 @@ public class LevelCreator : MonoBehaviour
 		tile.layer = GroundLayer;
 
 		return tile;
-	}
-
-	public void PrintCurrentTilePosition()
-	{
-        if (Inputs.Instance.Controls.Land.Shift.IsPressed())
-        {
-            Vector2Int newPos = new Vector2Int((int)((playerController.transform.position.x+0.75f) / Tilesize), (int)((playerController.transform.position.z + 0.75f) / Tilesize));
-            Debug.Log("Player is at " + newPos);
-            StartCoroutine(ShowHighlightSquare(newPos));
-            UIController.SetInfoText("Player is at tile: " + newPos+" \nactualPos: " + playerController.transform.position);
-		}
-	}
-    private IEnumerator ShowHighlightSquare(Vector2Int pos)
-    {
-        highLightSquare.transform.position = new Vector3(pos.x*Tilesize,0,pos.y*Tilesize);
-		highLightSquare.SetActive(true);
-        yield return new WaitForSeconds(1f);
-		highLightSquare.SetActive(false);
 	}
 
 	private void GetPlayerReference()
@@ -473,6 +438,7 @@ public class LevelCreator : MonoBehaviour
 
 	private void RemoveAllExtra(GameObject tile)
 	{
+		// TODO: This destroys mud on cracked floor tile, it should not
 		Transform[] children = tile.transform.GetComponentsInChildren<Transform>();
 		if(children.Length <= 1) return;
 

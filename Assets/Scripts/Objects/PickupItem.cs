@@ -31,12 +31,18 @@ public class PickupItem : MonoBehaviour
                 speed -= Time.deltaTime * slowDownSpeed;
                 transform.position += direction.normalized * speed * Time.deltaTime;
             }
-            if (!Pickable && speed <= 0)
+            if (!Pickable && speed <= 0.4f)
             {
+                ActivateCollider();
                 Pickable = true;
 
             }
         }
+    }
+
+    private void ActivateCollider()
+    {
+        GetComponent<Collider>().enabled = true;
     }
 
     private void ScaleItem()

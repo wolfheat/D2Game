@@ -319,9 +319,10 @@ public class LevelCreator : MonoBehaviour
 
 		for (int i = 0; i < 4; i++)
 		{
-			CreateResourceAt(spawnPoints[i*3],0);
-			CreateResourceAt(spawnPoints[i*3+1],1);
-			CreateResourceAt(spawnPoints[i*3+2],2);
+			CreateResourceAt(spawnPoints[i*4],0);
+			CreateResourceAt(spawnPoints[i*4+1],1);
+			CreateResourceAt(spawnPoints[i*4+2],2);
+			CreateResourceAt(spawnPoints[i*4+3],3);
 		}
 
 

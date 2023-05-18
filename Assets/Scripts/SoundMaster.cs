@@ -5,6 +5,10 @@ public class SoundMaster : MonoBehaviour
 {
     [SerializeField] private AudioClip[] menu;
     [SerializeField] private AudioClip[] sfx;
+    [SerializeField] private AudioClip[] fishing;
+    [SerializeField] private AudioClip[] axe;
+    [SerializeField] private AudioClip[] pickaxe;
+    [SerializeField] private AudioClip[] cultivating;
     [SerializeField] private AudioClip[] swordHits;
     [SerializeField] private AudioClip[] swordMiss;
     [SerializeField] private AudioClip[] arrowSounds;
@@ -122,7 +126,7 @@ public class SoundMaster : MonoBehaviour
         else musicSourceIntense.Stop(); 
 	}
 
-    public enum SFX {Footstep,GetHit,SwingSword,SwingSwordMiss,SwordHit,ShootArrow, Grunt,Yeah,PlayerDeath,MenuStep,MenuSelect,MenuError, Gather }
+    public enum SFX {Footstep,GetHit,SwingSword,SwingSwordMiss,SwordHit,ShootArrow,Grunt,Yeah,PlayerDeath,MenuStep,MenuSelect,MenuError, Gather,FishingSwing,AxeSwing,PickaxeSwing,Cultivating }
 
 
     public void StopStepSFX()
@@ -155,6 +159,18 @@ public class SoundMaster : MonoBehaviour
                 break;
             case SFX.Gather: 
                 sfxSource.PlayOneShot(sfx[2]);
+                break;
+            case SFX.AxeSwing: 
+                sfxSource.PlayOneShot(PlayRandomFromArray(axe));
+                break;
+            case SFX.PickaxeSwing: 
+                sfxSource.PlayOneShot(PlayRandomFromArray(pickaxe));
+                break;
+            case SFX.FishingSwing: 
+                sfxSource.PlayOneShot(PlayRandomFromArray(fishing));
+                break;
+            case SFX.Cultivating: 
+                sfxSource.PlayOneShot(PlayRandomFromArray(cultivating));
                 break;
             case SFX.SwingSword: 
                 sfxSource.PlayOneShot(sfx[0]);
@@ -195,4 +211,5 @@ public class SoundMaster : MonoBehaviour
     {
         return array[Random.Range(0, array.Length)];
     }
+
 }

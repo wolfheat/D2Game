@@ -592,6 +592,110 @@ PrefabInstance:
       propertyPath: m_Name
       value: SoundMaster
       objectReference: {fileID: 0}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: axe.Array.size
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: axe.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: a8f67e9bbff48ae4a97aa9e5d17916a8, type: 3}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: axe.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: 97eeb340fc89f5f4a81fa65ca566087c, type: 3}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: axe.Array.data[2]
+      value: 
+      objectReference: {fileID: 8300000, guid: d844e643f1b69dc4cb33ea0c08d79878, type: 3}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: axe.Array.data[3]
+      value: 
+      objectReference: {fileID: 8300000, guid: 36d372fbd9810794b94ee89a85b098a7, type: 3}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: axe.Array.data[4]
+      value: 
+      objectReference: {fileID: 8300000, guid: 72c84e9cc5f47d044baf2944a2d606ad, type: 3}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: axe.Array.data[5]
+      value: 
+      objectReference: {fileID: 8300000, guid: ba7672269e1eaeb49833f71a3a80d3d4, type: 3}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: axe.Array.data[6]
+      value: 
+      objectReference: {fileID: 8300000, guid: b1452725a6c98b0439b84235bd10839d, type: 3}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: axe.Array.data[7]
+      value: 
+      objectReference: {fileID: 8300000, guid: f9b683bd5eb5d284fadd0d35a263ee95, type: 3}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: axe.Array.data[8]
+      value: 
+      objectReference: {fileID: 8300000, guid: 18894591a2b975e42a162cc6ac83b110, type: 3}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: axe.Array.data[9]
+      value: 
+      objectReference: {fileID: 8300000, guid: 92c26b72673f41141a33447e3693d732, type: 3}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: axe.Array.data[10]
+      value: 
+      objectReference: {fileID: 8300000, guid: 8a9a032bf731f6944800a6f0b0d40a05, type: 3}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: fishing.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: pickaxe.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: gathering.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: swordMiss.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: fishing.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: 7bbe295bb3f4ccc429a56a580d2f18ef, type: 3}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: pickaxe.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: 68d0edfa6f7ead446ac44731578a8464, type: 3}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: pickaxe.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: 1b8def365bdf9f64b9b9a2aea1431921, type: 3}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: pickaxe.Array.data[2]
+      value: 
+      objectReference: {fileID: 8300000, guid: 6b017049c1b3dc84f869bc4aab802cca, type: 3}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: pickaxe.Array.data[3]
+      value: 
+      objectReference: {fileID: 8300000, guid: b454fbb06566220489cb2a56fa9355e2, type: 3}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: cultivating.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: gathering.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: a336b8bef3005a0438216167d5ce96c0, type: 3}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: gathering.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: e74ab0c30530b9343831fc4af1129e08, type: 3}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: swordMiss.Array.data[3]
+      value: 
+      objectReference: {fileID: 8300000, guid: 7bbe295bb3f4ccc429a56a580d2f18ef, type: 3}
+    - target: {fileID: 1025138565662438267, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
+      propertyPath: cultivating.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: e74ab0c30530b9343831fc4af1129e08, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c2ee94c8170051345a19e859b37dcc84, type: 3}
 --- !u!1 &627246424

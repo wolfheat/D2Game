@@ -7,6 +7,7 @@ public class PlayerStateControl : MonoBehaviour
 	private Animator animator;
 	private UIController UIController;
 	private PlayerController playerController;
+	private SoundMaster soundmaster;
 	public PlayerState State { get; private set;}
 
 	private void Start()
@@ -14,6 +15,7 @@ public class PlayerStateControl : MonoBehaviour
 		UIController = FindObjectOfType<UIController>();
 		playerController = FindObjectOfType<PlayerController>();
 		animator = GetComponent<Animator>();
+        soundmaster = GetComponent<SoundMaster>();
 
 	}
 	public void SetState(PlayerState newState)
@@ -48,7 +50,7 @@ public class PlayerStateControl : MonoBehaviour
 					case ResourceType.MiningNode:
 				animator.CrossFade("Mining", 0.1f);
 						playerController.ActivateTool(ToolType.PickAxe);
-						return;
+                        return;
 					case ResourceType.FishingNode:
 				animator.CrossFade("FishingCast", 0.1f);
 						playerController.ActivateTool(ToolType.FishingRod);
@@ -56,11 +58,11 @@ public class PlayerStateControl : MonoBehaviour
 					case ResourceType.ScavengingNode:
 				animator.CrossFade("Gather", 0.1f);
 						playerController.ActivateTool(ToolType.Cultivator);
-						return;
+                        return;
 					case ResourceType.WoodcuttingNode:
-				animator.CrossFade("Gather", 0.1f);
+				animator.CrossFade("Woodcutting", 0.1f);
 						playerController.ActivateTool(ToolType.Axe);
-						return;
+                        return;
 					case ResourceType.Stash:
 				animator.CrossFade("OpenStash", 0.1f);
 						return;

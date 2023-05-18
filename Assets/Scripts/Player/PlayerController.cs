@@ -8,6 +8,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.XR;
 using UnityEngine.Playables;
+using static SoundMaster;
 using static UnityEditor.Timeline.TimelinePlaybackControls;
 
 public class ClickInfo
@@ -356,8 +357,7 @@ public class PlayerController : PlayerUnit
 
 		Debug.Log("Now Iteract, at pos: "+transform.position);
 		playerState.SetState(PlayerState.Interact);
-		soundmaster.PlaySFX(SoundMaster.SFX.Gather);		
-	}
+    }
 
 	private IEnumerator FaceAttackDirection()
 	{
@@ -488,6 +488,24 @@ public class PlayerController : PlayerUnit
 	}
 
     // --------ANIMATION EVENTS--------------------------------------------------------
+
+
+    public void AxeHit()
+    {
+        soundmaster.PlaySFX(SFX.AxeSwing);
+    }
+    public void PickaxeHit()
+    {
+        soundmaster.PlaySFX(SFX.PickaxeSwing);
+    }
+    public void FishingCast()
+    {
+        soundmaster.PlaySFX(SFX.FishingSwing);
+    }
+    public void ScavangeStart()
+    {
+        soundmaster.PlaySFX(SFX.Cultivating);
+    }
 
     public void InteractWithIteractable()
     {

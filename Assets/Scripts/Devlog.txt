@@ -172,20 +172,13 @@ Nov 2022
 		* Player can no longer swap weapon during gatehring or with menu open
 		* Tools added for gathering, they should swap automatically
 		* Modded sounds for attack miss, and arrows sound
+		* Nodes now look different
+		* Different sounds when harvesting (pickaxe, axe, fish, scavenging)
 
-		// Need to fix up saving system. Store save file in SO during gameplay and store to file from that?
-		// Need some system that stores all items in game.	(Semi started, Item Library added)
+
+
 		
-		// Figure out how to swap out skins, need to be able to do that without losing sword holding positions etc
-
-		// Check if menus are scaling correctly when changing resolution (seems to work)
-
-
-
-		// GOAL 
 		
-		// Add more Interfaces
-
 		// - Content -
 		// Load Screen between scenes
 
@@ -199,9 +192,12 @@ Nov 2022
 		// Change arrow graphics
 
 		// - Data stuff -
+		// Need to fix up saving system. Store save file in SO during gameplay and store to file from that?
 		// Check for bugs in stash reloading after making it more efficient
+		// Need some system that stores all items in game.	(Semi started, Item Library added)
 
 		// - Animation Stuff -
+		// Figure out how to swap out skins, need to be able to do that without losing sword holding positions etc
 		// Make variants in attack animation (Power attack hit harder and larger with other animation/time to complete?)
 		// Fix gliding issue with animation while moving (fixed?)
 		// Screen jumps/flickers when animating attack. (Hard to fix by animation, tried longer transition time semi works)
@@ -217,10 +213,14 @@ Nov 2022
 		// Make Cooking work, maybe UI for it? Maybe do cook animation and entire cook transfer at the end if available?
 
 		// - Items Stuff -
+		// Make correct items drop dependig of the node type
 		// Items drop with some randomization?
 		// Make Objects droppable by enemies
 		// Make Cooked meat work as consumable
-		
+
+		// - UI stuff -
+		// Check if menus are scaling correctly when changing resolution (seems to work)
+
 		//  - LevelCreation Stuff -
 		// Make levelchecker that checks if level is correct
 		// Make better corridors and fix when several paths go out from same room.

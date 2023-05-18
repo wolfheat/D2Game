@@ -33,14 +33,14 @@ class PlayerAnimationEventController : MonoBehaviour
     public void ForcedStopGatheringEvent(bool completedEntireGathering = false)
     {
 
-        //Debug.Log("Stop Gathering!");
+        Debug.Log("Forced Stop Gathering!");
 
 		playerController.StopGathering();
 		if(completedEntireGathering) playerController.InteractWithIteractable();
             
         navMeshAgent.destination = transform.position;
 
-        playerState.SetState(PlayerState.MoveTo);
+        playerState.SetState(PlayerState.Idle);
 		soundMaster.StopSFX();
     }
 

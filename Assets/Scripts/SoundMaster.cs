@@ -6,6 +6,8 @@ public class SoundMaster : MonoBehaviour
     [SerializeField] private AudioClip[] menu;
     [SerializeField] private AudioClip[] sfx;
     [SerializeField] private AudioClip[] swordHits;
+    [SerializeField] private AudioClip[] swordMiss;
+    [SerializeField] private AudioClip[] arrowSounds;
     [SerializeField] private AudioClip[] grunts;
     [SerializeField] private AudioClip[] music;
     [SerializeField] private AudioClip[] musicIntense;
@@ -22,7 +24,7 @@ public class SoundMaster : MonoBehaviour
 
     private float presetVolume = 0.8f;
     //private float presetSFXVolume = 0.1f;
-    private float presetSFXStepVolume = 0.1f;
+    private float presetSFXStepVolume = 0.5f;
 
     private float totalFadeOutTime = 3.5f;
     private float fadeOutMargin = 0.01f;
@@ -149,7 +151,7 @@ public class SoundMaster : MonoBehaviour
         switch (type)
 		{
             case SFX.Footstep: 
-                sfxSource.PlayOneShot(footstep[Random.Range(0,footstep.Length)]);
+                sfxSource.PlayOneShot(PlayRandomFromArray(footstep));
                 break;
             case SFX.Gather: 
                 sfxSource.PlayOneShot(sfx[2]);
@@ -158,13 +160,13 @@ public class SoundMaster : MonoBehaviour
                 sfxSource.PlayOneShot(sfx[0]);
                 break;
             case SFX.SwordHit: 
-                sfxSource.PlayOneShot(swordHits[0]);
+                sfxSource.PlayOneShot(PlayRandomFromArray(swordHits));
                 break;
             case SFX.SwingSwordMiss: 
-                sfxSource.PlayOneShot(sfx[1]);
+                sfxSource.PlayOneShot(PlayRandomFromArray(swordMiss));
                 break;
             case SFX.ShootArrow: 
-                sfxSource.PlayOneShot(sfx[1]);
+                sfxSource.PlayOneShot(PlayRandomFromArray(arrowSounds));
                 break;
             case SFX.Grunt: 
                 sfxSource.PlayOneShot(grunts[0]);
@@ -189,5 +191,8 @@ public class SoundMaster : MonoBehaviour
 		}
 	}
 
-
+    private AudioClip PlayRandomFromArray(AudioClip[] array)
+    {
+        return array[Random.Range(0, array.Length)];
+    }
 }

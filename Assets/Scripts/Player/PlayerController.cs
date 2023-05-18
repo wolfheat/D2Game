@@ -19,7 +19,8 @@ public class ClickInfo
 	public ClickInfo(PlayerActionType pt, Vector3 p, Vector3 a, IInteractable i) { actionType = pt; pos = p; aim = a; i = interactable; }	
 }
 public enum ClickType {Left,Right}
-public enum WeaponType {Sword,Bow}
+public enum WeaponType {Sword, Bow}
+public enum ToolType {Axe, PickAxe, Cultivator, FishingRod}
 public enum PlayerActionType {Attack, PowerAttack ,Move, Interact, Gather, Stash, Undefined }
 
 
@@ -33,6 +34,9 @@ public class PlayerController : PlayerUnit
 	[SerializeField] private LayerMask UI;
 	[SerializeField] private GameObject[] weapons;
 
+	[Tooltip("Axe, PickAxe, Cultivator, Fishing Rod")]
+	[SerializeField] private GameObject[] tools;
+
     private PlayerAnimationEventController playerAnimationEventController;
 	private Camera mainCamera;
 	private WayPointController WayPointController;
@@ -43,6 +47,7 @@ public class PlayerController : PlayerUnit
 	private ClickInfo wayPointToShow;
 		
 	private WeaponType currentWeapon = WeaponType.Sword;
+	private ToolType currentTool = ToolType.Axe;
 
 	public IInteractable activeInteractable;
     public IInteractable ActiveNodeActiveInteractable { get { return activeInteractable; }}
@@ -90,11 +95,11 @@ public class PlayerController : PlayerUnit
 
     }
 
-	private void SwapWeapon(InputAction.CallbackContext ctx)
+	private void SwapWeapon(InputAction.CallbackContext context)
 	{
 		// Dont allow swapping if weapon is used
-		if (attackLock) return;
-
+		if (attackLock || playerState.State == PlayerState.Interact || playerState.State == PlayerState.MoveToInteract || UIController.Instance.IsMenuOpen()) return;
+		else Debug.Log("Playerstate = "+playerState.State);
 		ChangeCurrentWeapon();		
 	}
 
@@ -106,6 +111,27 @@ public class PlayerController : PlayerUnit
 
     }
 
+    public void ActivateTool(ToolType type)
+    {	
+		Debug.Log("Activating tool");
+		//Hide weapon
+		weapons[(int)currentWeapon].gameObject.SetActive(false);
+        currentTool = type;
+
+        // Activate tool here
+        tools[(int)currentTool].gameObject.SetActive(true);
+    }
+
+    public void DeactivateTool()
+    {
+		Debug.Log("Deactivating tool");
+		//Deactivate tool here
+		tools[(int)currentTool].gameObject.SetActive(false);	
+
+		//Show weapon
+		weapons[(int)currentWeapon].gameObject.SetActive(true);
+    }
+	
     private void CurrentWeaponVisualsEnabled(bool enable = true)
     {		
 		weapons[(int)currentWeapon].gameObject.SetActive(enable);
@@ -445,7 +471,14 @@ public class PlayerController : PlayerUnit
 	{
 		if (context.phase == InputActionPhase.Started)
 		{
-			holdPosition = true;
+            // Clicking UI element, ignore gameplay clicks
+            if (Inputs.Instance.PointerOverUI || UIController.Instance.IsMenuOpen())
+            {
+                if (UIController.Instance.IsMenuOpen()) Debug.Log("Shift when Menu is OPEN! Player does nothing");
+                return;
+            }
+
+            holdPosition = true;
 			StopInPlace();
 		}
 		else if (context.phase == InputActionPhase.Canceled)
@@ -473,6 +506,7 @@ public class PlayerController : PlayerUnit
     {
         if (interactCoroutine != null) StopCoroutine(interactCoroutine);
         interactCoroutine = null;
+		DeactivateTool();
     }
 
     internal bool TakeHit(int damage)

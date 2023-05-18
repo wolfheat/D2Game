@@ -168,12 +168,19 @@ Nov 2022
 		* MainScene loads automatically if not present when running townscene and dungeon. Dungeon errors fixed with coroutines.
 		* Fixed the issue with inventory items not swapping correctly
 		* Cleaned up and removed random walk generator and old UI
+18/5	* Shift does nolonger trigger player action when menu is open
+		* Player can no longer swap weapon during gatehring or with menu open
+		* Tools added for gathering, they should swap automatically
+		* Modded sounds for attack miss, and arrows sound
 
 		// Need to fix up saving system. Store save file in SO during gameplay and store to file from that?
 		// Need some system that stores all items in game.	(Semi started, Item Library added)
 		
+		// Figure out how to swap out skins, need to be able to do that without losing sword holding positions etc
 
-		// Check if menus are scaling correctly when changing resolution
+		// Check if menus are scaling correctly when changing resolution (seems to work)
+
+
 
 		// GOAL 
 		
@@ -183,15 +190,13 @@ Nov 2022
 		// Load Screen between scenes
 
 		// - Mechanics Stuff -		
-		// Make move and attack click not trigger when stash or other (closable )menu is open.
-		// Sometimes if player dont fully reach stash or target he keeps using moving animation without moving (fixed?)
-		// Player can get stuck sometimes fix, fixed?
-		// Add tools for harvesting.
-		// Change arrow shooting sound
-		// Make bow animation better, change speed of animation?
+		// Maybe remove option to store action, only do current action if possible?
+		// Player can get stuck sometimes fix?
 		// Can keep shooting arrows with left click but not rightclick
 		// Arrows stop at the player collider, maybe should stick to the actual character instead
 		// Make so Enemy stops chase earlier if player is not visable.
+		// Add more fancy tools for harvesting.
+		// Change arrow graphics
 
 		// - Data stuff -
 		// Check for bugs in stash reloading after making it more efficient
@@ -217,6 +222,8 @@ Nov 2022
 		// Make Cooked meat work as consumable
 		
 		//  - LevelCreation Stuff -
+		// Make levelchecker that checks if level is correct
+		// Make better corridors and fix when several paths go out from same room.
 		// The remove all children method for clearing doorways removes ground for cracked tile floor.
 		// Make it so tiles dont have enemies, resources, obstacles only one on each
 		// Maybe have certain rooms spawn enemies and not the added corridor?

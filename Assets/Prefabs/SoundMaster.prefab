@@ -50,6 +50,16 @@ MonoBehaviour:
   - {fileID: 8300000, guid: e74ab0c30530b9343831fc4af1129e08, type: 3}
   swordHits:
   - {fileID: 8300000, guid: 18121145dbcba1b40ad4badb429da9e8, type: 3}
+  - {fileID: 8300000, guid: b7a47396760e9ff4abe333f40022d2d7, type: 3}
+  - {fileID: 8300000, guid: 29a956b86d10b9b46aa3a3e9f862f065, type: 3}
+  swordMiss:
+  - {fileID: 8300000, guid: b61302dc7dacba648b924a3cafc96844, type: 3}
+  - {fileID: 8300000, guid: e3fc58ae16acae04e8751961230ceb8f, type: 3}
+  - {fileID: 8300000, guid: acd3c19b3b1239f41bb4bd34d9c1f0d0, type: 3}
+  arrowSounds:
+  - {fileID: 8300000, guid: f5a8064eae5a21e42b7c61105bc37b63, type: 3}
+  - {fileID: 8300000, guid: 758ec1f178927f046987bf8b90283edd, type: 3}
+  - {fileID: 8300000, guid: 700190dbcafd95f4c9677a2f66f7da73, type: 3}
   grunts: []
   music:
   - {fileID: 8300000, guid: 9a12e45e0ee6afa40bbe50f2d4282427, type: 3}

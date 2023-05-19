@@ -10,16 +10,29 @@ public class CameraRotateController : MonoBehaviour
 	CinemachineComponentBase vcamComponentBase;
 
 	private Camera mainCamera;
-	private const float RotationSpeed = 120f;
 
-	[Range (1,8)]
-	private int zoomLevel = 6;
-	private float cameraDistance = 15;
+    private const float RotationSpeed = 120f;
+    private const float RotationSpeedAcceleration = 1000f;
+    private const float Damping = 0.94f;
+	
+	private float rotationSpeed = 0f;
+	
+	private const float ZoomlevelTime = 0.28f;
+    private const int ZoomLevelMinimumHeight = 5;
+    private const int ZoomLevelStepHeight = 2;
+
+    [Range (0,8)] private int zoomLevel = 6;
+	private float cameraHeight = 15;
+
+
+	private Vector3 zoomLevelStart;
+	private Vector3 zoomLevelEnd;
+	private float zoomlevelTimer = 0;
+    private bool zooming = false;
 
 	private Vector3 followOffset = new Vector3(0f, 15f, -12f);
 
-
-
+	
 	
 	private void OnEnable()
 	{
@@ -35,9 +48,31 @@ public class CameraRotateController : MonoBehaviour
 	private void Update()
     {
 		CheckPlayerInput();
+
+		if(rotationSpeed != 0) RotateBySpeed();
+		if (zooming) ZoomLerp();
+	
 	}
 
-	private void CheckPlayerInput()
+    private void ZoomLerp()
+    {
+        (vcamComponentBase as CinemachineTransposer).m_FollowOffset = Vector3.Lerp(zoomLevelStart, zoomLevelEnd, zoomlevelTimer / ZoomlevelTime);
+		zoomlevelTimer += Time.deltaTime;
+		if (zoomlevelTimer >= ZoomlevelTime)
+		{
+			(vcamComponentBase as CinemachineTransposer).m_FollowOffset = zoomLevelEnd;
+			zooming = false;
+			zoomlevelTimer = 0;
+        }
+    }
+
+    private void RotateBySpeed()
+    {
+        vcamTransposer.m_FollowOffset = Quaternion.AngleAxis(rotationSpeed * Time.deltaTime, Vector3.up) * vcamTransposer.m_FollowOffset;
+		rotationSpeed *= Damping;
+    }
+
+    private void CheckPlayerInput()
 	{
 		// Constantly checks for inputs
 		if (Inputs.Instance.Controls.Land.RotateL.ReadValue<float>() == 1) RotateCamera();
@@ -54,16 +89,20 @@ public class CameraRotateController : MonoBehaviour
 
 	private void SetZoom()
 	{
-		Vector3 currentOffset = (vcamComponentBase as CinemachineTransposer).m_FollowOffset;
-		cameraDistance = 5 + zoomLevel * 2;
-		(vcamComponentBase as CinemachineTransposer).m_FollowOffset = new Vector3(currentOffset.x, cameraDistance, currentOffset.z);
-	}
+		if (!zooming)
+			zoomLevelStart = (vcamComponentBase as CinemachineTransposer).m_FollowOffset;
+
+		cameraHeight = ZoomLevelMinimumHeight + zoomLevel * ZoomLevelStepHeight;
+		zoomLevelEnd = new Vector3(zoomLevelStart.x, cameraHeight, zoomLevelStart.z);
+
+        zooming = true;
+    }
 
 
 	private void RotateCamera(int dirMultiplier = 1)
 	{
-		Vector3 currentCameraPositionVector = vcamTransposer.m_FollowOffset;
-		Vector3 newAimVector = Quaternion.AngleAxis(dirMultiplier*RotationSpeed * Time.deltaTime, Vector3.up) * currentCameraPositionVector;
-		vcamTransposer.m_FollowOffset = newAimVector;
-	}
+		// rotation speed changed and clamped to range
+		rotationSpeed = Mathf.Clamp(rotationSpeed + dirMultiplier * RotationSpeedAcceleration*Time.deltaTime, -RotationSpeed, RotationSpeed);
+		Debug.Log("Speed set to: "+rotationSpeed);
+    }
 }

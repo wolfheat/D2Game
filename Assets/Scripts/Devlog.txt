@@ -174,10 +174,12 @@ Nov 2022
 		* Modded sounds for attack miss, and arrows sound
 		* Nodes now look different
 		* Different sounds when harvesting (pickaxe, axe, fish, scavenging)
+19/5	* Smooth camera movements and zooming implemented
+		* Player can change avatar
+		* Changed to Erika as main avatar
+		* Sword separated into an object that can be used for any character
 
 
-
-		
 		
 		// - Content -
 		// Load Screen between scenes
@@ -197,6 +199,9 @@ Nov 2022
 		// Need some system that stores all items in game.	(Semi started, Item Library added)
 
 		// - Animation Stuff -
+		// Adjust bow so it is aligned correctly to the hand
+		// Adjust bow animation so it shows firing forward and not perpendicular to shoot direction
+		// Adjust pickaxe animation and axe animation
 		// Figure out how to swap out skins, need to be able to do that without losing sword holding positions etc
 		// Make variants in attack animation (Power attack hit harder and larger with other animation/time to complete?)
 		// Fix gliding issue with animation while moving (fixed?)
@@ -213,6 +218,7 @@ Nov 2022
 		// Make Cooking work, maybe UI for it? Maybe do cook animation and entire cook transfer at the end if available?
 
 		// - Items Stuff -
+		// Check if items may end up outside players reach and fix if so
 		// Make correct items drop dependig of the node type
 		// Items drop with some randomization?
 		// Make Objects droppable by enemies

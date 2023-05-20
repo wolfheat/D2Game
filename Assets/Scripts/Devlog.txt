@@ -179,9 +179,10 @@ Nov 2022
 		* Changed to Erika as main avatar
 		* Sword separated into an object that can be used for any character
 20/5	* Unreachable positions wont trigger player to move in place
-		
+		* Adjusted bow animation so it fires forward and not perpendicular to shoot direction
+		* Changed so Arrows dont use gravity, works better
+		* Changed graphics for arrows, now more fancy
 
-		// Clicking unreachable position makes player stuck in walkanimation but not moving.
 		
 		// - Content -
 		// Load Screen between scenes
@@ -193,7 +194,6 @@ Nov 2022
 		// Arrows stop at the player collider, maybe should stick to the actual character instead
 		// Make so Enemy stops chase earlier if player is not visable.
 		// Add more fancy tools for harvesting.
-		// Change arrow graphics
 
 		// - Data stuff -
 		// Need to fix up saving system. Store save file in SO during gameplay and store to file from that?
@@ -201,11 +201,9 @@ Nov 2022
 		// Need some system that stores all items in game.	(Semi started, Item Library added)
 
 		// - Animation Stuff -
-		// Adjust bow so it is aligned correctly to the hand
-		// Adjust bow animation so it shows firing forward and not perpendicular to shoot direction
-		// Adjust pickaxe animation and axe animation
+		// Adjust bow so it is aligned correctly to the hand, same for all tools
+		// Adjust pickaxe animation and axe animation, currently just slash
 		// Make variants in attack animation (Power attack hit harder and larger with other animation/time to complete?)
-		// Fix gliding issue with animation while moving (fixed?)
 		// Screen jumps/flickers when animating attack. (Hard to fix by animation, tried longer transition time semi works)
 		// Player still moves sometimes when clicking and using stash
 

@@ -16,7 +16,6 @@ public class BaseUnit : MonoBehaviour
     protected virtual void Awake()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
-        Debug.Log("Awake Unit navmesh");
     }
 
     public void SetToPosition(Vector3 pos)

@@ -10,7 +10,10 @@ public class PlayerStateControl : MonoBehaviour
 	private SoundMaster soundmaster;
 	public PlayerState State { get; private set;}
 
-	private void Start()
+	private const float FadeTime = 0.3f;
+
+
+    private void Start()
 	{
 		UIController = FindObjectOfType<UIController>();
 		playerController = FindObjectOfType<PlayerController>();
@@ -33,10 +36,10 @@ public class PlayerStateControl : MonoBehaviour
         switch (newState)
 		{
 			case PlayerState.Idle:
-				animator.CrossFade("Idle", 0.1f);
+				animator.CrossFade("Idle", FadeTime);
 				break;
 			case PlayerState.MoveTo:
-				animator.CrossFade("Run", 0.1f);
+				animator.CrossFade("Run", FadeTime);
 				break;
 			case PlayerState.AttackSwordSwing:
 				if(Random.Range(0,10)>6)
@@ -45,42 +48,42 @@ public class PlayerStateControl : MonoBehaviour
 					animator.CrossFade("SwordSwing2", 0.3f);
                 break;
 			case PlayerState.MoveToInteract:
-				animator.CrossFade("Run", 0.1f);
+				animator.CrossFade("Run", FadeTime);
 				break;
 			case PlayerState.ShootArrow:
-				animator.CrossFade("ShootArrow", 0.1f);
+				animator.CrossFade("ShootArrow", FadeTime);
 				break;
 			case PlayerState.Interact:
 				switch (playerController.activeInteractable.Type)
 				{
 					case ResourceType.MiningNode:
-				animator.CrossFade("Mining", 0.1f);
+				animator.CrossFade("Mining", FadeTime);
 						playerController.ActivateTool(ToolType.PickAxe);
                         break;
 					case ResourceType.FishingNode:
-				animator.CrossFade("FishingCast", 0.1f);
+				animator.CrossFade("FishingCast", FadeTime);
 						playerController.ActivateTool(ToolType.FishingRod);
                         break;
 					case ResourceType.ScavengingNode:
-				animator.CrossFade("Gather", 0.1f);
+				animator.CrossFade("Gather", FadeTime);
 						playerController.ActivateTool(ToolType.Cultivator);
                         break;
 					case ResourceType.WoodcuttingNode:
-				animator.CrossFade("Woodcutting", 0.1f);
+				animator.CrossFade("Woodcutting", FadeTime);
 						playerController.ActivateTool(ToolType.Axe);
 						break;
 					case ResourceType.Stash:
-				animator.CrossFade("OpenStash", 0.1f);
+				animator.CrossFade("OpenStash", FadeTime);
                         break;
                     case ResourceType.WellResourceNode:
-                animator.CrossFade("Gather", 0.1f);
+                animator.CrossFade("Gather", FadeTime);
                         break;
                     default:
                         break;
 				}
 				break;
 			case PlayerState.Death:
-                animator.CrossFade("Death4", 0.1f);
+                animator.CrossFade("Death4", FadeTime);
                 break;
 			case PlayerState.Dead:
 				break;

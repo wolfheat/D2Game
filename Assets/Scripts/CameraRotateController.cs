@@ -103,6 +103,5 @@ public class CameraRotateController : MonoBehaviour
 	{
 		// rotation speed changed and clamped to range
 		rotationSpeed = Mathf.Clamp(rotationSpeed + dirMultiplier * RotationSpeedAcceleration*Time.deltaTime, -RotationSpeed, RotationSpeed);
-		Debug.Log("Speed set to: "+rotationSpeed);
     }
 }

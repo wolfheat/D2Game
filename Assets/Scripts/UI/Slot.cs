@@ -14,7 +14,6 @@ public class Slot : MonoBehaviour
     private void Start()
     {
         Size = GetComponent<RectTransform>().sizeDelta.y;
-        Debug.Log("Setting Slot size to: "+Size);
     }
 
     public void PlaceItem(InventoryItem newItem)

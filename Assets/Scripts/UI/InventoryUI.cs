@@ -27,7 +27,6 @@ public class InventoryUI : MonoBehaviour
 
     public void StoreItemDataArray()
     {
-        Debug.Log("StoreItemData");
         int[] itemIDs = new int[slots.Count];
         for (int i = 0; i < slots.Count; i++)
             itemIDs[i] = slots[i].HasItem?slots[i].HeldItem.Data.ID:-1;

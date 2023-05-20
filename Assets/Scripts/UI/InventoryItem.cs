@@ -17,7 +17,6 @@ public class UIItem : MonoBehaviour
 
     protected virtual void Awake()
     {
-        Debug.Log("Awake UIItem");  
         rect = image.GetComponent<RectTransform>();
         itemRect = GetComponent<RectTransform>();
     }

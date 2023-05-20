@@ -8,6 +8,7 @@ public class BaseUnit : MonoBehaviour
 
     protected bool NavMeshAtTarget()
 	{
+        //if (navMeshAgent.remainingDistance > 0.1f) Debug.Log("NavMesh Remaining Distance: "+ navMeshAgent.remainingDistance);
         if(!navMeshAgent.enabled) return true;
 		return navMeshAgent.remainingDistance < 0.1f;
     }

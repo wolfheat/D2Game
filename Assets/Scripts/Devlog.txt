@@ -178,8 +178,10 @@ Nov 2022
 		* Player can change avatar
 		* Changed to Erika as main avatar
 		* Sword separated into an object that can be used for any character
+20/5	* Unreachable positions wont trigger player to move in place
+		
 
-
+		// Clicking unreachable position makes player stuck in walkanimation but not moving.
 		
 		// - Content -
 		// Load Screen between scenes
@@ -202,7 +204,6 @@ Nov 2022
 		// Adjust bow so it is aligned correctly to the hand
 		// Adjust bow animation so it shows firing forward and not perpendicular to shoot direction
 		// Adjust pickaxe animation and axe animation
-		// Figure out how to swap out skins, need to be able to do that without losing sword holding positions etc
 		// Make variants in attack animation (Power attack hit harder and larger with other animation/time to complete?)
 		// Fix gliding issue with animation while moving (fixed?)
 		// Screen jumps/flickers when animating attack. (Hard to fix by animation, tried longer transition time semi works)
@@ -227,7 +228,7 @@ Nov 2022
 		// - UI stuff -
 		// Check if menus are scaling correctly when changing resolution (seems to work)
 
-		//  - LevelCreation Stuff -
+		// - LevelCreation Stuff -
 		// Make levelchecker that checks if level is correct
 		// Make better corridors and fix when several paths go out from same room.
 		// The remove all children method for clearing doorways removes ground for cracked tile floor.

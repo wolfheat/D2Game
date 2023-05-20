@@ -10526,8 +10526,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.0000076293945, y: 0}
-  m_SizeDelta: {x: 0, y: 249.3}
+  m_AnchoredPosition: {x: 86.00878, y: 0}
+  m_SizeDelta: {x: 172.0177, y: 508.1539}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1001 &1152494014840443996
 PrefabInstance:
@@ -11435,7 +11435,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2677153111703068688, guid: 9dc1c0165ce4fab4fb6c9d829cc8dc53, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2677153111703068690, guid: 9dc1c0165ce4fab4fb6c9d829cc8dc53, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -13312,9 +13312,10 @@ MonoBehaviour:
       m_Calls: []
   m_text: "Thank you for trying out this game.\n\nThis is just an early access Gameplay
     Demo. Currently there is infinite levels. You can spawn enemies at random positions
-    with SPACE. You can now also  harvest Nodes.\n\nKEY BINDINGS:\nW \t\t- Swap Weapon\nSpace
-    \t- Spawn Enemy\nHold Shift \t- Attack\nScroll \t\t- Change Camera Angle\nF \t\t-
-    Spawn Item\n"
+    with SPACE. You can now also  harvest Nodes. You have a stash where you can store
+    your items. You can get water from the well.\n\nKEY BINDINGS:\nW \t\t- Swap Weapon\nSpace
+    \t- Spawn Enemy\nHold Shift \t- Attack\nScroll \t\t- Change Camera Angle\nA-D\t\t-
+    Rotate Camera\n\nF \t\t- Spawn Item\nT\t\t- Swap Character\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -13341,8 +13342,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 10.94
-  m_fontSizeBase: 10.94
+  m_fontSize: 19.91
+  m_fontSizeBase: 19.91
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

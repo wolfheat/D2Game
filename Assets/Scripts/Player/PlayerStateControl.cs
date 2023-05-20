@@ -20,11 +20,17 @@ public class PlayerStateControl : MonoBehaviour
 	}
 	public void SetState(PlayerState newState)
 	{
-		Debug.Log("Setting new state: "+newState);
+		Debug.Log("Setting new state: "+newState + " from "+State);
+		
+		if (State == newState) return;
+
 		//Set speed of animation
 		animator.speed = SavingUtility.Instance.playerInventory.AttackSpeedMultiplyer;
 
-		switch (newState)
+
+		State = newState;
+
+        switch (newState)
 		{
 			case PlayerState.Idle:
 				animator.CrossFade("Idle", 0.1f);
@@ -50,25 +56,25 @@ public class PlayerStateControl : MonoBehaviour
 					case ResourceType.MiningNode:
 				animator.CrossFade("Mining", 0.1f);
 						playerController.ActivateTool(ToolType.PickAxe);
-                        return;
+                        break;
 					case ResourceType.FishingNode:
 				animator.CrossFade("FishingCast", 0.1f);
 						playerController.ActivateTool(ToolType.FishingRod);
-						return;
+                        break;
 					case ResourceType.ScavengingNode:
 				animator.CrossFade("Gather", 0.1f);
 						playerController.ActivateTool(ToolType.Cultivator);
-                        return;
+                        break;
 					case ResourceType.WoodcuttingNode:
 				animator.CrossFade("Woodcutting", 0.1f);
 						playerController.ActivateTool(ToolType.Axe);
-                        return;
+						break;
 					case ResourceType.Stash:
 				animator.CrossFade("OpenStash", 0.1f);
-						return;
+                        break;
                     case ResourceType.WellResourceNode:
                 animator.CrossFade("Gather", 0.1f);
-                        return;
+                        break;
                     default:
                         break;
 				}
@@ -84,7 +90,6 @@ public class PlayerStateControl : MonoBehaviour
 				break;
 		}
 
-		State = newState;
 	}
 
 }

@@ -16,8 +16,10 @@ public class PlayerUnit : BaseUnit
 
     private void PlayerReachedTarget()
     {
-        if (playerState.State == PlayerState.MoveTo && NavMeshAtTarget())
+        //Debug.Log("Check if player reached target, state: "+ playerState.State);
+        if (playerState.State == PlayerState.MoveTo && (NavMeshAtTarget() || !navMeshAgent.hasPath))
         {
+            Debug.Log("Player reached Target, Set to Idle (haspath: "+ navMeshAgent.hasPath + ")");
             playerState.SetState(PlayerState.Idle);
             navMeshAgent.isStopped = true;
         }

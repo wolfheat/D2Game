@@ -317,9 +317,17 @@ public class PlayerController : PlayerUnit
 	}
 	private void NavigateTo()
 	{
+		NavMeshPath path = new NavMeshPath();
+		// Must check if navigating to a position you are already at or cant reach
+		if (Vector3.Distance(navMeshAgent.transform.position,clickInfo.pos) <= 0.1f || !navMeshAgent.CalculatePath(clickInfo.pos, path))
+		{
+			Debug.Log("Path not found.");
+			return;
+		}
+
 		navMeshAgent.isStopped = false;
+		navMeshAgent.SetPath(path);
 		playerState.SetState(PlayerState.MoveTo);		
-		navMeshAgent.SetDestination(clickInfo.pos);
 	}
 
 	private IEnumerator OpenStash()

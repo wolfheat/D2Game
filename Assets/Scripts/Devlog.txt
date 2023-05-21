@@ -181,13 +181,27 @@ Nov 2022
 20/5	* Unreachable positions wont trigger player to move in place
 		* Adjusted bow animation so it fires forward and not perpendicular to shoot direction
 		* Changed so Arrows dont use gravity, works better
-		* Changed graphics for arrows, now more fancy
+		* Changed graphics for arrows, now more fancy		
+21/5	* BUILD PC: 10s, 627Mb (307Mb compressed)
+		* Addressables fixed, had to build them separately before game build
+		* Added a Consol menu to show game information in
+		* Added inputRestriction method in UI that makes clicks outside game area unvalid
+		* Changed ratiation damener to act only in fixedupdate fixing rotation error in build where fps is lower
+		* ESC now opens exit menu if no closable menus are open
+		* Fixed Marias left hand position a bit better
+		* Clicking outside game is now prohibited
 
-		
+
+		ISSUES
+		// Light setting in town in build is dull why
+		// pressing stash sometime start gatehering animation before reaching the stash, should walk there first
+		// Spam shooting can still get stuck in animation
+
 		// - Content -
 		// Load Screen between scenes
 
 		// - Mechanics Stuff -		
+		// Still have to make sure clicking outside game works for any game size and fullscreen or not
 		// Maybe remove option to store action, only do current action if possible?
 		// Player can get stuck sometimes fix?
 		// Can keep shooting arrows with left click but not rightclick

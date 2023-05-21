@@ -14,14 +14,14 @@ public class StashUI : MonoBehaviour, IOpenCloseMenu
     private List<StashItem> stashItems = new List<StashItem>();
 
     public bool PanelEnabled => panel.activeSelf;
-    public void OpenMenu(){panel.SetActive(true); UpdateStashItems();}
-    public void CloseMenu() => panel.SetActive(false);
+    public void ShowPanel(){panel.SetActive(true); UpdateStashItems();}
+    public void ClosePanel() => panel.SetActive(false);
 
     private void Start()
     {
         library = FindObjectOfType<ItemLibrary>();
         inventoryUI = FindObjectOfType<InventoryUI>();
-        CloseMenu();
+        ClosePanel();
     }
 
     public void MoveAllButton()

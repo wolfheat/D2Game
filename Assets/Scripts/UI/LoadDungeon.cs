@@ -9,23 +9,23 @@ public class LoadDungeon : MonoBehaviour, IOpenCloseMenu
     TownPositionsController townPositionsController;
 
     public bool PanelEnabled => panel.activeSelf;
-    public void OpenMenu() => panel.SetActive(true);
-    public void CloseMenu() => panel.SetActive(false);
+    public void ShowPanel() => panel.SetActive(true);
+    public void ClosePanel() => panel.SetActive(false);
 
     public void Start()
     {
         townPositionsController = FindObjectOfType<TownPositionsController>();
-        CloseMenu();
+        ClosePanel();
     }
     public void ShowMenu(InputAction.CallbackContext coontext)
     {
-        OpenMenu();
+        ShowPanel();
     }
     
     public void StartDungeon()
     {
         Debug.Log("StartDungeon");
-        CloseMenu();
+        ClosePanel();
 
         FindObjectOfType<SavingUtility>()?.SetPlayerTownPosition();
         //townPositionsController.ChangeToClosestPoint(FindObjectOfType<PlayerController>().transform.position);

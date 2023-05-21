@@ -1,8 +1,6 @@
-using System.Collections.Generic;
 using System;
 using UnityEngine;
 using System.Collections;
-using static UnityEditor.Progress;
 using UnityEngine.SceneManagement;
 
 public class SavingUtility : MonoBehaviour

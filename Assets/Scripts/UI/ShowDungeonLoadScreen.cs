@@ -7,7 +7,7 @@ public class ShowDungeonLoadScreen : MonoBehaviour
         if(other.gameObject.GetComponent<PlayerController>() != null)
         {
             Debug.Log("Load Dungeon");
-            FindObjectOfType<LoadDungeon>().OpenMenu();
+            FindObjectOfType<LoadDungeon>().ShowPanel();
         }        
     }
 }

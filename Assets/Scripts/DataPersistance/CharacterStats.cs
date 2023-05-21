@@ -1,11 +1,3 @@
-using System.Collections.Generic;
-using static UnityEditor.Progress;
-using UnityEngine;
-using System.Linq;
-using System;
-using static UnityEditor.PlayerSettings;
-using Newtonsoft.Json;
-
 public static class CharacterStats
 {
     public static int HitDamage { get; } = 200;

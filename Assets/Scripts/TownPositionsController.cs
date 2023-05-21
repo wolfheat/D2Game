@@ -1,8 +1,6 @@
-using System;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 public class TownPositionsController : MonoBehaviour
 {
@@ -23,9 +21,10 @@ public class TownPositionsController : MonoBehaviour
 
     private void UpdateScriptableObject()
     {
-        
+#if UNITY_EDITOR
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
+#endif
         //Debug.Log("Scriptable Object created and saved: ");
     }
 

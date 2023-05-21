@@ -1,15 +1,8 @@
-using System;
 using System.Collections;
-using System.Threading;
-using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.XR;
-using UnityEngine.Playables;
 using static SoundMaster;
-using static UnityEditor.Timeline.TimelinePlaybackControls;
 
 public class ClickInfo
 {
@@ -161,8 +154,10 @@ public class PlayerController : PlayerUnit
 		mouseClickTimer += Time.deltaTime;
 		if (validClick && Inputs.Instance.Controls.Land.LeftClick.inProgress && !attackLock && mouseClickTimer > HoldMouseDuration)
 		{
-			// Left button is held
-			//Sample mouse again
+			if (!InputRestriction.Instance.CheckFocus()) return;
+
+			// Left button is held ON screen
+			// Sample mouse again
 			if(MouseClick())
 				SaveOrExecutePlayerAction();
 			mouseClickTimer = 0;
@@ -446,6 +441,7 @@ public class PlayerController : PlayerUnit
 
 	private void RightClick(InputAction.CallbackContext context)
 	{
+		if (!InputRestriction.Instance.CheckFocus()) return;
         if (context.phase == InputActionPhase.Started)
         {
 			if(MousePowerClick())
@@ -456,8 +452,30 @@ public class PlayerController : PlayerUnit
             ShowWaypointIfAvailable();
         }
     }
-	private void LeftClick(InputAction.CallbackContext context)
-	{
+
+    private void OnApplicationFocus(bool focus)
+    {
+		if (focus)
+		{
+            InGameConsol.Instance.AddInfo("Application Gained Focus");
+			Debug.Log("Application Gained Focus");
+		}
+		else
+		{
+			Debug.Log("Application Lost Focus");
+			InGameConsol.Instance.AddInfo("Application Lost Focus");
+		}
+    }
+
+    private void LeftClick(InputAction.CallbackContext context)
+    {
+		if (!InputRestriction.Instance.CheckFocus()) 
+		{
+			InGameConsol.Instance.AddInfo("LEft Click Not recognized");			
+			return;
+		}
+        InGameConsol.Instance.AddInfo("LEft Click Recognized");
+
         if (context.phase == InputActionPhase.Started)
         {
 			validClick = MouseClick();

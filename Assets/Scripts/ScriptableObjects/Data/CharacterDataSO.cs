@@ -1,5 +1,4 @@
 using UnityEngine;
-using static UnityEditor.Progress;
 
 [CreateAssetMenu(fileName = "SceneTransferData", menuName = "Game/GameData")]
 public class CharacterDataSO : ScriptableObject

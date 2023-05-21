@@ -13,7 +13,7 @@ public class CameraRotateController : MonoBehaviour
 
     private const float RotationSpeed = 120f;
     private const float RotationSpeedAcceleration = 1000f;
-    private const float Damping = 0.94f;
+    private const float Damping = 0.87f;
 	
 	private float rotationSpeed = 0f;
 	
@@ -49,10 +49,14 @@ public class CameraRotateController : MonoBehaviour
     {
 		CheckPlayerInput();
 
-		if(rotationSpeed != 0) RotateBySpeed();
-		if (zooming) ZoomLerp();
-	
+        if (rotationSpeed != 0) RotateBySpeed();
+        if (zooming) ZoomLerp();		
 	}
+
+    private void FixedUpdate()
+    {
+        rotationSpeed *= Damping;
+    }
 
     private void ZoomLerp()
     {
@@ -69,7 +73,7 @@ public class CameraRotateController : MonoBehaviour
     private void RotateBySpeed()
     {
         vcamTransposer.m_FollowOffset = Quaternion.AngleAxis(rotationSpeed * Time.deltaTime, Vector3.up) * vcamTransposer.m_FollowOffset;
-		rotationSpeed *= Damping;
+		//Debug.Log("frams per second: "+(1000/Time.deltaTime));
     }
 
     private void CheckPlayerInput()

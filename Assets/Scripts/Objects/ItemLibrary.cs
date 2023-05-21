@@ -38,9 +38,12 @@ public class ItemLibrary : MonoBehaviour
 
     private void LoadAllItems()
     {
+        InGameConsol.Instance.AddInfo("Loading addressables items into the Library.");
+
         Addressables.LoadAssetsAsync<ItemData>(assetLabelReference, (itemData) =>
         {
             libraryItemList.Add(itemData.ID,itemData);
+            InGameConsol.Instance.AddInfo("Loaded item to Library: " + itemData.Itemname);
             //Debug.Log("Loaded item to Library: "+itemData.Itemname);
         });
     }

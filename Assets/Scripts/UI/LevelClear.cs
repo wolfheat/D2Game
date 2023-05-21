@@ -7,17 +7,9 @@ public class LevelClear : MonoBehaviour, IOpenCloseMenu
     LevelCreator levelCreator;
 
     public bool PanelEnabled => panel.activeSelf;
-    public void OpenMenu() => panel.SetActive(true);
-    public void CloseMenu() => panel.SetActive(false);
+    public void ShowPanel() => panel.SetActive(true);
+    public void ClosePanel() => panel.SetActive(false);
 
-
-    public void ShowPanel()
-    {
-        if (panel.activeSelf) return;
-        Debug.Log("Show Panel");
-        OpenMenu();
-    }
-    
 	public void NewPressed()
     {
         Debug.Log("New Level");
@@ -25,7 +17,7 @@ public class LevelClear : MonoBehaviour, IOpenCloseMenu
         if (levelCreator != null)
         {
             levelCreator.CreateNewLevel();
-            if(PanelEnabled) CloseMenu();
+            if(PanelEnabled) ClosePanel();
         }
     }
     
@@ -40,11 +32,5 @@ public class LevelClear : MonoBehaviour, IOpenCloseMenu
         SceneManager.LoadScene("TownScene", LoadSceneMode.Additive);
         SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
         FindObjectOfType<PlayerController>()?.SetToPosition(FindObjectOfType<SavingUtility>().GetPlayerTownPosition());
-    }
-    
-	public void ClosePanel()
-    {
-        Debug.Log("Return To Town, Close pressed");
-        panel.SetActive(false);
     }    
 }

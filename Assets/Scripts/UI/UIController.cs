@@ -11,6 +11,7 @@ public class UIController : MonoBehaviour
 
     [SerializeField] private GameObject canvas;
     [SerializeField] private InventoryUI inventoryUI;
+    [SerializeField] private ExitGame exitGame;
 
     //Panels
     [SerializeField] public LevelClear levelClear;
@@ -26,12 +27,14 @@ public class UIController : MonoBehaviour
         Instance = this;
         Inputs.Instance.Controls.Land.BackSpace.performed += ActivateLevelClearPanel;
         Inputs.Instance.Controls.Land.ESC.performed += HideOpenMenu;
+        Inputs.Instance.Controls.Land.Consol.performed += ToggleConsol;
         //canvas.SetActive(false);
     }
     public void OnDestroy()
     {
         Inputs.Instance.Controls.Land.BackSpace.performed -= ActivateLevelClearPanel;
         Inputs.Instance.Controls.Land.ESC.performed -= HideOpenMenu;
+        Inputs.Instance.Controls.Land.Consol.performed -= ToggleConsol;
     }    
     
     public void ActivateCanvas()
@@ -63,7 +66,11 @@ public class UIController : MonoBehaviour
         }
         return false;
     }
-    
+
+    public void ToggleConsol(InputAction.CallbackContext context)
+    {
+        InGameConsol.Instance.TogglePanel();
+    }
     public void HideOpenMenu(InputAction.CallbackContext context)
     {
         //Get all active closables
@@ -73,11 +80,14 @@ public class UIController : MonoBehaviour
         {
             if (closables[i].PanelEnabled)
             {
-                closables[i].CloseMenu();
+                closables[i].ClosePanel();
                 Debug.Log("Closed Menu");
                 return;
             }
         }
+
+        // Reach here if no closables open then open exit
+        exitGame.ShowPanel();
     }
         
     internal bool AddItemToInventory(ItemData itemData)

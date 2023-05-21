@@ -215,6 +215,15 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Consol"",
+                    ""type"": ""Button"",
+                    ""id"": ""5629c645-e5bf-4fcc-a52b-cb93cda065f9"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -448,6 +457,17 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""action"": ""T"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""67cd2fb1-b68f-4e5f-9d46-011f9f3be967"",
+                    ""path"": ""<Keyboard>/backquote"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Consol"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -477,6 +497,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_Land_ZoomIn = m_Land.FindAction("ZoomIn", throwIfNotFound: true);
         m_Land_S = m_Land.FindAction("S", throwIfNotFound: true);
         m_Land_T = m_Land.FindAction("T", throwIfNotFound: true);
+        m_Land_Consol = m_Land.FindAction("Consol", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -557,6 +578,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_Land_ZoomIn;
     private readonly InputAction m_Land_S;
     private readonly InputAction m_Land_T;
+    private readonly InputAction m_Land_Consol;
     public struct LandActions
     {
         private @PlayerControls m_Wrapper;
@@ -582,6 +604,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @ZoomIn => m_Wrapper.m_Land_ZoomIn;
         public InputAction @S => m_Wrapper.m_Land_S;
         public InputAction @T => m_Wrapper.m_Land_T;
+        public InputAction @Consol => m_Wrapper.m_Land_Consol;
         public InputActionMap Get() { return m_Wrapper.m_Land; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -654,6 +677,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @T.started -= m_Wrapper.m_LandActionsCallbackInterface.OnT;
                 @T.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnT;
                 @T.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnT;
+                @Consol.started -= m_Wrapper.m_LandActionsCallbackInterface.OnConsol;
+                @Consol.performed -= m_Wrapper.m_LandActionsCallbackInterface.OnConsol;
+                @Consol.canceled -= m_Wrapper.m_LandActionsCallbackInterface.OnConsol;
             }
             m_Wrapper.m_LandActionsCallbackInterface = instance;
             if (instance != null)
@@ -721,6 +747,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @T.started += instance.OnT;
                 @T.performed += instance.OnT;
                 @T.canceled += instance.OnT;
+                @Consol.started += instance.OnConsol;
+                @Consol.performed += instance.OnConsol;
+                @Consol.canceled += instance.OnConsol;
             }
         }
     }
@@ -748,5 +777,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnZoomIn(InputAction.CallbackContext context);
         void OnS(InputAction.CallbackContext context);
         void OnT(InputAction.CallbackContext context);
+        void OnConsol(InputAction.CallbackContext context);
     }
 }

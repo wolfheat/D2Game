@@ -47,7 +47,7 @@ class PlayerAnimationEventController : MonoBehaviour
     private void AnimationOpenStashEvent()
 	{
 		Debug.Log("Open Stash!");
-        stash.OpenMenu();
+        stash.ShowPanel();
         playerState.SetState(PlayerState.Idle);
 		FindObjectOfType<SavingUtility>()?.SetPlayerTownPosition();
     }

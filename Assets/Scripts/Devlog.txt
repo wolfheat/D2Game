@@ -192,7 +192,7 @@ Nov 2022
 		* Clicking outside game is now prohibited
 22/5	* Added Cooking UI with craftable recipes at the hilltop
 		* Added sounds for success or fail to create item, and selecting new recipe.
-		* Clicking anywere in recipe will now select that recipe.
+23/5	* Clicking anywere in recipe will now select that recipe.
 		* Active recipe is now highlighted in the list.
 		* List of Recipes is now updated to show available recipes in green and unavailable in red
 		* 9-sliced all menu backgrounds
@@ -210,6 +210,8 @@ Nov 2022
 		* RESULT: FROM 767MB to 206MB game size (352MB to 85MB) Can be improved further.
 		* Added Occlusion Culling, made graphic card ease a bit
 		
+
+		// Trees add many triangles, make them use less?
 
 		// REDO CLIFFS, TO LARGE MAKE MY OWN PROBUILDER ONES OR DOWNLOAD NEW
 

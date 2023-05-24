@@ -36,7 +36,7 @@ public class InGameConsol : MonoBehaviour
     {
         if(queue.Count >= 10)
         {
-            Debug.Log("Destroy INFO");
+            //Debug.Log("Destroy INFO");
             ConsoleText consolText = queue.Dequeue() as ConsoleText;
             Destroy(consolText.gameObject);
         }

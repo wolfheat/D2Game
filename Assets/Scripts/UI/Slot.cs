@@ -48,6 +48,7 @@ public class Slot : MonoBehaviour
     
     public void ClearSlot(bool destroy=false)
     {
+        if(destroy) Destroy(HeldItem.gameObject);
         HeldItem = null;        
         HasItem = false;
     }

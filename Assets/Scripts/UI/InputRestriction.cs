@@ -25,7 +25,7 @@ public class InputRestriction : MonoBehaviour
 
     public bool CheckFocus()
     {
-        Debug.Log("Checking focus at pos"+ Mouse.current.position.ReadValue().x + " region: ("+inputRegion.xMin+","+ inputRegion.xMax+")");
+        //Debug.Log("Checking focus at pos"+ Mouse.current.position.ReadValue().x + " region: ("+inputRegion.xMin+","+ inputRegion.xMax+")");
         InGameConsol.Instance.AddInfo("Focus X pos:" + Mouse.current.position.ReadValue().x);// + " region: (" + inputRegion.xMin + "," + inputRegion.xMax + ")");
         // Check for mouse input within the input region
         if (Mouse.current.position.ReadValue().x >= inputRegion.xMin &&

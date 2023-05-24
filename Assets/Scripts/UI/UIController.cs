@@ -12,6 +12,8 @@ public class UIController : MonoBehaviour
     [SerializeField] private GameObject canvas;
     [SerializeField] private InventoryUI inventoryUI;
     [SerializeField] private ExitGame exitGame;
+    [SerializeField] private StashUI stash;
+    [SerializeField] private CookUI cookUI;
 
     //Panels
     [SerializeField] public LevelClear levelClear;
@@ -93,5 +95,14 @@ public class UIController : MonoBehaviour
     internal bool AddItemToInventory(ItemData itemData)
     {
         return inventoryUI.AddItem(itemData);
+    }
+
+    internal void ShowcookUIMenu()
+    {
+        cookUI.ShowPanel();
+    }
+    internal void ShowStashMenu()
+    {
+        stash.ShowPanel();
     }
 }

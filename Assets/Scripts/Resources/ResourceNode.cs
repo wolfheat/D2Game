@@ -2,7 +2,7 @@
 using UnityEngine;
 
 
-public enum ResourceType{MiningNode, FishingNode, WoodcuttingNode, ScavengingNode, WellResourceNode, CookingResourceNode, Stash }
+public enum ResourceType{MiningNode, FishingNode, WoodcuttingNode, ScavengingNode, WellResourceNode, CookingStation, Stash}
 public abstract class ResourceNode : MonoBehaviour, IInteractable
 {
     ItemSpawner itemSpawner;

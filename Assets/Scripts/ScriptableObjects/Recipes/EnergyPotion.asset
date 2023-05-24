@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d22628a9aad38434c8dc370b5214ff00, type: 3}
+  m_Name: EnergyPotion
+  m_EditorClassIdentifier: 
+  ID: 3
+  Recipename: EnergyPotion
+  ingredients:
+  - itemData: {fileID: 11400000, guid: d299e4d59fd71cb4b9a45bd8d69d852e, type: 2}
+    amount: 1
+  - itemData: {fileID: 11400000, guid: f9fbffc533876794a8d12f8ea5fb9478, type: 2}
+    amount: 1
+  results:
+  - itemData: {fileID: 11400000, guid: e89d7f3cd9a988b4985fdfa010bf5894, type: 2}
+    amount: 1

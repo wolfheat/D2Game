@@ -186,11 +186,32 @@ Nov 2022
 		* Addressables fixed, had to build them separately before game build
 		* Added a Consol menu to show game information in
 		* Added inputRestriction method in UI that makes clicks outside game area unvalid
-		* Changed ratiation damener to act only in fixedupdate fixing rotation error in build where fps is lower
+		* Changed rotaation dampener to act only in fixedupdate fixing rotation error in build where fps is lower
 		* ESC now opens exit menu if no closable menus are open
 		* Fixed Marias left hand position a bit better
 		* Clicking outside game is now prohibited
+22/5	* Added Cooking UI with craftable recipes at the hilltop
+		* Added sounds for success or fail to create item, and selecting new recipe.
+		* Clicking anywere in recipe will now select that recipe.
+		* Active recipe is now highlighted in the list.
+		* List of Recipes is now updated to show available recipes in green and unavailable in red
+		* 9-sliced all menu backgrounds
+		* Scroll Area of recipes now scale to fit the recipes. Scrolling now correct if recipes overflows the size of the window
+		* Cooking now has a delay and cooking animation
+		* Fixed active recipe having red background.
+		* BUILD PC: 21s 767MB (352MB) After remove WoodenGUI Stuff 27MB => 
+24/5	* BUILD PC: 14s			562MB		694MB Removed MossyStone		
+		* BUILD PC:		Texture 483MB 		610MB (294MB) - Removed HighDef SkyBOxImage and 3rd person controller left in erika gameobject 		
+		* BUILD PC:		Texture 469MB 		596MB (287MB) - Removed Sharp Stones Wall on hilltop 		
+		* Redid Cliffs to my own stone, takes a lot less data
+		* BUILD PC:		Texture 320MB 		447MB (210MB) - Lowered import settings for medieval constructor textures 		
+		* BUILD PC:		Texture 140MB 		264MB (109MB) - Lowered import settings for many more items 		
+		* BUILD PC:		Texture  89MB 		206MB ( 85MB) - Lowered import settings for more items 		
+		* RESULT: FROM 767MB to 206MB game size (352MB to 85MB) Can be improved further.
+		* Added Occlusion Culling, made graphic card ease a bit
+		
 
+		// REDO CLIFFS, TO LARGE MAKE MY OWN PROBUILDER ONES OR DOWNLOAD NEW
 
 		ISSUES
 		// Light setting in town in build is dull why
@@ -210,6 +231,7 @@ Nov 2022
 		// Add more fancy tools for harvesting.
 
 		// - Data stuff -
+		// Recheck the use of Addressables and see if there is a better solution
 		// Need to fix up saving system. Store save file in SO during gameplay and store to file from that?
 		// Check for bugs in stash reloading after making it more efficient
 		// Need some system that stores all items in game.	(Semi started, Item Library added)
@@ -228,7 +250,8 @@ Nov 2022
 		// Check for to high resolution in all assets, lower them down for performance
 
 		// - Crafting  Stuff -
-		// Make Cooking work, maybe UI for it? Maybe do cook animation and entire cook transfer at the end if available?
+		// Cooking screen is possible to close while crafting, allow this?
+		// Player can initiate a craft of recipies they cant create, limit this? Not game breaking, leave for later?
 
 		// - Items Stuff -
 		// Check if items may end up outside players reach and fix if so

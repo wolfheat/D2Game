@@ -204,7 +204,7 @@ public class PlayerController : PlayerUnit
 		// Clicking UI element, ignore gameplay clicks
 		if (Inputs.Instance.PointerOverUI || UIController.Instance.IsMenuOpen()){
 			//Debug.Log("Click On UI dismiss	");
-			if (UIController.Instance.IsMenuOpen()) Debug.Log("Menu is OPEN!");
+			//if (UIController.Instance.IsMenuOpen()) Debug.Log("Menu is OPEN!");
 			return false;
 		}
 
@@ -533,6 +533,19 @@ public class PlayerController : PlayerUnit
         soundmaster.PlaySFX(SFX.Cultivating);
     }
 
+    public void StartCooking()
+    {
+		Debug.Log("Cooking Started: ");
+        playerState.SetState(PlayerState.Cooking);
+    }
+	
+    public void CookingComplete()
+    {
+		Debug.Log("Cooking Complete: ");
+		FindObjectOfType<CookUI>().CreateActiveRecipe();
+        playerState.SetState(PlayerState.Idle);
+    }
+	
     public void InteractWithIteractable()
     {
 		Debug.Log("activeInteractable: " + activeInteractable);

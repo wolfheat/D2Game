@@ -12,6 +12,7 @@ class PlayerAnimationEventController : MonoBehaviour
 	NavMeshAgent navMeshAgent;
 	SoundMaster soundMaster;
 	ProjectilesSpawner projectiles;
+	UIController uIController;
 
     [SerializeField] private GameObject shootPoint;
     private StashUI stash;
@@ -20,6 +21,7 @@ class PlayerAnimationEventController : MonoBehaviour
 
     public void Start()
 	{
+        uIController = FindObjectOfType<UIController>();
 		soundMaster = FindObjectOfType<SoundMaster>();
         projectiles = FindObjectOfType<ProjectilesSpawner>();
 		stash = FindObjectOfType<StashUI>();
@@ -44,6 +46,14 @@ class PlayerAnimationEventController : MonoBehaviour
 		soundMaster.StopSFX();
     }
 
+    private void AnimationOpenCookingEvent()
+	{
+		Debug.Log("Open Cook menu!");
+		uIController.ShowcookUIMenu();        
+        playerState.SetState(PlayerState.Idle);
+		FindObjectOfType<SavingUtility>()?.SetPlayerTownPosition();
+    }
+	
     private void AnimationOpenStashEvent()
 	{
 		Debug.Log("Open Stash!");

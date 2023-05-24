@@ -1,6 +1,7 @@
 ﻿using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class StashItem : UIItem, IPointerClickHandler
 {
@@ -9,6 +10,8 @@ public class StashItem : UIItem, IPointerClickHandler
     public void SetAmount(int amt)
     {
         textField.text = amt.ToString();
+        if (amt == 1) textField.alpha = 0.2f;
+        else textField.alpha = 1f;
     }
     
     public void OnPointerClick(PointerEventData eventData)
@@ -38,4 +41,10 @@ public class StashItem : UIItem, IPointerClickHandler
             }
         }
     }
+
+    public void RemoveRayCastTarget()
+    {        
+        image.raycastTarget = false;
+    }
+
 }

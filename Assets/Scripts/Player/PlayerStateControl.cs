@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum PlayerState { Idle, MoveTo, MoveToInteract, AttackSwordSwing, ShootArrow, Chase, Death, Dead, Decay, Interact }
+public enum PlayerState { Idle, MoveTo, MoveToInteract, AttackSwordSwing, ShootArrow, Chase, Death, Dead, Decay, Interact, Cooking }
 
 public class PlayerStateControl : MonoBehaviour
 {
@@ -23,10 +23,10 @@ public class PlayerStateControl : MonoBehaviour
 	}
 	public void SetState(PlayerState newState)
 	{
-		Debug.Log("Setting new state: "+newState + " from "+State);
 		
 		if (State == newState) return;
 
+		Debug.Log("Setting new state: "+newState + " from "+State);
 		//Set speed of animation
 		animator.speed = SavingUtility.Instance.playerInventory.AttackSpeedMultiplyer;
 
@@ -53,6 +53,9 @@ public class PlayerStateControl : MonoBehaviour
 			case PlayerState.ShootArrow:
 				animator.CrossFade("ShootArrow", FadeTime);
 				break;
+			case PlayerState.Cooking:
+				animator.CrossFade("Cooking", FadeTime);
+				break;
 			case PlayerState.Interact:
 				switch (playerController.activeInteractable.Type)
 				{
@@ -74,6 +77,9 @@ public class PlayerStateControl : MonoBehaviour
 						break;
 					case ResourceType.Stash:
 				animator.CrossFade("OpenStash", FadeTime);
+                        break;
+                    case ResourceType.CookingStation:
+				animator.CrossFade("OpenCooking", FadeTime);
                         break;
                     case ResourceType.WellResourceNode:
                 animator.CrossFade("Gather", FadeTime);

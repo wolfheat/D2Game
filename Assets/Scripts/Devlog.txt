@@ -209,7 +209,8 @@ Nov 2022
 		* BUILD PC:		Texture  89MB 		206MB ( 85MB) - Lowered import settings for more items 		
 		* RESULT: FROM 767MB to 206MB game size (352MB to 85MB) Can be improved further.
 		* Added Occlusion Culling, made graphic card ease a bit
-		
+		* Made all static objects static in town and main (not dungeon yet)
+
 
 		// Trees add many triangles, make them use less?
 

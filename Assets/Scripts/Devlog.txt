@@ -211,7 +211,7 @@ Nov 2022
 		* Added Occlusion Culling, made graphic card ease a bit
 		* Made all static objects static in town and main (not dungeon yet)
 14/6	* Player now revive after dieng and returning to town. Items are lost on death.
-
+		
 		
 
 		ISSUES

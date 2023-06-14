@@ -17,6 +17,7 @@ public class UIController : MonoBehaviour
 
     //Panels
     [SerializeField] public LevelClear levelClear;
+    [SerializeField] public DeathPanel deathPanel;
     
     private void Awake()
     {
@@ -44,6 +45,11 @@ public class UIController : MonoBehaviour
         canvas.SetActive(true);
     }
 
+    public void ActivateDeathPanel()
+    {
+        deathPanel.ShowPanel();
+    }
+    
     public void ActivateLevelClearPanel()
     {
         levelClear.ShowPanel();

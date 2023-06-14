@@ -58,6 +58,15 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
+    public void DropAllItems()
+    {
+        for (int i = 0; i < slots.Count; i++)
+        {
+            slots[i].ClearSlotEntirely();
+            slots[i].Index = i;
+        }
+    }
+    
     private void ClearAllSlots()
     {
         for (int i = 0; i < slots.Count; i++)

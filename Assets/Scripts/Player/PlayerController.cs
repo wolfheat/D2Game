@@ -552,11 +552,23 @@ public class PlayerController : PlayerUnit
         activeInteractable?.Interract();
     }
 
+    public void Revive()
+    {
+		Debug.Log("Revive");
+        playerState.SetState(PlayerState.Idle);
+		IsDead = false;
+        attackLock = false;
+        playerAnimationEventController.EnableAgent();
+    }
+	
     public void DeathAnimationComplete()
     {
 		Debug.Log("Death animation complete");
+		Debug.Log("Spread items?");
+		FindObjectOfType<InventoryUI>()?.DropAllItems();
+
         playerState.SetState(PlayerState.Dead);
-        UIController.Instance.ActivateLevelClearPanel();
+        UIController.Instance.ActivateDeathPanel();
     }
 	
     public void StopGathering()

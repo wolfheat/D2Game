@@ -24,7 +24,12 @@ public class LevelClear : MonoBehaviour, IOpenCloseMenu
 	public void OkPressed()
     {
         Debug.Log("Return To Town");
+        
+        //Check if dead and store items if alive
         Debug.Log("Store Collected Items in Inventory");
+
+
+
         FindObjectOfType<InventoryUI>().StoreItemDataArray();
         SavingUtility.Instance.SaveToFile();
 

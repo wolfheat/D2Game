@@ -210,11 +210,9 @@ Nov 2022
 		* RESULT: FROM 767MB to 206MB game size (352MB to 85MB) Can be improved further.
 		* Added Occlusion Culling, made graphic card ease a bit
 		* Made all static objects static in town and main (not dungeon yet)
+14/6	* Player now revive after dieng and returning to town. Items are lost on death.
 
-
-		// Trees add many triangles, make them use less?
-
-		// REDO CLIFFS, TO LARGE MAKE MY OWN PROBUILDER ONES OR DOWNLOAD NEW
+		
 
 		ISSUES
 		// Light setting in town in build is dull why
@@ -225,6 +223,7 @@ Nov 2022
 		// Load Screen between scenes
 
 		// - Mechanics Stuff -		
+		// Make items spread around dead player?
 		// Still have to make sure clicking outside game works for any game size and fullscreen or not
 		// Maybe remove option to store action, only do current action if possible?
 		// Player can get stuck sometimes fix?
@@ -234,6 +233,8 @@ Nov 2022
 		// Add more fancy tools for harvesting.
 
 		// - Data stuff -
+		// REDO CLIFFS, TO LARGE MAKE MY OWN PROBUILDER ONES OR DOWNLOAD NEW
+		// Trees add many triangles, make them use less?
 		// Recheck the use of Addressables and see if there is a better solution
 		// Need to fix up saving system. Store save file in SO during gameplay and store to file from that?
 		// Check for bugs in stash reloading after making it more efficient
